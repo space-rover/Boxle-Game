@@ -45,6 +45,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="CompCore" level="project" />
   </component>
 </module>
 
