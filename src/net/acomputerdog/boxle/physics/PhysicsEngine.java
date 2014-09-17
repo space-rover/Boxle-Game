@@ -1,7 +1,7 @@
 package net.acomputerdog.boxle.physics;
 
 import net.acomputerdog.boxle.main.Boxle;
-import net.acomputerdog.boxle.world.structure.World;
+import net.acomputerdog.boxle.world.World;
 
 /**
  * Physics engine.

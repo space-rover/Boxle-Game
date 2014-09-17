@@ -2,7 +2,7 @@ package net.acomputerdog.boxle.main;
 
 import net.acomputerdog.boxle.config.GameConfig;
 import net.acomputerdog.boxle.render.engine.RenderEngine;
-import net.acomputerdog.boxle.world.WorldList;
+import net.acomputerdog.boxle.world.structure.WorldList;
 import net.acomputerdog.core.logger.CLogger;
 import org.lwjgl.opengl.Display;
 
