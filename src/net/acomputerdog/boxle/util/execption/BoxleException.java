@@ -3,9 +3,12 @@ package net.acomputerdog.boxle.util.execption;
 import net.acomputerdog.boxle.main.Boxle;
 
 /**
- * A boxle-specific checked exception
+ * A boxle-specific checked exception.
  */
 public class BoxleException extends Exception {
+    /**
+     * The boxle instance that this exception occurred under.
+     */
     private final Boxle boxle;
 
     public BoxleException(Boxle boxle) {

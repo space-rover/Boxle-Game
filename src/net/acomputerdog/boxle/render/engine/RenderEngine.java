@@ -15,6 +15,11 @@ public class RenderEngine {
         this.boxle = boxle;
     }
 
+    /**
+     * Gets the Boxle that this RenderEngine belongs to.
+     *
+     * @return Return the Boxle that created this RenderEngine.
+     */
     public Boxle getBoxle() {
         return boxle;
     }
