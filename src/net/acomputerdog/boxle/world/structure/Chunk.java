@@ -1,4 +1,4 @@
-package net.acomputerdog.boxle.world;
+package net.acomputerdog.boxle.world.structure;
 
 /**
  * A 16 by 16 chunk of a world

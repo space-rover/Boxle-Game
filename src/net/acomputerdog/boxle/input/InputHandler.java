@@ -2,7 +2,7 @@ package net.acomputerdog.boxle.input;
 
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.main.Client;
-import net.acomputerdog.boxle.render.util.ThreadUtils;
+import net.acomputerdog.boxle.util.ThreadUtils;
 import net.acomputerdog.core.logger.CLogger;
 
 /**

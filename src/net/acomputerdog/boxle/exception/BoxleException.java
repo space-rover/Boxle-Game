@@ -1,4 +1,4 @@
-package net.acomputerdog.boxle.util.execption;
+package net.acomputerdog.boxle.exception;
 
 import net.acomputerdog.boxle.main.Boxle;
 

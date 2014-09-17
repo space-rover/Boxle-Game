@@ -2,12 +2,9 @@ package net.acomputerdog.boxle.main;
 
 import net.acomputerdog.boxle.config.GameConfig;
 import net.acomputerdog.boxle.render.engine.RenderEngine;
-import net.acomputerdog.boxle.world.World;
+import net.acomputerdog.boxle.world.WorldList;
 import net.acomputerdog.core.logger.CLogger;
 import org.lwjgl.opengl.Display;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Boxle main class
@@ -32,9 +29,9 @@ public class Boxle {
     private final RenderEngine renderEngine;
 
     /**
-     * Map of world names to instances.
+     * All loaded worlds
      */
-    private final Map<String, World> worldMap;
+    private final WorldList worlds;
 
     /**
      * Global game config.
@@ -61,8 +58,8 @@ public class Boxle {
      */
     private Boxle() {
         this.renderEngine = new RenderEngine(this);
-        worldMap = new ConcurrentHashMap<>();
         gameConfig = new GameConfig(this);
+        worlds = new WorldList(this);
         client = new Client(this);
         server = new Server(this);
         try {
@@ -136,35 +133,6 @@ public class Boxle {
     }
 
     /**
-     * Gets a world by it's name.
-     *
-     * @param name The name of the world.
-     * @return Returns the instance of the world, or null if none exists or name is null.
-     */
-    public World getWorld(String name) {
-        if (name == null) {
-            throw new IllegalArgumentException("World name must not be null!");
-        }
-        return worldMap.get(name);
-    }
-
-    /**
-     * Adds a world to the world map.
-     *
-     * @param world The world to add.
-     */
-    public void addWorld(World world) {
-        if (world == null) {
-            throw new IllegalArgumentException("World cannot be null!");
-        }
-        String name = world.getName();
-        if (name == null) {
-            throw new IllegalArgumentException("World has a null name!");
-        }
-        worldMap.put(name, world);
-    }
-
-    /**
      * Requests the game to stop.
      */
     public void stop() {
@@ -186,15 +154,6 @@ public class Boxle {
      */
     public RenderEngine getRenderEngine() {
         return renderEngine;
-    }
-
-    /**
-     * Gets the entire world map.
-     *
-     * @return Return the world map.
-     */
-    public Map<String, World> getWorldMap() {
-        return worldMap;
     }
 
     /**
@@ -222,6 +181,15 @@ public class Boxle {
      */
     public Server getServer() {
         return server;
+    }
+
+    /**
+     * Gets the all worlds loaded by this Boxle instance
+     *
+     * @return Return a WorldList containing all worlds loaded by this boxle instance.
+     */
+    public WorldList getWorlds() {
+        return worlds;
     }
 
     /**

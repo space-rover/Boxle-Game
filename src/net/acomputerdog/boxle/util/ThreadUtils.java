@@ -1,4 +1,4 @@
-package net.acomputerdog.boxle.render.util;
+package net.acomputerdog.boxle.util;
 
 /**
  * Threading-related utilities

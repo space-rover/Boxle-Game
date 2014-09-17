@@ -1,7 +1,7 @@
 package net.acomputerdog.boxle.render.renders;
 
+import net.acomputerdog.boxle.exception.BoxleException;
 import net.acomputerdog.boxle.render.engine.RenderEngine;
-import net.acomputerdog.boxle.util.execption.BoxleException;
 
 /**
  * Represents a type of renderable object.  Can have one or more of the following phases: init, startup, render, shutdown, and cleanup.
@@ -29,18 +29,21 @@ public interface Render {
 
     /**
      * Sets up render environment.  Calling threads must have a GL context.
+     *
      * @throws BoxleException If exception occurs.
      */
     public void startup() throws BoxleException;
 
     /**
      * Called each frame to trigger a render.  Calling threads must have a GL context.
+     *
      * @throws BoxleException If exception occurs.
      */
     public void render() throws BoxleException;
 
     /**
      * Cleanup render environment. Calling threads must have a GL context.
+     *
      * @throws BoxleException If exception occurs.
      */
     public void shutdown() throws BoxleException;

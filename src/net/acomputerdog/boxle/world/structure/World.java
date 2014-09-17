@@ -1,4 +1,4 @@
-package net.acomputerdog.boxle.world;
+package net.acomputerdog.boxle.world.structure;
 
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.physics.PhysicsEngine;
