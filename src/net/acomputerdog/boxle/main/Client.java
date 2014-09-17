@@ -13,6 +13,8 @@ public class Client {
      */
     private final InputHandler input;
 
+    private final Thread inputThread;
+
     /**
      * Create a new Client instance.
      *
@@ -21,27 +23,29 @@ public class Client {
     public Client(Boxle boxle) {
         this.boxle = boxle;
         input = new InputHandler(this);
+        inputThread = new Thread(input);
+        inputThread.setName("Client-Input");
     }
 
     /**
      * Initializes this client
      */
     public void init() {
-        input.init();
+        inputThread.start();
     }
 
     /**
      * Ticks this client
      */
     public void tick() {
-        input.tick();
+        //todo read data from input handler
     }
 
     /**
      * Shuts down this client
      */
     public void shutdown() {
-        input.shutdown();
+        input.requestStop();
     }
 
     /**

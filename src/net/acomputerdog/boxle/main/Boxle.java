@@ -172,6 +172,14 @@ public class Boxle {
     }
 
     /**
+     * Checks if the game is running, or if game components should begin shutting down.
+     * @return return true if the game is running
+     */
+    public boolean canRun() {
+        return canRun;
+    }
+
+    /**
      * Gets the RenderEngine of this Boxle instance.
      *
      * @return return the RenderEngine of this Boxle instance
