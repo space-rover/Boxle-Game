@@ -11,7 +11,15 @@ public class RenderEngine {
      */
     private final Boxle boxle;
 
+    /**
+     * Creates a new instance of this RenderEngine.
+     *
+     * @param boxle The Boxle instance that created this RenderEngine.
+     */
     public RenderEngine(Boxle boxle) {
+        if (boxle == null) {
+            throw new IllegalArgumentException("Boxle instance must not be null!");
+        }
         this.boxle = boxle;
     }
 
