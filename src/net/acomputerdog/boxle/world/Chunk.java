@@ -1,5 +1,7 @@
 package net.acomputerdog.boxle.world;
 
+import net.acomputerdog.boxle.math.vec.Vec3i;
+
 /**
  * A 16 by 16 chunk of a world
  */
@@ -21,12 +23,19 @@ public class Chunk {
     private final World world;
 
     /**
+     * The x,y,z location of this chunk
+     */
+    private final Vec3i location;
+
+    /**
      * Creates a new chunk.
      *
      * @param world The world that contains the chunk
+     * @param location The x,y,z location of this Chunk
      */
-    public Chunk(World world) {
+    public Chunk(World world, Vec3i location) {
         this.world = world;
+        this.location = location;
     }
 
     /**
@@ -36,5 +45,14 @@ public class Chunk {
      */
     public World getWorld() {
         return world;
+    }
+
+    /**
+     * Gets the x,y,z location of this chunk
+     *
+     * @return Return a Vec3i defining the location of this Chunk
+     */
+    public Vec3i getLocation() {
+        return location;
     }
 }
