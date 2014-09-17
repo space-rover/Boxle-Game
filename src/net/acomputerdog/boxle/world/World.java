@@ -1,13 +1,14 @@
 package net.acomputerdog.boxle.world;
 
 import net.acomputerdog.boxle.main.Boxle;
+import net.acomputerdog.boxle.physics.PhysicsEngine;
 
 /**
  * A world, made of blocks :)
  */
 public class World {
     /**
-     * Boxle instance
+     * Boxle instance.
      */
     private final Boxle boxle;
 
@@ -15,6 +16,11 @@ public class World {
      * Name of this world.
      */
     private final String name;
+
+    /**
+     * The physics engine for this world.
+     */
+    private final PhysicsEngine physicsEngine;
 
     /**
      * Creates a new instance of this World.
@@ -31,6 +37,7 @@ public class World {
         }
         this.boxle = boxle;
         this.name = name;
+        physicsEngine = new PhysicsEngine(this);
     }
 
     /**
@@ -49,5 +56,14 @@ public class World {
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * Gets the physics engine for this world.
+     *
+     * @return Return the physics engine for this world.
+     */
+    public PhysicsEngine getPhysicsEngine() {
+        return physicsEngine;
     }
 }
