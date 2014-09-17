@@ -16,6 +16,13 @@ public class Vec3f {
         this.z = z;
     }
 
+    public Vec3f(Vec3f other) {
+        this(other == null ? 0 : other.x, other == null ? 0 : other.y, other == null ? 0 : other.z); //written this way because java doesn't allow check for null before call to "this()"...
+        if (other == null) {
+            throw new IllegalArgumentException("Other Vec3f cannot be null!");
+        }
+    }
+
     public Vec3f(float x, float y) {
         this(x, y, 0);
     }
@@ -50,6 +57,10 @@ public class Vec3f {
 
     public void setZ(float z) {
         this.z = z;
+    }
+
+    public Vec3f duplicate() {
+        return new Vec3f(this);
     }
 
     @Override

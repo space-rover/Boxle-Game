@@ -53,6 +53,6 @@ public class Chunk {
      * @return Return a Vec3i defining the location of this Chunk
      */
     public Vec3i getLocation() {
-        return location;
+        return location.duplicate();
     }
 }
