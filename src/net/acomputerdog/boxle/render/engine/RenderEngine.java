@@ -24,6 +24,27 @@ public class RenderEngine {
     }
 
     /**
+     * Initializes this RenderEngine
+     */
+    public void init() {
+
+    }
+
+    /**
+     * Render a single frame.
+     */
+    public void render() {
+
+    }
+
+    /**
+     * Cleanup and prepare for shutdown.
+     */
+    public void cleanup() {
+
+    }
+
+    /**
      * Gets the Boxle that this RenderEngine belongs to.
      *
      * @return Return the Boxle that created this RenderEngine.

@@ -36,7 +36,20 @@ public class Boxle {
      */
     private final Map<String, World> worldMap;
 
+    /**
+     * Global game config.
+     */
     private final GameConfig gameConfig;
+
+    /**
+     * The instance of the game client
+     */
+    private final Client client;
+
+    /**
+     * The instance of the game server;
+     */
+    private final Server server;
 
     /**
      * If true the game can run, if false, a close has been requested.
@@ -50,6 +63,8 @@ public class Boxle {
         this.renderEngine = new RenderEngine(this);
         worldMap = new ConcurrentHashMap<>();
         gameConfig = new GameConfig(this);
+        client = new Client(this);
+        server = new Server(this);
         try {
             init();
         } catch (Throwable t) {
@@ -60,8 +75,15 @@ public class Boxle {
             run();
         } catch (Throwable t) {
             LOGGER_FULL.logFatal("Caught exception during run phase!", t);
-            end(-1);
+            end(-2);
         }
+        try {
+            LOGGER_FULL.logError("Reached invalid area of code!  Shutting down!");
+            cleanup();
+        } catch (Throwable t) {
+            LOGGER_FULL.logFatal("Caught excpetion in invalid area of code!", t);
+        }
+        end(-3);
     }
 
     /**
@@ -69,6 +91,10 @@ public class Boxle {
      */
     private void init() {
         LOGGER_FULL.logInfo("Boxle is initializing.");
+        //must be in order server -> client -> render
+        server.init();
+        client.init();
+        renderEngine.init();
     }
 
     /**
@@ -77,13 +103,27 @@ public class Boxle {
     private void run() {
         LOGGER_FULL.logInfo("Boxle is starting.");
         while (canRun) {
+            server.tick(); //todo separate thread
+            client.tick(); //todo separate thread
+            renderEngine.render(); //todo separate thread
             Display.sync(gameConfig.maxFPS); //limit the tick speed to max FPS
         }
+        cleanup();
         end(0);
     }
 
     /**
-     * Saves and exits.
+     * Cleanup and prepare to close.
+     */
+    private void cleanup() {
+        //must be in order render -> client -> server
+        renderEngine.cleanup();
+        client.shutdown();
+        server.shutdown();
+    }
+
+    /**
+     * Saves and exits.  Should not do any game actions, and should be safe to call without try-catch blocks.
      * @param code The error code to return.
      */
     private void end(int code) {
@@ -93,24 +133,6 @@ public class Boxle {
             LOGGER_FULL.logWarning("Boxle shutting down abnormally: error code " + code + ".");
         }
         System.exit(code);
-    }
-
-    /**
-     * Gets the RenderEngine of this Boxle instance.
-     *
-     * @return return the RenderEngine of this Boxle instance
-     */
-    public RenderEngine getRenderEngine() {
-        return renderEngine;
-    }
-
-    /**
-     * Gets the entire world map.
-     *
-     * @return Return the world map.
-     */
-    public Map<String, World> getWorldMap() {
-        return worldMap;
     }
 
     /**
@@ -147,6 +169,51 @@ public class Boxle {
      */
     public void stop() {
         canRun = false;
+    }
+
+    /**
+     * Gets the RenderEngine of this Boxle instance.
+     *
+     * @return return the RenderEngine of this Boxle instance
+     */
+    public RenderEngine getRenderEngine() {
+        return renderEngine;
+    }
+
+    /**
+     * Gets the entire world map.
+     *
+     * @return Return the world map.
+     */
+    public Map<String, World> getWorldMap() {
+        return worldMap;
+    }
+
+    /**
+     * Gets the game config.
+     *
+     * @return Return the GameConfig controlling this game.
+     */
+    public GameConfig getGameConfig() {
+        return gameConfig;
+    }
+
+    /**
+     * Gets the client of this game.
+     *
+     * @return Return the client of this game.
+     */
+    public Client getClient() {
+        return client;
+    }
+
+    /**
+     * Gets the server of this game.
+     *
+     * @return Return the server of this game.
+     */
+    public Server getServer() {
+        return server;
     }
 
     /**
