@@ -2,6 +2,7 @@ package net.acomputerdog.boxle.world;
 
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.physics.PhysicsEngine;
+import net.acomputerdog.boxle.world.structure.ChunkTable;
 
 /**
  * A world, made of blocks :)
@@ -23,6 +24,11 @@ public class World {
     private final PhysicsEngine physicsEngine;
 
     /**
+     * ChunkTable containing all loaded chunks in this world.
+     */
+    private final ChunkTable chunks;
+
+    /**
      * Creates a new instance of this World.
      *
      * @param boxle The Boxle instance that created this World.
@@ -34,6 +40,7 @@ public class World {
         this.boxle = boxle;
         this.name = name;
         physicsEngine = new PhysicsEngine(this);
+        chunks = new ChunkTable(this);
     }
 
     /**
@@ -61,5 +68,14 @@ public class World {
      */
     public PhysicsEngine getPhysicsEngine() {
         return physicsEngine;
+    }
+
+    /**
+     * Gets the ChunkTable containing all chunks loaded by this World.
+     *
+     * @return Return the ChunkTable of this World
+     */
+    public ChunkTable getChunks() {
+        return chunks;
     }
 }
