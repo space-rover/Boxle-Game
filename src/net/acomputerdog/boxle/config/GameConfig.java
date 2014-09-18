@@ -48,6 +48,16 @@ public class GameConfig {
     public boolean fullscreen = false;
 
     /**
+     * Render distance on the X and Z axises
+     */
+    public int renderDistanceHorizontal = 10;
+
+    /**
+     * Render distance on the Y axis
+     */
+    public int renderDistanceVertical = 5;
+
+    /**
      * Creates a new config for the given boxle instance.
      *
      * @param boxle The boxle instance to create this config for.
