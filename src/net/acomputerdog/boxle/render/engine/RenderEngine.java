@@ -32,9 +32,7 @@ public class RenderEngine {
      * @param boxle The Boxle instance that created this RenderEngine.
      */
     public RenderEngine(Boxle boxle) {
-        if (boxle == null) {
-            throw new IllegalArgumentException("Boxle instance must not be null!");
-        }
+        if (boxle == null) throw new IllegalArgumentException("Boxle instance must not be null!");
         this.boxle = boxle;
     }
 

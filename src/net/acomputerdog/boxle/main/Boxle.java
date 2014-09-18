@@ -1,6 +1,7 @@
 package net.acomputerdog.boxle.main;
 
 import net.acomputerdog.boxle.config.GameConfig;
+import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.render.engine.RenderEngine;
 import net.acomputerdog.boxle.world.structure.WorldList;
 import net.acomputerdog.core.logger.CLogger;
@@ -88,6 +89,7 @@ public class Boxle {
      */
     private void init() {
         LOGGER_FULL.logInfo("Boxle is initializing.");
+        VecPool.init();
         //must be in order render -> server -> client
         renderEngine.init();
         server.init();
@@ -121,6 +123,7 @@ public class Boxle {
 
     /**
      * Saves and exits.  Should not do any game actions, and should be safe to call without try-catch blocks.
+     *
      * @param code The error code to return.
      */
     private void end(int code) {
@@ -141,6 +144,7 @@ public class Boxle {
 
     /**
      * Checks if the game is running, or if game components should begin shutting down.
+     *
      * @return return true if the game is running
      */
     public boolean canRun() {

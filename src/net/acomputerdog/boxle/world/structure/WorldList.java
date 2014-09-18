@@ -44,6 +44,7 @@ public class WorldList {
      * @param boxle The parent boxle instance.
      */
     public WorldList(Boxle boxle) {
+        if (boxle == null) throw new IllegalArgumentException("Boxle instance cannot be null!");
         this.boxle = boxle;
         nameToWorldMap = new ConcurrentHashMap<>();
         worldToNameMap = new ConcurrentHashMap<>();
@@ -58,9 +59,7 @@ public class WorldList {
      * @return Returns the instance of the world, or null if none exists or name is null.
      */
     public World getWorld(String name) {
-        if (name == null) {
-            throw new IllegalArgumentException("World name must not be null!");
-        }
+        if (name == null) throw new IllegalArgumentException("World name must not be null!");
         return nameToWorldMap.get(name);
     }
 
@@ -70,13 +69,9 @@ public class WorldList {
      * @param world The world to add.
      */
     public void addWorld(World world) {
-        if (world == null) {
-            throw new IllegalArgumentException("World cannot be null!");
-        }
+        if (world == null) throw new IllegalArgumentException("World cannot be null!");
         String name = world.getName();
-        if (name == null) {
-            throw new IllegalArgumentException("World has a null name!");
-        }
+        if (name == null) throw new IllegalArgumentException("World has a null name!");
         nameToWorldMap.put(name, world);
         worldToNameMap.put(world, name);
         instanceSet.add(world);
@@ -89,9 +84,7 @@ public class WorldList {
      * @param name The name of the world.
      */
     public void removeWorld(String name) {
-        if (name == null) {
-            throw new IllegalArgumentException("name cannot be null!");
-        }
+        if (name == null) throw new IllegalArgumentException("name cannot be null!");
         World world = nameToWorldMap.remove(name);
         if (world != null) {
             worldToNameMap.remove(world);
@@ -106,9 +99,7 @@ public class WorldList {
      * @param world The world to remove.
      */
     public void removeWorld(World world) {
-        if (world == null) {
-            throw new IllegalArgumentException("World cannot be null!");
-        }
+        if (world == null) throw new IllegalArgumentException("World cannot be null!");
         String name = worldToNameMap.remove(world);
         if (name != null) {
             nameToWorldMap.remove(name);

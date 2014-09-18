@@ -34,6 +34,7 @@ public class InputHandler implements Runnable {
      * @param client The parent client instance.
      */
     public InputHandler(Client client) {
+        if (client == null) throw new IllegalArgumentException("Client instance must not be null!");
         this.client = client;
     }
 

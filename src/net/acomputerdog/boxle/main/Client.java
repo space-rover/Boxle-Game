@@ -21,6 +21,7 @@ public class Client {
      * @param boxle The parent boxle instance.
      */
     public Client(Boxle boxle) {
+        if (boxle == null) throw new IllegalArgumentException("Boxle instance must not be null!");
         this.boxle = boxle;
         input = new InputHandler(this);
         inputThread = new Thread(input);

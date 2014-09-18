@@ -29,12 +29,8 @@ public class World {
      * @param name  The name of this world.
      */
     public World(Boxle boxle, String name) {
-        if (name == null) {
-            throw new IllegalArgumentException("Name cannot be null!");
-        }
-        if (boxle == null) {
-            throw new IllegalArgumentException("Boxle instance must not be null!");
-        }
+        if (name == null) throw new IllegalArgumentException("Name cannot be null!");
+        if (boxle == null) throw new IllegalArgumentException("Boxle instance must not be null!");
         this.boxle = boxle;
         this.name = name;
         physicsEngine = new PhysicsEngine(this);

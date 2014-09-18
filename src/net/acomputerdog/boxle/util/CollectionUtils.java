@@ -31,9 +31,7 @@ public class CollectionUtils {
          */
         private UnmodifiableSet(Set<T> parent) {
             this.parent = parent;
-            if (parent == null) {
-                throw new IllegalArgumentException("Parent set cannot be null!");
-            }
+            if (parent == null) throw new IllegalArgumentException("Parent set cannot be null!");
         }
 
         @Override

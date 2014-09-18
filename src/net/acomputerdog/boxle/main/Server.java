@@ -12,6 +12,7 @@ public class Server {
      * @param boxle The parent boxle instance.
      */
     public Server(Boxle boxle) {
+        if (boxle == null) throw new IllegalArgumentException("Boxle instance must not be null!");
         this.boxle = boxle;
     }
 

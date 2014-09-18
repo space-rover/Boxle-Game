@@ -34,6 +34,8 @@ public class Chunk {
      * @param location The x,y,z location of this Chunk
      */
     public Chunk(World world, Vec3i location) {
+        if (world == null) throw new IllegalArgumentException("World cannot be null!");
+        if (location == null) throw new IllegalArgumentException("Location cannot be null!");
         this.world = world;
         this.location = location;
     }

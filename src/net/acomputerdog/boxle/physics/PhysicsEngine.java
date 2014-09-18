@@ -23,14 +23,10 @@ public class PhysicsEngine {
      * @param world The World that this PhysicsEngine is handling physics for.
      */
     public PhysicsEngine(World world) {
+        if (world == null) throw new IllegalArgumentException("World instance must not be null!");
         this.world = world;
-        if (world == null) {
-            throw new IllegalArgumentException("World instance must not be null!");
-        }
         this.boxle = world.getBoxle();
-        if (boxle == null) {
-            throw new IllegalArgumentException("Boxle instance must not be null!");
-        }
+        if (boxle == null) throw new IllegalArgumentException("Boxle instance must not be null!");
     }
 
     /**
