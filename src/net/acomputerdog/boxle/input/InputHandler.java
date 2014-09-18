@@ -4,6 +4,10 @@ import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.main.Client;
 import net.acomputerdog.boxle.util.ThreadUtils;
 import net.acomputerdog.core.logger.CLogger;
+import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.Display;
 
 /**
  * Handles input for the game client.
@@ -39,7 +43,7 @@ public class InputHandler implements Runnable {
         try {
             while (getBoxle().canRun() && canRun) {
                 long startTime = System.currentTimeMillis();
-
+                tick();
                 ThreadUtils.sync(startTime, 1);
             }
         } catch (Exception e) {
@@ -53,6 +57,20 @@ public class InputHandler implements Runnable {
      * Initializes this InputHandler
      */
     public void init() {
+        try {
+            Keyboard.create();
+        } catch (LWJGLException e) {
+            logger.logFatal("Exception creating keyboard!", e);
+            getBoxle().stop();
+            return;
+        }
+        try {
+            Mouse.create();
+        } catch (LWJGLException e) {
+            logger.logFatal("Exception creating mouse!", e);
+            getBoxle().stop();
+            return;
+        }
         logger.logInfo("Started.");
     }
 
@@ -60,13 +78,23 @@ public class InputHandler implements Runnable {
      * Ticks this handler
      */
     public void tick() {
-
+        if (Display.isCloseRequested()) {
+            getBoxle().stop();
+        }
+        if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
+            getBoxle().stop();
+        }
     }
 
     /**
      * Shuts down this handler
      */
     public void shutdown() {
+        try {
+            if (Keyboard.isCreated()) Keyboard.destroy();
+            if (Mouse.isCreated()) Mouse.destroy();
+        } catch (Exception ignored) {
+        }
         logger.logInfo("Stopping!");
     }
 

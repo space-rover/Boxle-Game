@@ -1,6 +1,7 @@
 package net.acomputerdog.boxle.config;
 
 import net.acomputerdog.boxle.main.Boxle;
+import net.acomputerdog.core.logger.CLogger;
 
 /**
  * Game config.
@@ -12,9 +13,39 @@ public class GameConfig {
     private final Boxle boxle;
 
     /**
+     * Logger for GameConfig
+     */
+    private final CLogger logger = new CLogger("GameConfig", false, true);
+
+    /**
      * Max allowed FPS.
      */
     public int maxFPS = 60;
+
+    /**
+     * Screen width
+     */
+    public int screenWidth = 800;
+
+    /**
+     * Screen height
+     */
+    public int screenHeight = 600;
+
+    /**
+     * If true, limit FPS to screen refresh rate.
+     */
+    public boolean enableVSync = false;
+
+    /**
+     * Field of view
+     */
+    public float fov = 60.0f;
+
+    /**
+     * If true, game will run in fullscreen mode
+     */
+    public boolean fullscreen = false;
 
     /**
      * Creates a new config for the given boxle instance.
@@ -29,14 +60,14 @@ public class GameConfig {
      * Loads this config.
      */
     public void load() {
-
+        logger.logInfo("Loaded game config.");
     }
 
     /**
      * Saves this config.
      */
     public void save() {
-
+        logger.logInfo("Saved game config.");
     }
 
     /**

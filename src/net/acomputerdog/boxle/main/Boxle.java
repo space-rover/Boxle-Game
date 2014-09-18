@@ -88,10 +88,10 @@ public class Boxle {
      */
     private void init() {
         LOGGER_FULL.logInfo("Boxle is initializing.");
-        //must be in order server -> client -> render
+        //must be in order render -> server -> client
+        renderEngine.init();
         server.init();
         client.init();
-        renderEngine.init();
     }
 
     /**
@@ -113,10 +113,10 @@ public class Boxle {
      * Cleanup and prepare to close.
      */
     private void cleanup() {
-        //must be in order render -> client -> server
-        renderEngine.cleanup();
+        //must be in order client -> server -> render
         client.shutdown();
         server.shutdown();
+        renderEngine.cleanup();
     }
 
     /**
