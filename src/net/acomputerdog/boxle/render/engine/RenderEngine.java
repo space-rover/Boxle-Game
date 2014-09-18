@@ -2,6 +2,7 @@ package net.acomputerdog.boxle.render.engine;
 
 import net.acomputerdog.boxle.config.GameConfig;
 import net.acomputerdog.boxle.main.Boxle;
+import net.acomputerdog.boxle.world.Chunk;
 import net.acomputerdog.core.logger.CLogger;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
@@ -52,7 +53,7 @@ public class RenderEngine {
             Display.create();
 
             glClearColor(0.4f, 0.6f, 0.9f, 0f);
-            GLU.gluPerspective(config.fov, (float) config.screenWidth / (float) config.screenHeight, 0.1f, 100.0f);
+            GLU.gluPerspective(config.fov, (float) config.screenWidth / (float) config.screenHeight, 0.1f, (float) (config.renderDistanceHorizontal * Chunk.CHUNK_SIZE) + 1f);
             glLoadIdentity();
         } catch (LWJGLException e) {
             logger.logFatal("Exception initializing render engine!", e);
