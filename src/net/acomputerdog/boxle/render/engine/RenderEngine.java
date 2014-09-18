@@ -53,7 +53,7 @@ public class RenderEngine {
             Display.create();
 
             glClearColor(0.4f, 0.6f, 0.9f, 0f);
-            GLU.gluPerspective(config.fov, (float) config.screenWidth / (float) config.screenHeight, 0.1f, (float) (config.renderDistanceHorizontal * Chunk.CHUNK_SIZE) + 1f);
+            GLU.gluPerspective(config.fov, (float) config.screenWidth / (float) config.screenHeight, 0.1f, (float) (Math.max(config.renderDistanceHorizontal, config.renderDistanceVertical) * Chunk.CHUNK_SIZE) + 1f);
             glLoadIdentity();
         } catch (LWJGLException e) {
             logger.logFatal("Exception initializing render engine!", e);
