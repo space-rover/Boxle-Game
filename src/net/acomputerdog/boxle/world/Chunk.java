@@ -1,6 +1,8 @@
 package net.acomputerdog.boxle.world;
 
+import net.acomputerdog.boxle.block.Block;
 import net.acomputerdog.boxle.math.vec.Vec3i;
+import net.acomputerdog.boxle.world.structure.BlockStorage;
 
 /**
  * A 16 by 16 chunk of a world
@@ -28,6 +30,11 @@ public class Chunk {
     private final Vec3i location;
 
     /**
+     * Blocks and data for this Chunk
+     */
+    private final BlockStorage blocks;
+
+    /**
      * Creates a new chunk.
      *
      * @param world The world that contains the chunk
@@ -38,6 +45,54 @@ public class Chunk {
         if (location == null) throw new IllegalArgumentException("Location cannot be null!");
         this.world = world;
         this.location = location;
+        blocks = new BlockStorage(Chunk.CHUNK_SIZE);
+    }
+
+    /**
+     * Gets the block at a location
+     * @param x X-location
+     * @param y Y-location
+     * @param z Z-location
+     * @return Return the block at the given location
+     */
+    public Block getBlockAt(int x, int y, int z) {
+        return blocks.getBlock(x, y, z);
+    }
+
+    /**
+     * Gets the data value at a location
+     *
+     * @param x X-location
+     * @param y Y-location
+     * @param z Z-location
+     * @return Return the data value
+     */
+    public byte getDataAt(int x, int y, int z) {
+        return blocks.getData(x, y, z);
+    }
+
+    /**
+     * Sets the block at a location
+     *
+     * @param x     X-location
+     * @param y     Y-location
+     * @param z     Z-location
+     * @param block The block to set.  Cannot be null.
+     */
+    public void setBlockAt(int x, int y, int z, Block block) {
+        blocks.setBlock(x, y, z, block);
+    }
+
+    /**
+     * Sets a data value at a location
+     *
+     * @param x    X-location
+     * @param y    Y-location
+     * @param z    Z-location
+     * @param data The data value to set.
+     */
+    public void setDataAt(int x, int y, int z, byte data) {
+        blocks.setData(x, y, z, data);
     }
 
     /**
@@ -56,5 +111,14 @@ public class Chunk {
      */
     public Vec3i getLocation() {
         return location.duplicate();
+    }
+
+    /**
+     * Gets the BlockStorage for this Chunk
+     *
+     * @return Return the BlockStorage for this Chunk
+     */
+    public BlockStorage getBlocks() {
+        return blocks;
     }
 }

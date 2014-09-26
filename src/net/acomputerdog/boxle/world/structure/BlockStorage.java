@@ -5,7 +5,10 @@ import net.acomputerdog.boxle.world.Chunk;
 
 /**
  * Class used to hold blocks for a Chunk.
+ *
+ * Not yet thread-safe!
  */
+//todo: make thread-safe
 public class BlockStorage {
     /**
      * Array containing powers of two up to 2048

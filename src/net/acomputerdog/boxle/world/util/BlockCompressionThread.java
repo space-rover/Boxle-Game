@@ -1,18 +1,21 @@
 package net.acomputerdog.boxle.world.util;
 
-import net.acomputerdog.boxle.world.structure.BlockStorage;
-
-import java.util.List;
+import net.acomputerdog.boxle.main.Boxle;
+import net.acomputerdog.boxle.world.Chunk;
+import net.acomputerdog.boxle.world.World;
 
 /**
- * Thread that scans and compresses block and data arrays within chunks
+ * Thread that scans and compresses block and data arrays within chunks.
  */
 public class BlockCompressionThread extends Thread {
-    private final List<BlockStorage> storages;
+    /**
+     * Boxle instance
+     */
+    private final Boxle boxle;
 
-    public BlockCompressionThread(List<BlockStorage> storages) {
+    public BlockCompressionThread(Boxle boxle) {
         super();
-        this.storages = storages;
+        this.boxle = boxle;
         super.setName("BlockCompressionThread");
         super.setDaemon(true); //JVM can end even if thread is still running
         super.setPriority(4); //slightly low priority to minimize CPU usage
@@ -20,9 +23,11 @@ public class BlockCompressionThread extends Thread {
 
     @Override
     public void run() {
-        while (true) {
-            for (BlockStorage storage : storages) {
-                storage.compressArrays();
+        while (boxle.canRun()) {
+            for (World world : boxle.getWorlds().getWorlds()) {
+                for (Chunk chunk : world.getChunks().getAllChunks()) {
+                    chunk.getBlocks().compressArrays();
+                }
             }
             try {
                 Thread.sleep(1);
