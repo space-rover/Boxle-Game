@@ -23,9 +23,9 @@ public class ThreadUtils {
      * @param force             If true, InterruptedExceptions will be suppressed
      */
     public static void sync(long methodStartTime, long minDurationMillis, boolean force) {
-        long currTime = System.currentTimeMillis();
-        long endTime = minDurationMillis + methodStartTime;
-        if (endTime > currTime) {
+        long currTime = System.currentTimeMillis(); //only calculate current time once, otherwise math can be thrown off
+        long endTime = minDurationMillis + methodStartTime; //time that the method wants to end after
+        if (endTime > currTime) { //if the method completed too fast, then sleep.
             do {
                 try {
                     Thread.sleep(endTime - currTime);

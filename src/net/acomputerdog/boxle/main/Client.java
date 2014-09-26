@@ -2,6 +2,9 @@ package net.acomputerdog.boxle.main;
 
 import net.acomputerdog.boxle.input.InputHandler;
 
+/**
+ * Boxle client instance
+ */
 public class Client {
     /**
      * The owning Boxle instance;
@@ -13,6 +16,9 @@ public class Client {
      */
     private final InputHandler input;
 
+    /**
+     * Input-reading thread for this Client
+     */
     private final Thread inputThread;
 
     /**

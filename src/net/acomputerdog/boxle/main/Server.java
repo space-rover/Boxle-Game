@@ -1,5 +1,8 @@
 package net.acomputerdog.boxle.main;
 
+/**
+ * Boxle Server instance
+ */
 public class Server {
     /**
      * The owning Boxle instance;

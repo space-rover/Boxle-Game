@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Holds chunks for a world
+ * Holds chunks for a world.  Thread-safe.
  */
 public class ChunkTable {
     /**
@@ -37,21 +37,22 @@ public class ChunkTable {
     public ChunkTable(World world) {
         if (world == null) throw new IllegalArgumentException("World cannot be null!");
         this.world = world;
-        chunkLocMap = new ConcurrentHashMap<>();
-        chunkList = new CopyOnWriteArrayList<>();
+        chunkLocMap = new ConcurrentHashMap<>(); //concurrent HashMap for thread safety
+        chunkList = new CopyOnWriteArrayList<>(); //thread-safe list implementation
     }
 
     /**
      * Adds a chunk to the table.  Cannot be null.
+     *
      * @param chunk The chunk to add
      * @return Return the chunk already defined at this location, if present.
      */
     public Chunk addChunk(Chunk chunk) {
         if (chunk == null) throw new IllegalArgumentException("Chunk cannot be null!");
-        chunkList.add(chunk);
-        Chunk oldChunk = chunkLocMap.put(chunk.getLocation(), chunk);
+        chunkList.add(chunk); //add chunk to list of all chunks
+        Chunk oldChunk = chunkLocMap.put(chunk.getLocation(), chunk); //get existing chunk, or null
         if (oldChunk != null) {
-            chunkList.remove(oldChunk);
+            chunkList.remove(oldChunk); //if chunk exists, remove from chunkList
         }
         return oldChunk;
     }
@@ -63,9 +64,9 @@ public class ChunkTable {
      * @return Return the chunk that was removed.
      */
     public Chunk removeChunkAt(Vec3i loc) {
-        Chunk chunk = chunkLocMap.remove(loc);
+        Chunk chunk = chunkLocMap.remove(loc); //get existing chunk, or null
         if (chunk != null) {
-            chunkList.remove(chunk);
+            chunkList.remove(chunk); //if chunk exists, remove from chunkList
         }
         return chunk;
     }
@@ -97,6 +98,7 @@ public class ChunkTable {
 
     /**
      * Gets a chunk at a given location
+     *
      * @param x x-loc of the chunk
      * @param y y-loc of the chunk
      * @param z z-loc of the chunk
@@ -111,6 +113,7 @@ public class ChunkTable {
 
     /**
      * Get a list of all loaded chunks
+     *
      * @return Return a list of all loaded chunks
      */
     public List<Chunk> getAllChunks() {
@@ -119,6 +122,7 @@ public class ChunkTable {
 
     /**
      * Gets the world that these chunks belong to
+     *
      * @return Return the world that the chunks belong to
      */
     public World getWorld() {

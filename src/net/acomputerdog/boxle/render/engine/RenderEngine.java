@@ -50,7 +50,7 @@ public class RenderEngine {
             Display.setVSyncEnabled(config.enableVSync);
             Display.create();
 
-            glClearColor(0.4f, 0.6f, 0.9f, 0f);
+            glClearColor(0.4f, 0.6f, 0.9f, 0f); //light blue background color
             GLU.gluPerspective(config.fov, (float) config.screenWidth / (float) config.screenHeight, 0.1f, (float) (Math.max(config.renderDistanceHorizontal, config.renderDistanceVertical) * Chunk.CHUNK_SIZE) + 1f);
             glLoadIdentity();
         } catch (LWJGLException e) {
@@ -63,11 +63,12 @@ public class RenderEngine {
      * Render a single frame.
      */
     public void render() {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glBegin(GL_TRIANGLES);
-        glEnd();
-        Display.update();
-        checkErrors();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //clear buffers
+        glBegin(GL_TRIANGLES); //start update
+
+        glEnd(); //end update
+        Display.update(); //trigger render
+        checkErrors(); //check for and print out any GL errors
     }
 
     private void checkErrors() {
@@ -82,7 +83,7 @@ public class RenderEngine {
      */
     public void cleanup() {
         try {
-            if (Display.isCreated()) Display.destroy();
+            if (Display.isCreated()) Display.destroy(); //only destroy the display if it has been created
         } catch (Exception ignored) {
         }
         logger.logInfo("Stopping!");

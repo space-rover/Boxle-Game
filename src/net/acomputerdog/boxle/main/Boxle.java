@@ -124,7 +124,7 @@ public class Boxle {
     /**
      * Saves and exits.  Should not do any game actions, and should be safe to call without try-catch blocks.
      *
-     * @param code The error code to return.
+     * @param code The error code to return.  Non-zero codes print out abnormal shutdown.
      */
     private void end(int code) {
         if (code == 0) {

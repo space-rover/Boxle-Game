@@ -5,7 +5,7 @@ import net.acomputerdog.boxle.world.Chunk;
 
 /**
  * Class used to hold blocks for a Chunk.
- *
+ * <p/>
  * Not yet thread-safe!
  */
 //todo: make thread-safe
@@ -17,7 +17,7 @@ public class BlockStorage {
     //stops at 2048 due to maximum reasonable size for a BlockStorage.  Anything over that (or 64, really) would take an extremely long time to set a block or compress arrays.
 
     /**
-     * Maximum size of the arrays in this BlockStorage
+     * Maximum size of the arrays in this BlockStorage.  Cannot be greater than 2048.
      */
     private final int maxSize;
 
@@ -55,6 +55,7 @@ public class BlockStorage {
 
     /**
      * Gets the data value of a location
+     *
      * @param x X-location of block
      * @param y Y-location of block
      * @param z Z-location of block
@@ -70,6 +71,7 @@ public class BlockStorage {
 
     /**
      * Gets the block at a location
+     *
      * @param x X-location of block
      * @param y Y-location of block
      * @param z Z-location of block
@@ -86,9 +88,10 @@ public class BlockStorage {
 
     /**
      * Sets a block at a location
-     * @param x X-location of block
-     * @param y Y-location of block
-     * @param z Z-location of block
+     *
+     * @param x     X-location of block
+     * @param y     Y-location of block
+     * @param z     Z-location of block
      * @param block Block to set.  Cannot be null.
      */
     public void setBlock(int x, int y, int z, Block block) {
@@ -100,9 +103,10 @@ public class BlockStorage {
 
     /**
      * Sets the data value at a location
-     * @param x X-location of block
-     * @param y Y-location of block
-     * @param z Z-location of block
+     *
+     * @param x    X-location of block
+     * @param y    Y-location of block
+     * @param z    Z-location of block
      * @param data The data value to set
      */
     public void setData(int x, int y, int z, byte data) {
@@ -113,17 +117,19 @@ public class BlockStorage {
 
     /**
      * Finds the scaled index of a location.
+     *
      * @param index The real (0 - maxSize) index of the location
-     * @param size The size of the array to scale to
+     * @param size  The size of the array to scale to
      * @return Return the scaled index of the location
      */
     private int findIndex(int index, int size) {
-        int scale = maxSize / size;
+        int scale = maxSize / size; //find the ratio of size to maxSize.  Ex. if maxSize is 16 and size is 8, ratio is two because the array is half of maxSize.
         return index / scale;
     }
 
     /**
      * Verifies that the x, y, and z locations are within the bounds of this BlockStorage
+     *
      * @param x X-location
      * @param y Y-location
      * @param z Z-location
@@ -168,34 +174,34 @@ public class BlockStorage {
      * Expand the arrays in this BlockStorage to maxSize
      */
     private void expandArrays() {
-        hasChanged = true;
-        if (blockArray.length < maxSize) {
-            Block[][][] newBA = new Block[maxSize][maxSize][maxSize];
-            int scaleX = maxSize / blockArray.length;
-            int scaleY = maxSize / blockArray[0].length;
-            int scaleZ = maxSize / blockArray[0][0].length;
+        hasChanged = true; //mark arrays as having changed
+        if (blockArray.length < maxSize) { //skip if array is already fully expanded
+            Block[][][] newBA = new Block[maxSize][maxSize][maxSize]; //create new fully expanded array
+            int scaleX = maxSize / blockArray.length; //gets ratio of x-size to maxSize.  Reverse of function in findIndex().
+            int scaleY = maxSize / blockArray[0].length; //gets ratio of y-size to maxSize.  Reverse of function in findIndex().
+            int scaleZ = maxSize / blockArray[0][0].length; //gets ratio of z-size to maxSize.  Reverse of function in findIndex().
             for (int x = 0; x < maxSize; x++) {
                 for (int y = 0; y < maxSize; y++) {
                     for (int z = 0; z < maxSize; z++) {
-                        newBA[x][y][z] = blockArray[x / scaleX][y / scaleY][z / scaleZ];
+                        newBA[x][y][z] = blockArray[x / scaleX][y / scaleY][z / scaleZ]; //for each [x,y,z], scale [x,y,z] and copy the value.
                     }
                 }
             }
-            blockArray = newBA;
+            blockArray = newBA; //replace array.  old will be GC'ed
         }
-        if (dataArray.length < maxSize) {
-            byte[][][] newDA = new byte[maxSize][maxSize][maxSize];
-            int scaleX = maxSize / dataArray.length;
-            int scaleY = maxSize / dataArray[0].length;
-            int scaleZ = maxSize / dataArray[0][0].length;
+        if (dataArray.length < maxSize) { //skip if array is already fully expanded
+            byte[][][] newDA = new byte[maxSize][maxSize][maxSize]; //create new fully expanded array
+            int scaleX = maxSize / dataArray.length; //gets ratio of x-size to maxSize.  Reverse of function in findIndex().
+            int scaleY = maxSize / dataArray[0].length; //gets ratio of y-size to maxSize.  Reverse of function in findIndex().
+            int scaleZ = maxSize / dataArray[0][0].length; //gets ratio of z-size to maxSize.  Reverse of function in findIndex().
             for (int x = 0; x < maxSize; x++) {
                 for (int y = 0; y < maxSize; y++) {
                     for (int z = 0; z < maxSize; z++) {
-                        newDA[x][y][z] = dataArray[x / scaleX][y / scaleY][z / scaleZ];
+                        newDA[x][y][z] = dataArray[x / scaleX][y / scaleY][z / scaleZ]; //for each [x,y,z], scale [x,y,z] and copy the value.
                     }
                 }
             }
-            dataArray = newDA;
+            dataArray = newDA; //replace array.  old will be GC'ed
         }
     }
 
@@ -216,6 +222,7 @@ public class BlockStorage {
 
     /**
      * Run a test of BlockStorage
+     *
      * @param args Arguments.  Not used.
      */
     public static void main(String[] args) {

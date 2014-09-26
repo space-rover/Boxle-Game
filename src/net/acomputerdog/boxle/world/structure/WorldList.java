@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
- * Holds a list of worlds for a Boxle instance.
+ * Holds a list of worlds for a Boxle instance.  Thread-safe.
  */
 public class WorldList {
     /**
@@ -86,7 +86,7 @@ public class WorldList {
     public void removeWorld(String name) {
         if (name == null) throw new IllegalArgumentException("name cannot be null!");
         World world = nameToWorldMap.remove(name);
-        if (world != null) {
+        if (world != null) { //if world exists, remove from other mappings.
             worldToNameMap.remove(world);
             instanceSet.remove(world);
             nameSet.remove(name);
@@ -101,7 +101,7 @@ public class WorldList {
     public void removeWorld(World world) {
         if (world == null) throw new IllegalArgumentException("World cannot be null!");
         String name = worldToNameMap.remove(world);
-        if (name != null) {
+        if (name != null) { //if world exists, remove from other mappings.
             nameToWorldMap.remove(name);
             instanceSet.remove(world);
             nameSet.remove(name);

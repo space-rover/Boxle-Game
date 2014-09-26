@@ -30,7 +30,7 @@ public class BlockCompressionThread extends Thread {
                 }
             }
             try {
-                Thread.sleep(1);
+                Thread.sleep(1); //no need to run at full speed
             } catch (InterruptedException ignored) {
             }
         }

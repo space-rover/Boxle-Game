@@ -2,6 +2,9 @@ package net.acomputerdog.boxle.exception;
 
 import net.acomputerdog.boxle.main.Boxle;
 
+/**
+ * A boxle specific error
+ */
 public class BoxleError extends Error {
     /**
      * The boxle instance that this exception occurred under.

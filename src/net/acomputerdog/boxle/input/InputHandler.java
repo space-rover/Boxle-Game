@@ -45,7 +45,7 @@ public class InputHandler implements Runnable {
             while (getBoxle().canRun() && canRun) {
                 long startTime = System.currentTimeMillis();
                 tick();
-                ThreadUtils.sync(startTime, 1);
+                ThreadUtils.sync(startTime, 1); //ensure method takes at least 1 ms to complete
             }
         } catch (Exception e) {
             logger.logFatal("Exception while ticking InputHandler!", e);
@@ -92,8 +92,8 @@ public class InputHandler implements Runnable {
      */
     public void shutdown() {
         try {
-            if (Keyboard.isCreated()) Keyboard.destroy();
-            if (Mouse.isCreated()) Mouse.destroy();
+            if (Keyboard.isCreated()) Keyboard.destroy(); //only destroy keyboard if created
+            if (Mouse.isCreated()) Mouse.destroy(); //only destroy mouse if created
         } catch (Exception ignored) {
         }
         logger.logInfo("Stopping!");
@@ -124,6 +124,11 @@ public class InputHandler implements Runnable {
         return client;
     }
 
+    /**
+     * Gets the boxle instance of this InputHandler
+     *
+     * @return return the Boxle instance of this input handler
+     */
     public Boxle getBoxle() {
         return client.getBoxle();
     }
