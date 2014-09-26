@@ -1,6 +1,7 @@
 package net.acomputerdog.boxle.world.util;
 
 import net.acomputerdog.boxle.main.Boxle;
+import net.acomputerdog.boxle.util.ThreadUtils;
 import net.acomputerdog.boxle.world.Chunk;
 import net.acomputerdog.boxle.world.World;
 
@@ -29,10 +30,7 @@ public class BlockCompressionThread extends Thread {
                     chunk.getBlocks().compressArrays();
                 }
             }
-            try {
-                Thread.sleep(1); //no need to run at full speed
-            } catch (InterruptedException ignored) {
-            }
+            ThreadUtils.sleep(1); //limit to 1000 TPS, to lower CPU usage
         }
     }
 }
