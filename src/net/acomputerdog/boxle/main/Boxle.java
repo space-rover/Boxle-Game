@@ -89,6 +89,7 @@ public class Boxle {
      */
     private void init() {
         LOGGER_FULL.logInfo("Boxle is initializing.");
+        gameConfig.load();
         VecPool.init();
         //must be in order render -> server -> client
         renderEngine.init();
@@ -118,6 +119,7 @@ public class Boxle {
         //must be in order client -> server -> render
         client.shutdown();
         server.shutdown();
+        gameConfig.save();
         renderEngine.cleanup();
     }
 
