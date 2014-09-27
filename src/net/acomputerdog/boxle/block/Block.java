@@ -1,6 +1,7 @@
 package net.acomputerdog.boxle.block;
 
 import net.acomputerdog.boxle.math.vec.Vec3i;
+import net.acomputerdog.boxle.world.World;
 
 /**
  * Represents a type of Block.
@@ -34,31 +35,34 @@ public abstract class Block {
     /**
      * Checks if the block can be placed at the specified location
      *
+     * @param world The world the block will be placed in
      * @param location The location to be placed at
      * @param data     The data value that the block will be placed as
      * @return Return true if the block can be placed, false otherwise.
      */
-    public boolean canPlaceAt(Vec3i location, byte data) {
+    public boolean canPlaceAt(World world, Vec3i location, byte data) {
         return true;
     }
 
     /**
      * Called whenever the block is updated, such as from a neighboring block change.
      *
+     * @param world The world the block is in
      * @param location The location of the block
      * @param data     The data value of the block
      */
-    public void onUpdate(Vec3i location, byte data) {
+    public void onUpdate(World world, Vec3i location, byte data) {
 
     }
 
     /**
      * Called if the block has requested to relieve tick updates.
      *
+     * @param world The world the block is in
      * @param location The location of the block
      * @param data     The data value of the block
      */
-    public void onTick(Vec3i location, byte data) {
+    public void onTick(World world, Vec3i location, byte data) {
 
     }
 
