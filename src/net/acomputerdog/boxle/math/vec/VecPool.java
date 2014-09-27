@@ -109,4 +109,46 @@ public class VecPool {
             vec2fs.add(vec);
         }
     }
+
+    public static Vec3i copy(Vec3i existing) {
+        if (existing == null) {
+            return null;
+        }
+        Vec3i newVec = getVec3i();
+        newVec.x = existing.x;
+        newVec.y = existing.y;
+        newVec.z = existing.z;
+        return newVec;
+    }
+
+    public static Vec2i copy(Vec2i existing) {
+        if (existing == null) {
+            return null;
+        }
+        Vec2i newVec = getVec2i();
+        newVec.x = existing.x;
+        newVec.y = existing.y;
+        return newVec;
+    }
+
+    public static Vec3f copy(Vec3f existing) {
+        if (existing == null) {
+            return null;
+        }
+        Vec3f newVec = getVec3f();
+        newVec.x = existing.x;
+        newVec.y = existing.y;
+        newVec.z = existing.z;
+        return newVec;
+    }
+
+    public static Vec2f copy(Vec2f existing) {
+        if (existing == null) {
+            return null;
+        }
+        Vec2f newVec = getVec2f();
+        newVec.x = existing.x;
+        newVec.y = existing.y;
+        return newVec;
+    }
 }
