@@ -21,6 +21,13 @@ public class Vec2i {
         }
     }
 
+    public Vec2i(Vec3i vec3) {
+        this(vec3 == null ? 0 : vec3.x, vec3 == null ? 0 : vec3.y); //written this way because java doesn't allow check for null before call to "this()"...
+        if (vec3 == null) {
+            throw new IllegalArgumentException("Vec3i cannot be null!");
+        }
+    }
+
     public Vec2i(int x) {
         this(x, 0);
     }
