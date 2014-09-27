@@ -3,7 +3,7 @@ package net.acomputerdog.boxle.math.vec;
 import net.acomputerdog.core.hash.Hash;
 
 /**
- * A class containing a vector of 3 floats
+ * A class containing a vector of 2 floats
  */
 public class Vec2f {
     public float x;
