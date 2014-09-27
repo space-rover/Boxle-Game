@@ -19,7 +19,28 @@ public class Vec3i {
     public Vec3i(Vec3i other) {
         this(other == null ? 0 : other.x, other == null ? 0 : other.y, other == null ? 0 : other.z); //written this way because java doesn't allow check for null before call to "this()"...
         if (other == null) {
-            throw new IllegalArgumentException("Other Vec3f cannot be null!");
+            throw new IllegalArgumentException("Other Vec3i cannot be null!");
+        }
+    }
+
+    public Vec3i(Vec2i vec2) {
+        this(vec2 == null ? 0 : vec2.x, vec2 == null ? 0 : vec2.y); //written this way because java doesn't allow check for null before call to "this()"...
+        if (vec2 == null) {
+            throw new IllegalArgumentException("Vec2i cannot be null!");
+        }
+    }
+
+    public Vec3i(Vec2f vec2) {
+        this(vec2 == null ? 0 : (int)Math.floor(vec2.x), vec2 == null ? 0 : (int)Math.floor(vec2.y)); //written this way because java doesn't allow check for null before call to "this()"...
+        if (vec2 == null) {
+            throw new IllegalArgumentException("Vec2f cannot be null!");
+        }
+    }
+
+    public Vec3i(Vec3f vec3) {
+        this(vec3 == null ? 0 : (int)Math.floor(vec3.x), vec3 == null ? 0 : (int)Math.floor(vec3.y), vec3 == null ? 0 : (int)Math.floor(vec3.z)); //written this way because java doesn't allow check for null before call to "this()"...
+        if (vec3 == null) {
+            throw new IllegalArgumentException("Vec3f cannot be null!");
         }
     }
 
