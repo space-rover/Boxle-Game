@@ -8,25 +8,9 @@ import net.acomputerdog.boxle.block.types.BlockNonSolid;
 public class BlockAir extends BlockNonSolid {
     public BlockAir() {
         super("air");
-    }
-
-    @Override
-    public boolean canBeDestroyed(byte data) {
-        return false;
-    }
-
-    @Override
-    public float getResistance(byte data) {
-        return 0f;
-    }
-
-    @Override
-    public float getExplosionResistance(byte data) {
-        return 0f;
-    }
-
-    @Override
-    public float getStrength(byte data) {
-        return 9999f;
+        super.setBreakable(false);
+        super.setResistance(0f);
+        super.setExplosionResistance(0f);
+        super.setStrength(9999f);
     }
 }

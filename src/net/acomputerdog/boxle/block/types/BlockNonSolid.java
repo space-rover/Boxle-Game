@@ -1,11 +1,9 @@
 package net.acomputerdog.boxle.block.types;
 
-import net.acomputerdog.boxle.block.Block;
-
 /**
  * Superclass for non-solid blocks
  */
-public abstract class BlockNonSolid extends Block {
+public abstract class BlockNonSolid extends BlockConfigurable {
     /**
      * Creates a new Block
      *
@@ -13,20 +11,8 @@ public abstract class BlockNonSolid extends Block {
      */
     protected BlockNonSolid(String name) {
         super(name);
-    }
-
-    @Override
-    public boolean blocksMovement(byte data) {
-        return false;
-    }
-
-    @Override
-    public boolean isTransparent(byte data) {
-        return true;
-    }
-
-    @Override
-    public byte getLightReduction(byte data) {
-        return 0;
+        super.setBlocksMovement(false);
+        super.setTransparent(true);
+        super.setLightReduction((byte) 0);
     }
 }

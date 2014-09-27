@@ -66,7 +66,7 @@ public abstract class Block {
      * Checks if the block can be destroyed
      * @return Return true if the block can be destroyed.
      */
-    public boolean canBeDestroyed(byte data) {
+    public boolean isBreakable(byte data) {
         return true;
     }
 
