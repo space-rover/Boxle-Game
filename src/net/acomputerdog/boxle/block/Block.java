@@ -3,7 +3,7 @@ package net.acomputerdog.boxle.block;
 import net.acomputerdog.boxle.math.vec.Vec3i;
 
 /**
- * Represents a Block in the world.
+ * Represents a type of Block.
  */
 public abstract class Block {
     /**
