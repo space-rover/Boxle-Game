@@ -1,5 +1,8 @@
 package net.acomputerdog.boxle.block;
 
+import net.acomputerdog.boxle.block.types.nonsolid.BlockAir;
+import net.acomputerdog.boxle.block.types.solid.BlockDirt;
+import net.acomputerdog.boxle.block.types.solid.BlockStone;
 import net.acomputerdog.core.logger.CLogger;
 
 import java.util.Map;
@@ -9,6 +12,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * Registry of Blocks.
  */
 public class Blocks {
+
+    public static final BlockAir air = new BlockAir();
+    public static final BlockDirt dirt = new BlockDirt();
+    public static final BlockStone stone = new BlockStone();
 
     /**
      * Logger for Blocks

@@ -63,6 +63,14 @@ public abstract class Block {
     }
 
     /**
+     * Checks if the block can be destroyed
+     * @return Return true if the block can be destroyed.
+     */
+    public boolean canBeDestroyed(byte data) {
+        return true;
+    }
+
+    /**
      * Gets the resistance to damage of this block.  The value is multiplied to incoming damage.
      *
      * @param data The data value of the block
@@ -100,6 +108,42 @@ public abstract class Block {
      */
     public float getHardness(byte data) {
         return 1f;
+    }
+
+    /**
+     * Checks if the block can be collided with
+     *
+     * @return Return true if the block can be collided with, false otherwise.
+     */
+    public boolean blocksMovement(byte data) {
+        return true;
+    }
+
+    /**
+     * Checks if this block is clear
+     *
+     * @return Return true if the block is clear
+     */
+    public boolean isTransparent(byte data) {
+        return false;
+    }
+
+    /**
+     * Gets the light reduction of light passing through this block.
+     *
+     * @return return a byte of the reduction of light passing through this block
+     */
+    public byte getLightReduction(byte data) {
+        return (byte) 255;
+    }
+
+    /**
+     * Gets the light level emitted by this block
+     *
+     * @return Return a byte of the amount of light emitted by this block.
+     */
+    public byte getLightOutput(byte data) {
+        return 0;
     }
 
     @Override
