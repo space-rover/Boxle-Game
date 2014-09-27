@@ -107,7 +107,7 @@ public abstract class Block {
      * @return Return a float of the hardness of this block
      */
     public float getHardness(byte data) {
-        return 1f;
+        return .1f;
     }
 
     /**

@@ -10,7 +10,7 @@ public abstract class BlockConfigurable extends Block {
     private float resistance = 1.0f;
     private float explosionResistance = 1.0f;
     private float strength = 100f;
-    private float hardness = 1.0f;
+    private float hardness = .1f;
     private boolean blocksMovement = true;
     private boolean isTransparent = false;
     private byte lightReduction = (byte) 255;
