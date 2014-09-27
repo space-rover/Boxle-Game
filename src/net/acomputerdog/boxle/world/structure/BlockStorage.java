@@ -1,11 +1,12 @@
 package net.acomputerdog.boxle.world.structure;
 
 import net.acomputerdog.boxle.block.Block;
+import net.acomputerdog.boxle.block.Blocks;
 import net.acomputerdog.boxle.world.Chunk;
 
 /**
  * Class used to hold blocks for a Chunk.
- * <p/>
+ *
  * Not yet thread-safe!
  */
 //todo: make thread-safe
@@ -82,8 +83,8 @@ public class BlockStorage {
         int indexX = findIndex(x, blockArray.length);
         int indexY = findIndex(y, blockArray[0].length);
         int indexZ = findIndex(z, blockArray[0][0].length);
-        //todo return a default block (air?) if null
-        return blockArray[indexX][indexY][indexZ];
+        Block block = blockArray[indexX][indexY][indexZ];
+        return block == null ? Blocks.air : block;
     }
 
     /**
