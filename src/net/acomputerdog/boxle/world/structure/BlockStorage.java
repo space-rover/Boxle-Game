@@ -219,27 +219,4 @@ public class BlockStorage {
         }
         return false;
     }
-
-    /**
-     * Run a test of BlockStorage
-     *
-     * @param args Arguments.  Not used.
-     */
-    public static void main(String[] args) {
-        BlockStorage storage = new BlockStorage(Chunk.CHUNK_SIZE);
-        Block block1 = new Block();
-        Block block2 = new Block();
-        Block block3 = new Block();
-        Block block4 = new Block();
-        Block block5 = new Block();
-        System.out.println("Initial dimensions: [" + storage.blockArray.length + ", " + storage.blockArray[0].length + ", " + storage.blockArray[0][0].length + "]");
-        //storage.setBlock(0,0,0, block1);
-        storage.blockArray[0][0][0] = block1;
-        storage.setBlock(0, 0, 1, block2);
-        storage.setBlock(0, 0, 7, block3);
-        storage.setBlock(0, 0, 8, block4);
-        storage.setBlock(0, 0, 15, block5);
-        System.out.println("New dimensions: [" + storage.blockArray.length + ", " + storage.blockArray[0].length + ", " + storage.blockArray[0][0].length + "]");
-        System.out.println("Correct Blocks: " + (storage.getBlock(0, 0, 0) == block1 && storage.getBlock(0, 0, 1) == block2 && storage.getBlock(0, 0, 7) == block3 && storage.getBlock(0, 0, 8) == block4 && storage.getBlock(0, 0, 15) == block5));
-    }
 }

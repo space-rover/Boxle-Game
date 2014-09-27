@@ -31,7 +31,7 @@ public class Vec3f {
     }
 
     public Vec3f(Vec2f vec2) {
-        this(vec2 == null ? 0 : (int)Math.floor(vec2.x), vec2 == null ? 0 : (int)Math.floor(vec2.y)); //written this way because java doesn't allow check for null before call to "this()"...
+        this(vec2 == null ? 0 : vec2.x, vec2 == null ? 0 : vec2.y); //written this way because java doesn't allow check for null before call to "this()"...
         if (vec2 == null) {
             throw new IllegalArgumentException("Vec2f cannot be null!");
         }
