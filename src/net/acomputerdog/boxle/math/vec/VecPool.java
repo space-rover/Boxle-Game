@@ -24,6 +24,7 @@ public class VecPool {
             vec3fs.add(new Vec3f());
             vec2is.add(new Vec2i());
             vec3is.add(new Vec3i());
+            loops++;
         }
     }
 
