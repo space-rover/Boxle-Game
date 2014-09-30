@@ -71,9 +71,12 @@ public class RenderEngine {
         checkErrors(); //check for and print out any GL errors
     }
 
+    /**
+     * Checks for and prints out any openGL errors
+     */
     private void checkErrors() {
-        int error = glGetError();
-        if (error != 0) {
+        int error;
+        while ((error = glGetError()) != 0) {
             logger.logWarning("GL Error " + error + ": " + Util.translateGLErrorString(error) + "!");
         }
     }
