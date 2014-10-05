@@ -53,12 +53,8 @@ public class Shader {
      * @param shaderType     The type of this shader
      */
     public Shader(RenderEngine renderEngine, String shaderContents, int shaderType) {
-        if (renderEngine == null) {
-            throw new IllegalArgumentException("Render engine cannot be null!");
-        }
-        if (shaderContents == null) {
-            throw new IllegalArgumentException("Shader contents cannot be null!");
-        }
+        if (renderEngine == null) throw new IllegalArgumentException("Render engine cannot be null!");
+        if (shaderContents == null) throw new IllegalArgumentException("Shader contents cannot be null!");
         this.renderEngine = renderEngine;
         this.shaderContents = shaderContents;
         this.shaderType = shaderType;
@@ -68,16 +64,13 @@ public class Shader {
      * Compiles the shader, so that it can be added to a shader program
      */
     public void compile() {
-        if (isCompiled) {
-            throw new IllegalStateException("Cannot compile an already compiled shader!");
-        }
+        if (isCompiled) throw new IllegalStateException("Cannot compile an already compiled shader!");
         try {
             shaderID = glCreateShaderObjectARB(shaderType);
             glShaderSourceARB(shaderID, shaderContents);
             glCompileShaderARB(shaderID);
-            if (glGetObjectParameteriARB(shaderID, GL_OBJECT_COMPILE_STATUS_ARB) == GL_FALSE) {
+            if (glGetObjectParameteriARB(shaderID, GL_OBJECT_COMPILE_STATUS_ARB) == GL_FALSE)
                 throw new IllegalArgumentException("Could not compile shader!");
-            }
             glDeleteObjectARB(shaderID);
             isCompiled = true;
         } catch (Exception e) {

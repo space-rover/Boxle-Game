@@ -42,9 +42,7 @@ public class ShaderProgram {
      * @param engine The render engine of the shader
      */
     public ShaderProgram(RenderEngine engine) {
-        if (engine == null) {
-            throw new IllegalArgumentException("Render engine cannot be null!");
-        }
+        if (engine == null) throw new IllegalArgumentException("Render engine cannot be null!");
         this.engine = engine;
     }
 
@@ -53,18 +51,11 @@ public class ShaderProgram {
      * @param shader The shader to add. Must be already compiled and use the same render engine.
      */
     public void addShader(Shader shader) {
-        if (isLinked) {
-            throw new IllegalStateException("Cannot add a shader to a linked program!");
-        }
-        if (shader == null) {
-            throw new IllegalArgumentException("Cannot add a null shader!");
-        }
-        if (shader.getRenderEngine() != engine) {
+        if (isLinked) throw new IllegalStateException("Cannot add a shader to a linked program!");
+        if (shader == null) throw new IllegalArgumentException("Cannot add a null shader!");
+        if (shader.getRenderEngine() != engine)
             throw new IllegalArgumentException("Cannot add a shader with a different render engine!");
-        }
-        if (!shader.isCompiled()) {
-            throw new IllegalArgumentException("Cannot add an un-compiled shader!");
-        }
+        if (!shader.isCompiled()) throw new IllegalArgumentException("Cannot add an un-compiled shader!");
         attachedShaders.add(shader);
     }
 
@@ -72,12 +63,9 @@ public class ShaderProgram {
      * Links this Shader Program.
      */
     public void link() {
-        if (isLinked) {
-            throw new IllegalStateException("Program is already linked!");
-        }
-        if (attachedShaders.size() == 0) {
+        if (isLinked) throw new IllegalStateException("Program is already linked!");
+        if (attachedShaders.size() == 0)
             throw new IllegalStateException("Cannot link a shader program with no shaders!");
-        }
         try {
             programID = glCreateProgramObjectARB();
             for (Shader shader : attachedShaders) {
