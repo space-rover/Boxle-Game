@@ -3,6 +3,11 @@ package net.acomputerdog.boxle.render.wrapper;
 import net.acomputerdog.boxle.render.engine.RenderEngine;
 import net.acomputerdog.core.logger.CLogger;
 
+import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+
 import static org.lwjgl.opengl.ARBShaderObjects.*;
 import static org.lwjgl.opengl.GL11.GL_FALSE;
 
@@ -120,5 +125,89 @@ public class Shader {
      */
     public boolean isCompiled() {
         return isCompiled;
+    }
+
+    /**
+     * Creates a new shader from an InputStream
+     *
+     * @param engine     The render engine to use
+     * @param shaderType the shader type to use
+     * @param in         The input stream
+     * @return Return a shader
+     */
+    public static Shader create(RenderEngine engine, int shaderType, InputStream in) {
+        if (in == null) throw new IllegalArgumentException("Input stream cannot be null!");
+        BufferedReader reader = null;
+        StringBuilder sb = new StringBuilder();
+        try {
+            reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line).append('\n');
+            }
+            reader.close();
+        } catch (Exception e) {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException ignored) {
+                }
+            }
+            throw new RuntimeException("Could not read file!", e);
+        }
+        return new Shader(engine, sb.toString(), shaderType);
+    }
+
+    /**
+     * Creates a new shader from a file
+     *
+     * @param engine       The render engine to use
+     * @param shaderType   the shader type to use
+     * @param shaderSource The source file
+     * @return Return a shader
+     */
+    public static Shader create(RenderEngine engine, int shaderType, File shaderSource) throws FileNotFoundException {
+        if (shaderSource == null) throw new IllegalArgumentException("Shader source is null!");
+        if (!shaderSource.isFile()) throw new IllegalArgumentException("Shader source is not a file!");
+        return create(engine, shaderType, new BufferedInputStream(new FileInputStream(shaderSource)));
+    }
+
+    /**
+     * Creates a new shader from a URI
+     *
+     * @param engine     The render engine to use
+     * @param shaderType the shader type to use
+     * @param uri        The URI
+     * @return Return a shader
+     */
+    public static Shader create(RenderEngine engine, int shaderType, URI uri) throws FileNotFoundException {
+        if (uri == null) throw new IllegalArgumentException("URI cannot be null!");
+        return create(engine, shaderType, new File(uri));
+    }
+
+    /**
+     * Creates a new shader from a URL
+     *
+     * @param engine     The render engine to use
+     * @param shaderType the shader type to use
+     * @param url        The url
+     * @return Return a shader
+     */
+    public static Shader create(RenderEngine engine, int shaderType, URL url) throws URISyntaxException, FileNotFoundException {
+        if (url == null) throw new IllegalArgumentException("URL cannot be null!");
+        return create(engine, shaderType, url.toURI());
+    }
+
+    /**
+     * Creates a new shader from a path
+     *
+     * @param engine     The render engine to use
+     * @param shaderType the shader type to use
+     * @param path       The path
+     * @return Return a shader
+     */
+    public static Shader create(RenderEngine engine, int shaderType, String path) throws FileNotFoundException {
+        if (path == null) throw new IllegalArgumentException("Shader path cannot be null!");
+        return create(engine, shaderType, new File(path));
     }
 }
