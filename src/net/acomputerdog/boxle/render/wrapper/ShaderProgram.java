@@ -53,8 +53,7 @@ public class ShaderProgram {
     public void addShader(Shader shader) {
         if (isLinked) throw new IllegalStateException("Cannot add a shader to a linked program!");
         if (shader == null) throw new IllegalArgumentException("Cannot add a null shader!");
-        if (shader.getRenderEngine() != engine)
-            throw new IllegalArgumentException("Cannot add a shader with a different render engine!");
+        if (shader.getRenderEngine() != engine) throw new IllegalArgumentException("Cannot add a shader with a different render engine!");
         if (!shader.isCompiled()) throw new IllegalArgumentException("Cannot add an un-compiled shader!");
         attachedShaders.add(shader);
     }
@@ -64,8 +63,7 @@ public class ShaderProgram {
      */
     public void link() {
         if (isLinked) throw new IllegalStateException("Program is already linked!");
-        if (attachedShaders.size() == 0)
-            throw new IllegalStateException("Cannot link a shader program with no shaders!");
+        if (attachedShaders.size() == 0) throw new IllegalStateException("Cannot link a shader program with no shaders!");
         try {
             programID = glCreateProgramObjectARB();
             for (Shader shader : attachedShaders) {
