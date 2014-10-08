@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.lwjgl.opengl.ARBShaderObjects.*;
+import static org.lwjgl.opengl.GL11.GL_FALSE;
 
 /**
  * A wrapper for a GL Shader Program
@@ -65,12 +66,20 @@ public class ShaderProgram {
         if (isLinked) throw new IllegalStateException("Program is already linked!");
         if (attachedShaders.size() == 0) throw new IllegalStateException("Cannot link a shader program with no shaders!");
         try {
-            programID = glCreateProgramObjectARB();
+            programID = glCreateProgramObjectARB(); //tell the graphics card to create a new ShaderProgram
             for (Shader shader : attachedShaders) {
-                glAttachObjectARB(programID, shader.getShaderID());
+                glAttachObjectARB(programID, shader.getShaderID()); //attach each shader to the GPU program
             }
-            glLinkProgramARB(programID);
-            glValidateProgramARB(programID);
+            glLinkProgramARB(programID); //Tells GPU linker to link shader program
+            if (glGetObjectParameteriARB(programID, GL_OBJECT_LINK_STATUS_ARB) == GL_FALSE) {  //if link failed
+                glDeleteObjectARB(programID); //delete the shader program, since it is invalid
+                throw new IllegalArgumentException("Could not link shader program!");
+            }
+            glValidateProgramARB(programID); //Verify shader program is valid and completes pipeline.
+            if (glGetObjectParameteriARB(programID, GL_OBJECT_VALIDATE_STATUS_ARB) == GL_FALSE) {  //if validate failed
+                glDeleteObjectARB(programID); //delete the shader program, since it is invalid
+                throw new IllegalArgumentException("Could not validate shader program!");
+            }
             isLinked = true;
         } catch (Exception e) {
             Shader.LOGGER.logFatal("Exception creating shader program!", e);

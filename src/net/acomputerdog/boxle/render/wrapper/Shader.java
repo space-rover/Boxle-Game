@@ -66,12 +66,13 @@ public class Shader {
     public void compile() {
         if (isCompiled) throw new IllegalStateException("Cannot compile an already compiled shader!");
         try {
-            shaderID = glCreateShaderObjectARB(shaderType);
-            glShaderSourceARB(shaderID, shaderContents);
-            glCompileShaderARB(shaderID);
-            if (glGetObjectParameteriARB(shaderID, GL_OBJECT_COMPILE_STATUS_ARB) == GL_FALSE)
+            shaderID = glCreateShaderObjectARB(shaderType); //tell gpu to create a new Shader
+            glShaderSourceARB(shaderID, shaderContents); //provide GPU with shader source code
+            glCompileShaderARB(shaderID); //GPU compiler will compile shader into a native GPU executable
+            if (glGetObjectParameteriARB(shaderID, GL_OBJECT_COMPILE_STATUS_ARB) == GL_FALSE) {  //if compile failed
+                glDeleteObjectARB(shaderID); //delete the shader, since it is invalid
                 throw new IllegalArgumentException("Could not compile shader!");
-            glDeleteObjectARB(shaderID);
+            }
             isCompiled = true;
         } catch (Exception e) {
             LOGGER.logFatal("Exception creating shader!", e);
@@ -143,8 +144,7 @@ public class Shader {
             if (reader != null) {
                 try {
                     reader.close();
-                } catch (IOException ignored) {
-                }
+                } catch (IOException ignored) {}
             }
             throw new RuntimeException("Could not read file!", e);
         }
