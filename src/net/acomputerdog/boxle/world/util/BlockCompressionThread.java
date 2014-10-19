@@ -1,9 +1,9 @@
 package net.acomputerdog.boxle.world.util;
 
 import net.acomputerdog.boxle.main.Boxle;
-import net.acomputerdog.boxle.util.ThreadUtils;
 import net.acomputerdog.boxle.world.Chunk;
 import net.acomputerdog.boxle.world.World;
+import net.acomputerdog.core.java.ThreadUtils;
 
 /**
  * Thread that scans and compresses block and data arrays within chunks.

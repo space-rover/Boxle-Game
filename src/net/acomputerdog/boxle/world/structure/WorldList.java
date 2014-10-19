@@ -1,8 +1,8 @@
 package net.acomputerdog.boxle.world.structure;
 
 import net.acomputerdog.boxle.main.Boxle;
-import net.acomputerdog.boxle.util.CollectionUtils;
 import net.acomputerdog.boxle.world.World;
+import net.acomputerdog.core.storage.CollectionUtils;
 
 import java.util.Map;
 import java.util.Set;

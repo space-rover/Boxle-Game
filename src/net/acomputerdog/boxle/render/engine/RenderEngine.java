@@ -68,17 +68,20 @@ public class RenderEngine {
 
         glEnd(); //end update
         Display.update(); //trigger render
-        checkErrors(); //check for and print out any GL errors
+        checkGLErrors(); //check for and print out any GL errors
     }
 
     /**
      * Checks for and prints out any openGL errors
      */
-    private void checkErrors() {
+    public boolean checkGLErrors() {
         int error;
+        boolean foundError = false;
         while ((error = glGetError()) != 0) {
+            foundError = true;
             logger.logWarning("GL Error " + error + ": " + Util.translateGLErrorString(error) + "!");
         }
+        return foundError;
     }
 
     /**
