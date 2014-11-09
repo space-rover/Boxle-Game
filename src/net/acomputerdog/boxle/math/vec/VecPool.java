@@ -7,6 +7,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Pool of temporary Vec classes.
  * Should be used by calling getVec() to get a vector, and calling freeVec() once the Vec is no longer needed AND THERE ARE NO REMAINING REFERENCES TO IT!
  * VecPool is thread-safe.
+ * TODO replace Lists with Queues
  */
 public class VecPool {
     private static final List<Vec3i> vec3is = new CopyOnWriteArrayList<>();
