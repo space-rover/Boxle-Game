@@ -30,7 +30,7 @@ public class BlockCompressionThread extends Thread {
                     chunk.getBlocks().compressArrays();
                 }
             }
-            ThreadUtils.sleep(1); //limit to 1000 TPS, to lower CPU usage
+            ThreadUtils.sleep(10); //limit to 100 TPS, to lower CPU usage
         }
     }
 }

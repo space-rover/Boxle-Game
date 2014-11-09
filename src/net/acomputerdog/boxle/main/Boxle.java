@@ -1,16 +1,18 @@
 package net.acomputerdog.boxle.main;
 
+import com.jme3.app.SimpleApplication;
+import com.jme3.system.AppSettings;
 import net.acomputerdog.boxle.config.GameConfig;
 import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.render.engine.RenderEngine;
 import net.acomputerdog.boxle.world.structure.WorldList;
+import net.acomputerdog.core.java.ThreadUtils;
 import net.acomputerdog.core.logger.CLogger;
-import org.lwjgl.opengl.Display;
 
 /**
  * Boxle main class
  */
-public class Boxle {
+public class Boxle extends SimpleApplication {
     /**
      * Logger that logs without date or time.  Useful for high-output debug messages.
      */
@@ -66,48 +68,66 @@ public class Boxle {
         try {
             init();
         } catch (Throwable t) {
-            LOGGER_FULL.logFatal("Caught exception during init phase!", t);
+            LOGGER_MAIN.logFatal("Caught exception during init phase!", t);
             end(-1);
         }
         try {
             run();
         } catch (Throwable t) {
-            LOGGER_FULL.logFatal("Caught exception during run phase!", t);
+            LOGGER_MAIN.logFatal("Caught exception during run phase!", t);
             end(-2);
         }
         try {
-            LOGGER_FULL.logError("Reached invalid area of code!  Shutting down!");
+            LOGGER_MAIN.logError("Reached invalid area of code!  Shutting down!");
             cleanup();
         } catch (Throwable t) {
-            LOGGER_FULL.logFatal("Caught excpetion in invalid area of code!", t);
+            LOGGER_MAIN.logFatal("Caught excpetion in invalid area of code!", t);
         }
         end(-3);
+    }
+
+    @Override
+    public void simpleInitApp() {
+        renderEngine.init();
     }
 
     /**
      * Initializes boxle to start.
      */
     private void init() {
-        LOGGER_FULL.logInfo("Boxle is initializing.");
+        LOGGER_MAIN.logInfo("Boxle is initializing.");
         gameConfig.load();
         VecPool.init();
         //must be in order render -> server -> client
-        renderEngine.init();
         server.init();
         client.init();
+
+        super.showSettings = false;
+
+        AppSettings settings = new AppSettings(true);
+        settings.setFrameRate(gameConfig.maxFPS);
+        settings.setWidth(gameConfig.screenWidth);
+        settings.setHeight(gameConfig.screenHeight);
+        settings.setVSync(gameConfig.enableVSync);
+        settings.setUseInput(true);
+        settings.setFullscreen(gameConfig.fullscreen);
+        settings.setTitle("Boxle");
+        super.settings = settings;
+
+        super.start();
     }
 
     /**
      * Performs actual game loop.
      */
     private void run() {
-        LOGGER_FULL.logInfo("Boxle is starting.");
+        LOGGER_MAIN.logInfo("Boxle is starting.");
         while (canRun) {
             server.tick(); //todo separate thread
             client.tick(); //todo separate thread
-            renderEngine.render(); //todo separate thread
-            Display.sync(gameConfig.maxFPS); //limit the tick speed to max FPS
+            ThreadUtils.sleep(10);
         }
+        System.out.println("Stopping.");
         cleanup();
         end(0);
     }
@@ -130,9 +150,9 @@ public class Boxle {
      */
     private void end(int code) {
         if (code == 0) {
-            LOGGER_FULL.logInfo("Boxle shutting down normally.");
+            LOGGER_MAIN.logInfo("Boxle shutting down normally.");
         } else {
-            LOGGER_FULL.logWarning("Boxle shutting down abnormally: error code " + code + ".");
+            LOGGER_MAIN.logWarning("Boxle shutting down abnormally: error code " + code + ".");
         }
         System.exit(code);
     }
@@ -196,6 +216,13 @@ public class Boxle {
      */
     public WorldList getWorlds() {
         return worlds;
+    }
+
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        stop();
     }
 
     /**

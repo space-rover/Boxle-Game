@@ -1,19 +1,19 @@
 package net.acomputerdog.boxle.render.engine;
 
-import net.acomputerdog.boxle.config.GameConfig;
+import com.jme3.asset.AssetManager;
+import com.jme3.material.Material;
+import com.jme3.math.ColorRGBA;
+import com.jme3.math.Vector3f;
+import com.jme3.scene.Geometry;
+import com.jme3.scene.Node;
+import com.jme3.scene.shape.Box;
+import net.acomputerdog.boxle.input.InputHandler;
 import net.acomputerdog.boxle.main.Boxle;
-import net.acomputerdog.boxle.world.Chunk;
 import net.acomputerdog.core.logger.CLogger;
-import org.lwjgl.LWJGLException;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.opengl.Util;
-import org.lwjgl.util.glu.GLU;
-
-import static org.lwjgl.opengl.GL11.*;
 
 /**
  * Central boxle render engine.
+ * //"temp" render stuff IS temporary.  It exists just to provide a basic rendered object for testing.
  */
 public class RenderEngine {
     /**
@@ -25,6 +25,25 @@ public class RenderEngine {
      * Logger for RenderEngine
      */
     private final CLogger logger = new CLogger("RenderEngine", false, true);
+
+    /**
+     * The root node for the JME render
+     */
+    private Node worldNode;
+
+    /**
+     * Base node for terrain data.
+     */
+    private Node terrainNode;
+
+    /**
+     * Input handler
+     */
+    private final InputHandler input = new InputHandler(this);
+
+    Material grass;
+    Material stone;
+    Material dirt;
 
     /**
      * Creates a new instance of this RenderEngine.
@@ -40,58 +59,29 @@ public class RenderEngine {
      * Initializes this RenderEngine
      */
     public void init() {
-        logger.logInfo("Initializing.");
-        GameConfig config = boxle.getGameConfig();
-        try {
-            Display.setTitle("Boxle");
-            Display.setFullscreen(config.fullscreen);
-            Display.setResizable(true);
-            Display.setDisplayMode(new DisplayMode(config.screenWidth, config.screenHeight));
-            Display.setVSyncEnabled(config.enableVSync);
-            Display.create();
+        worldNode = boxle.getRootNode();
+        terrainNode = new Node("terrain");
+        worldNode.attachChild(terrainNode);
 
-            glClearColor(0.4f, 0.6f, 0.9f, 0f); //light blue background color
-            GLU.gluPerspective(config.fov, (float) config.screenWidth / (float) config.screenHeight, 0.1f, (float) (Math.max(config.renderDistanceHorizontal, config.renderDistanceVertical) * Chunk.CHUNK_SIZE) + 1f);
-            glLoadIdentity();
-        } catch (LWJGLException e) {
-            logger.logFatal("Exception initializing render engine!", e);
-            getBoxle().stop();
-        }
-    }
+        boxle.getFlyByCamera().setEnabled(false);
+        input.init();
 
-    /**
-     * Render a single frame.
-     */
-    public void render() {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //clear buffers
-        glBegin(GL_TRIANGLES); //start update
+        AssetManager manager = boxle.getAssetManager();
 
-        glEnd(); //end update
-        Display.update(); //trigger render
-        checkGLErrors(); //check for and print out any GL errors
-    }
+        grass = new Material(manager, "Common/MatDefs/Misc/Unshaded.j3md");
+        grass.setColor("Color", ColorRGBA.Green);
+        stone = new Material(manager, "Common/MatDefs/Misc/Unshaded.j3md");
+        stone.setColor("Color", ColorRGBA.Gray);
+        dirt = new Material(manager, "Common/MatDefs/Misc/Unshaded.j3md");
+        dirt.setColor("Color", ColorRGBA.Brown);
 
-    /**
-     * Checks for and prints out any openGL errors
-     */
-    public boolean checkGLErrors() {
-        int error;
-        boolean foundError = false;
-        while ((error = glGetError()) != 0) {
-            foundError = true;
-            logger.logWarning("GL Error " + error + ": " + Util.translateGLErrorString(error) + "!");
-        }
-        return foundError;
+        tempLoadLevel();
     }
 
     /**
      * Cleanup and prepare for shutdown.
      */
     public void cleanup() {
-        try {
-            if (Display.isCreated()) Display.destroy(); //only destroy the display if it has been created
-        } catch (Exception ignored) {
-        }
         logger.logInfo("Stopping!");
     }
 
@@ -102,5 +92,81 @@ public class RenderEngine {
      */
     public Boxle getBoxle() {
         return boxle;
+    }
+
+    private void tempLoadLevel() {
+        Geometry[][][] chunk = new Geometry[16][16][16];
+        for (int x = 0; x < 16; x++) {
+            for (int y = 0; y < 16; y++) {
+                for (int z = 0; z < 16; z++) {
+                    Geometry geom = null;
+                    if (y < 6) {
+                        geom = new Geometry("voxel_stone@" + x + "," + y + "," + z, new Box(.5f, .5f, .5f));
+                        geom.setMaterial(stone);
+                    } else if (y < 10) {
+                        geom = new Geometry("voxel_dirt@" + x + "," + y + "," + z, new Box(.5f, .5f, .5f));
+                        geom.setMaterial(dirt);
+                    } else if (y == 10) {
+                        geom = new Geometry("voxel_grass@" + x + "," + y + "," + z, new Box(.5f, .5f, .5f));
+                        geom.setMaterial(grass);
+                    }
+                    if (geom != null) {
+                        geom.setLocalTranslation(new Vector3f(x, y, z));
+                        geom.updateModelBound();
+                        chunk[x][y][z] = geom;
+                    }
+                }
+            }
+        }
+        processChunk(chunk);
+    }
+
+    private void processChunk(Geometry[][][] chunk) {
+        for (int x = 0; x < chunk.length; x++) {
+            for (int y = 0; y < chunk[0].length; y++) {
+                for (int z = 0; z < chunk[0][0].length; z++) {
+                    if (chunk[x][y][z] != null && hasOpenSpace(chunk, x, y, z)) {
+                        terrainNode.attachChild(chunk[x][y][z]);
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean hasOpenSpace(Geometry[][][] chunk, int x, int y, int z) {
+        int lengthX = chunk.length;
+        int lengthY = chunk[0].length;
+        int lengthZ = chunk[0][0].length;
+        if (isEmpty(chunk, lengthX, lengthY, lengthZ, x + 1, y, z)) {
+            return true;
+        }
+        if (isEmpty(chunk, lengthX, lengthY, lengthZ, x - 1, y, z)) {
+            return true;
+        }
+        if (isEmpty(chunk, lengthX, lengthY, lengthZ, x, y + 1, z)) {
+            return true;
+        }
+        if (isEmpty(chunk, lengthX, lengthY, lengthZ, x, y - 1, z)) {
+            return true;
+        }
+        if (isEmpty(chunk, lengthX, lengthY, lengthZ, x, y, z + 1)) {
+            return true;
+        }
+        if (isEmpty(chunk, lengthX, lengthY, lengthZ, x, y, z - 1)) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isEmpty(Geometry[][][] chunk, int maxX, int maxY, int maxZ, int x, int y, int z) {
+        return x < 0 || x >= maxX || y < 0 || y >= maxY || z < 0 || z >= maxZ || chunk[x][y][z] == null;
+    }
+
+    public Node getWorldNode() {
+        return worldNode;
+    }
+
+    public InputHandler getInputHandler() {
+        return input;
     }
 }
