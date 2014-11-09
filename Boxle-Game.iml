@@ -56,7 +56,8 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="library" name="main" level="project" />
+    <orderEntry type="library" name="CompCore" level="project" />
+    <orderEntry type="library" name="jME3" level="project" />
   </component>
 </module>
 
