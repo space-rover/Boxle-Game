@@ -150,6 +150,10 @@ public abstract class Block {
         return 0;
     }
 
+    public String getTextureFilename() {
+        return name.concat(".png");
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
