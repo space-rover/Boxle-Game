@@ -37,7 +37,7 @@ public class Chunk {
     /**
      * Creates a new chunk.
      *
-     * @param world The world that contains the chunk
+     * @param world    The world that contains the chunk
      * @param location The x,y,z location of this Chunk
      */
     public Chunk(World world, Vec3i location) {
@@ -50,6 +50,7 @@ public class Chunk {
 
     /**
      * Gets the block at a location
+     *
      * @param x X-location
      * @param y Y-location
      * @param z Z-location
@@ -57,18 +58,6 @@ public class Chunk {
      */
     public Block getBlockAt(int x, int y, int z) {
         return blocks.getBlock(x, y, z);
-    }
-
-    /**
-     * Gets the data value at a location
-     *
-     * @param x X-location
-     * @param y Y-location
-     * @param z Z-location
-     * @return Return the data value
-     */
-    public byte getDataAt(int x, int y, int z) {
-        return blocks.getData(x, y, z);
     }
 
     /**
@@ -81,18 +70,6 @@ public class Chunk {
      */
     public void setBlockAt(int x, int y, int z, Block block) {
         blocks.setBlock(x, y, z, block);
-    }
-
-    /**
-     * Sets a data value at a location
-     *
-     * @param x    X-location
-     * @param y    Y-location
-     * @param z    Z-location
-     * @param data The data value to set.
-     */
-    public void setDataAt(int x, int y, int z, byte data) {
-        blocks.setData(x, y, z, data);
     }
 
     /**

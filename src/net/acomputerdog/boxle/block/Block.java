@@ -21,7 +21,7 @@ public abstract class Block {
     /**
      * Creates a new Block
      *
-     * @param name The name of this block.
+     * @param name  The name of this block.
      * @param boxle
      */
     protected Block(String name, Boxle boxle) {
@@ -43,82 +43,76 @@ public abstract class Block {
     /**
      * Checks if the block can be placed at the specified location
      *
-     * @param world The world the block will be placed in
+     * @param world    The world the block will be placed in
      * @param location The location to be placed at
-     * @param data     The data value that the block will be placed as
      * @return Return true if the block can be placed, false otherwise.
      */
-    public boolean canPlaceAt(World world, Vec3i location, byte data) {
+    public boolean canPlaceAt(World world, Vec3i location) {
         return true;
     }
 
     /**
      * Called whenever the block is updated, such as from a neighboring block change.
      *
-     * @param world The world the block is in
+     * @param world    The world the block is in
      * @param location The location of the block
-     * @param data     The data value of the block
      */
-    public void onUpdate(World world, Vec3i location, byte data) {
+    public void onUpdate(World world, Vec3i location) {
 
     }
 
     /**
      * Called if the block has requested to relieve tick updates.
      *
-     * @param world The world the block is in
+     * @param world    The world the block is in
      * @param location The location of the block
-     * @param data     The data value of the block
      */
-    public void onTick(World world, Vec3i location, byte data) {
+    public void onTick(World world, Vec3i location) {
 
     }
 
     /**
      * Checks if the block can be destroyed
+     *
      * @return Return true if the block can be destroyed.
      */
-    public boolean isBreakable(byte data) {
+    public boolean isBreakable() {
         return true;
     }
 
     /**
      * Gets the resistance to damage of this block.  The value is multiplied to incoming damage.
      *
-     * @param data The data value of the block
      * @return Return a float representing the resistance of the block
      */
-    public float getResistance(byte data) {
+    public float getResistance() {
         return 1.0f;
     }
 
     /**
      * Gets the resistance to an explosion of the block.  The value is multiplied to incoming explosion damage.
      *
-     * @param data The data value of the block
      * @return Return a float representing the explosion resistance of the block
      */
-    public float getExplosionResistance(byte data) {
+    public float getExplosionResistance() {
         return 1.0f;
     }
 
     /**
      * Gets the "strength" of a block.  Is used as a base "hit point" value when being damaged.
      *
-     * @param data The data value of the block
      * @return Return a float of the strength of the block
      */
-    public float getStrength(byte data) {
+    public float getStrength() {
         return 100f;
     }
 
     /**
      * Gets the damage factor done to tools breaking this block.  Value is multiplied in to scale damage.
      *
-     * @param data The data value of the block
      * @return Return a float of the hardness of this block
      */
-    public float getHardness(byte data) {
+    public float getHardness() {
         return .1f;
     }
 
@@ -127,7 +121,7 @@ public abstract class Block {
      *
      * @return Return true if the block can be collided with, false otherwise.
      */
-    public boolean blocksMovement(byte data) {
+    public boolean blocksMovement() {
         return true;
     }
 
@@ -136,7 +130,7 @@ public abstract class Block {
      *
      * @return Return true if the block is clear
      */
-    public boolean isTransparent(byte data) {
+    public boolean isTransparent() {
         return false;
     }
 
@@ -145,7 +139,7 @@ public abstract class Block {
      *
      * @return return a byte of the reduction of light passing through this block
      */
-    public byte getLightReduction(byte data) {
+    public byte getLightReduction() {
         return (byte) 255;
     }
 
@@ -154,16 +148,16 @@ public abstract class Block {
      *
      * @return Return a byte of the amount of light emitted by this block.
      */
-    public byte getLightOutput(byte data) {
+    public byte getLightOutput() {
         return 0;
     }
 
-    public boolean isRenderable(byte data) {
+    public boolean isRenderable() {
         return true;
     }
 
-    public BlockTex getTextures(byte data) {
-        if (tex == null && isRenderable(data)) {
+    public BlockTex getTextures() {
+        if (tex == null && isRenderable()) {
             tex = new BlockTex(this);
             tex.loadAllDefault();
         }

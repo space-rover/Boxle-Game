@@ -28,12 +28,11 @@ public abstract class Item {
      *
      * @param world     The world the block is in
      * @param block     The type of block being broken
-     * @param blockData The data of the block being broken
      * @param location  The location of the block
      * @param item      The itemStack being used to break the block
      * @return Return true if the block can be broken, false otherwise
      */
-    public boolean canBreak(World world, Vec3i location, Block block, byte blockData, ItemStack item) {
+    public boolean canBreak(World world, Vec3i location, Block block, ItemStack item) {
         return true;
     }
 
@@ -42,12 +41,11 @@ public abstract class Item {
      *
      * @param world     The world the block is in
      * @param block     The type of block being broken
-     * @param blockData The data of the block being broken
      * @param location  The location of the block
      * @param item      The itemStack being used to break the block
      * @return Return true if the block can be used, false otherwise
      */
-    public boolean canUseBlock(World world, Vec3i location, Block block, byte blockData, ItemStack item) {
+    public boolean canUseBlock(World world, Vec3i location, Block block, ItemStack item) {
         return true;
     }
 
@@ -56,11 +54,10 @@ public abstract class Item {
      *
      * @param world     The world the block is in
      * @param block     The type of block being broken
-     * @param blockData The data of the block being broken
      * @param location  The location of the block
      * @param item      The itemStack being used to break the block
      */
-    public void onBreakBlock(World world, Vec3i location, Block block, byte blockData, ItemStack item) {
+    public void onBreakBlock(World world, Vec3i location, Block block, ItemStack item) {
 
     }
 
@@ -69,11 +66,10 @@ public abstract class Item {
      *
      * @param world     The world the block is in
      * @param block     The type of block being broken
-     * @param blockData The data of the block being broken
      * @param location  The location of the block
      * @param item      The itemStack being used to break the block
      */
-    public void onUseBlock(World world, Block block, byte blockData, Vec3i location, ItemStack item) {
+    public void onUseBlock(World world, Block block, Vec3i location, ItemStack item) {
 
     }
 

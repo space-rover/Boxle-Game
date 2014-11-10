@@ -6,7 +6,7 @@ import net.acomputerdog.boxle.world.Chunk;
 
 /**
  * Class used to hold blocks for a Chunk.
- *
+ * <p/>
  * Not yet thread-safe!
  */
 //todo: make thread-safe
@@ -28,11 +28,6 @@ public class BlockStorage {
     private Block[][][] blockArray = new Block[1][1][1];
 
     /**
-     * Array containing block data values
-     */
-    private byte[][][] dataArray = new byte[1][1][1];
-
-    /**
      * Set to true if block arrays have changed since last compression
      */
     private boolean hasChanged = false;
@@ -52,22 +47,6 @@ public class BlockStorage {
      */
     public BlockStorage() {
         this(Chunk.CHUNK_SIZE);
-    }
-
-    /**
-     * Gets the data value of a location
-     *
-     * @param x X-location of block
-     * @param y Y-location of block
-     * @param z Z-location of block
-     * @return return the data value of the block
-     */
-    public byte getData(int x, int y, int z) {
-        verifyBounds(x, y, z); //make sure x, y, and z are within bounds.
-        int indexX = findIndex(x, dataArray.length);
-        int indexY = findIndex(y, dataArray[0].length);
-        int indexZ = findIndex(z, dataArray[0][0].length);
-        return dataArray[indexX][indexY][indexZ];
     }
 
     /**
@@ -100,20 +79,6 @@ public class BlockStorage {
         verifyBounds(x, y, z);
         expandArrays();
         blockArray[x][y][z] = block;
-    }
-
-    /**
-     * Sets the data value at a location
-     *
-     * @param x    X-location of block
-     * @param y    Y-location of block
-     * @param z    Z-location of block
-     * @param data The data value to set
-     */
-    public void setData(int x, int y, int z, byte data) {
-        verifyBounds(x, y, z);
-        expandArrays();
-        dataArray[x][y][z] = data;
     }
 
     /**
@@ -189,20 +154,6 @@ public class BlockStorage {
                 }
             }
             blockArray = newBA; //replace array.  old will be GC'ed
-        }
-        if (dataArray.length < maxSize) { //skip if array is already fully expanded
-            byte[][][] newDA = new byte[maxSize][maxSize][maxSize]; //create new fully expanded array
-            int scaleX = maxSize / dataArray.length; //gets ratio of x-size to maxSize.  Reverse of function in findIndex().
-            int scaleY = maxSize / dataArray[0].length; //gets ratio of y-size to maxSize.  Reverse of function in findIndex().
-            int scaleZ = maxSize / dataArray[0][0].length; //gets ratio of z-size to maxSize.  Reverse of function in findIndex().
-            for (int x = 0; x < maxSize; x++) {
-                for (int y = 0; y < maxSize; y++) {
-                    for (int z = 0; z < maxSize; z++) {
-                        newDA[x][y][z] = dataArray[x / scaleX][y / scaleY][z / scaleZ]; //for each [x,y,z], scale [x,y,z] and copy the value.
-                    }
-                }
-            }
-            dataArray = newDA; //replace array.  old will be GC'ed
         }
     }
 

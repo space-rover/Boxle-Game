@@ -67,9 +67,9 @@ public class RenderEngine {
 
         AssetManager manager = boxle.getAssetManager();
 
-        grass = Blocks.grass.getTextures((byte) 0).getTopMat();
-        dirt = Blocks.dirt.getTextures((byte) 0).getFrontMat();
-        stone = Blocks.stone.getTextures((byte) 0).getFrontMat();
+        grass = Blocks.grass.getTextures().getTopMat();
+        dirt = Blocks.dirt.getTextures().getFrontMat();
+        stone = Blocks.stone.getTextures().getFrontMat();
 
         tempLoadLevel();
     }

@@ -28,52 +28,52 @@ public abstract class BlockConfigurable extends Block {
     }
 
     @Override
-    public boolean isBreakable(byte data) {
+    public boolean isBreakable() {
         return isBreakable;
     }
 
     @Override
-    public float getResistance(byte data) {
+    public float getResistance() {
         return resistance;
     }
 
     @Override
-    public float getExplosionResistance(byte data) {
+    public float getExplosionResistance() {
         return explosionResistance;
     }
 
     @Override
-    public float getStrength(byte data) {
+    public float getStrength() {
         return strength;
     }
 
     @Override
-    public float getHardness(byte data) {
+    public float getHardness() {
         return hardness;
     }
 
     @Override
-    public boolean blocksMovement(byte data) {
+    public boolean blocksMovement() {
         return blocksMovement;
     }
 
     @Override
-    public boolean isTransparent(byte data) {
+    public boolean isTransparent() {
         return isTransparent;
     }
 
     @Override
-    public byte getLightReduction(byte data) {
+    public byte getLightReduction() {
         return lightReduction;
     }
 
     @Override
-    public byte getLightOutput(byte data) {
+    public byte getLightOutput() {
         return lightOutput;
     }
 
     @Override
-    public boolean isRenderable(byte data) {
+    public boolean isRenderable() {
         return renderable;
     }
 

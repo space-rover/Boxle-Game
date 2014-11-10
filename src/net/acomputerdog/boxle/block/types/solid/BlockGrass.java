@@ -12,7 +12,7 @@ public class BlockGrass extends BlockSolid {
     }
 
     @Override
-    public BlockTex getTextures(byte data) {
+    public BlockTex getTextures() {
         if (tex == null) {
             tex = new BlockTex(this);
             tex.loadTopTex("tex/block/grass_top.png");

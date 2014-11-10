@@ -47,19 +47,18 @@ public abstract class ItemTool extends Item {
      *
      * @param world     The world the block is in
      * @param block     The type of block being broken
-     * @param blockData The data of the block being broken
      * @param location  The location of the block
      * @param item      The itemStack being used to break the block
      */
-    public void onToolBreak(World world, Vec3i location, Block block, byte blockData, ItemStack item) {
+    public void onToolBreak(World world, Vec3i location, Block block, ItemStack item) {
 
     }
 
     @Override
-    public void onBreakBlock(World world, Vec3i location, Block block, byte blockData, ItemStack item) {
-        item.setDamageValue(item.getDamageValue() + (int) Math.floor(((float) maxDamage * block.getHardness(blockData))));
+    public void onBreakBlock(World world, Vec3i location, Block block, ItemStack item) {
+        item.setDamageValue(item.getDamageValue() + (int) Math.floor(((float) maxDamage * block.getHardness())));
         if (item.getDamageValue() > maxDamage) {
-            this.onToolBreak(world, location, block, blockData, item);
+            this.onToolBreak(world, location, block, item);
         }
     }
 }
