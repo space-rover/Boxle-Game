@@ -105,9 +105,9 @@ public class RenderEngine {
     public void buildChunk(Chunk chunk) {
         Node node = chunk.getChunkNode();
         BlockStorage storage = chunk.getBlocks();
-        for (int x = 0; x < Chunk.CHUNK_SIZE; x++) {
-            for (int y = 0; y < Chunk.CHUNK_SIZE; y++) {
-                for (int z = 0; z < Chunk.CHUNK_SIZE; z++) {
+        for (int x = 0; x < chunkSize; x++) {
+            for (int y = 0; y < chunkSize; y++) {
+                for (int z = 0; z < chunkSize; z++) {
                     Block block = storage.getBlock(x, y, z);
                     if (block != null && block.isRenderable()) {
                         BlockTex tex = block.getTextures();
