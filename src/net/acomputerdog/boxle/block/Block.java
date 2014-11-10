@@ -1,10 +1,12 @@
 package net.acomputerdog.boxle.block;
 
+import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.world.World;
 
 /**
  * Represents a type of Block.
+ * TODO: remove block data
  */
 public abstract class Block {
     /**
@@ -12,12 +14,18 @@ public abstract class Block {
      */
     public final String name;
 
+    private final Boxle boxle;
+
+    private BlockTex tex;
+
     /**
      * Creates a new Block
      *
      * @param name The name of this block.
+     * @param boxle
      */
-    protected Block(String name) {
+    protected Block(String name, Boxle boxle) {
+        this.boxle = boxle;
         if (name == null) throw new IllegalArgumentException("Block name cannot be null!");
         this.name = name;
         Blocks.registerBlock(this);
@@ -150,8 +158,16 @@ public abstract class Block {
         return 0;
     }
 
-    public String getTextureFilename() {
-        return name.concat(".png");
+    public boolean isRenderable(byte data) {
+        return true;
+    }
+
+    public BlockTex getTextures(byte data) {
+        if (tex == null && isRenderable(data)) {
+            tex = new BlockTex(this);
+            tex.loadAllDefault();
+        }
+        return tex;
     }
 
     @Override

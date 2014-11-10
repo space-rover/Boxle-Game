@@ -1,6 +1,7 @@
 package net.acomputerdog.boxle.block.types;
 
 import net.acomputerdog.boxle.block.Block;
+import net.acomputerdog.boxle.main.Boxle;
 
 /**
  * Abstract block subclass that adds methods and fields for values such as strength,, resitance, light value, etc.
@@ -15,14 +16,15 @@ public abstract class BlockConfigurable extends Block {
     private boolean isTransparent = false;
     private byte lightReduction = (byte) 255;
     private byte lightOutput = 0;
+    private boolean renderable = true;
 
     /**
      * Creates a new Block
      *
      * @param name The name of this block.
      */
-    protected BlockConfigurable(String name) {
-        super(name);
+    protected BlockConfigurable(String name, Boxle boxle) {
+        super(name, boxle);
     }
 
     @Override
@@ -70,6 +72,11 @@ public abstract class BlockConfigurable extends Block {
         return lightOutput;
     }
 
+    @Override
+    public boolean isRenderable(byte data) {
+        return renderable;
+    }
+
     public void setBreakable(boolean isBreakable) {
         this.isBreakable = isBreakable;
     }
@@ -104,5 +111,9 @@ public abstract class BlockConfigurable extends Block {
 
     public void setLightOutput(byte lightOutput) {
         this.lightOutput = lightOutput;
+    }
+
+    public void setRenderable(boolean renderable) {
+        this.renderable = renderable;
     }
 }

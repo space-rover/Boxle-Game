@@ -57,10 +57,16 @@ public class Boxle extends SimpleApplication {
      */
     private boolean canRun = true;
 
+    private static Boxle instance;
+
     /**
      * Creates a new Boxle instance
      */
     private Boxle() {
+        if (instance != null) {
+            throw new IllegalStateException("Multiple Boxles cannot be created!");
+        }
+        instance = this;
         this.renderEngine = new RenderEngine(this);
         gameConfig = new GameConfig(this);
         worlds = new WorldList(this);
@@ -236,5 +242,9 @@ public class Boxle extends SimpleApplication {
      */
     public static void main(String[] args) {
         new Boxle();
+    }
+
+    public static Boxle instance() {
+        return instance;
     }
 }

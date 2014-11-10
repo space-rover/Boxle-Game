@@ -2,11 +2,11 @@ package net.acomputerdog.boxle.render.engine;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
-import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
+import net.acomputerdog.boxle.block.Blocks;
 import net.acomputerdog.boxle.input.InputHandler;
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.core.logger.CLogger;
@@ -67,12 +67,9 @@ public class RenderEngine {
 
         AssetManager manager = boxle.getAssetManager();
 
-        grass = new Material(manager, "Common/MatDefs/Misc/Unshaded.j3md");
-        grass.setColor("Color", ColorRGBA.Green);
-        stone = new Material(manager, "Common/MatDefs/Misc/Unshaded.j3md");
-        stone.setColor("Color", ColorRGBA.Gray);
-        dirt = new Material(manager, "Common/MatDefs/Misc/Unshaded.j3md");
-        dirt.setColor("Color", ColorRGBA.Brown);
+        grass = Blocks.grass.getTextures((byte) 0).getTopMat();
+        dirt = Blocks.dirt.getTextures((byte) 0).getFrontMat();
+        stone = Blocks.stone.getTextures((byte) 0).getFrontMat();
 
         tempLoadLevel();
     }

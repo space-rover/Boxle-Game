@@ -2,7 +2,9 @@ package net.acomputerdog.boxle.block;
 
 import net.acomputerdog.boxle.block.types.nonsolid.BlockAir;
 import net.acomputerdog.boxle.block.types.solid.BlockDirt;
+import net.acomputerdog.boxle.block.types.solid.BlockGrass;
 import net.acomputerdog.boxle.block.types.solid.BlockStone;
+import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.core.logger.CLogger;
 
 import java.util.Map;
@@ -13,9 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Blocks {
 
-    public static final BlockAir air = new BlockAir();
-    public static final BlockDirt dirt = new BlockDirt();
-    public static final BlockStone stone = new BlockStone();
+    private static final Boxle boxle = Boxle.instance();
 
     /**
      * Logger for Blocks
@@ -26,6 +26,11 @@ public class Blocks {
      * Map of block names to instances
      */
     private static final Map<String, Block> blockMap = new ConcurrentHashMap<>();
+
+    public static final BlockAir air = new BlockAir(boxle);
+    public static final BlockDirt dirt = new BlockDirt(boxle);
+    public static final BlockStone stone = new BlockStone(boxle);
+    public static final BlockGrass grass = new BlockGrass(boxle);
 
     /**
      * Registers a block into the registry
