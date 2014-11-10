@@ -81,7 +81,11 @@ public class Vec3f {
     }
 
     public Vec3f duplicate() {
-        return new Vec3f(this);
+        return VecPool.copy(this);
+    }
+
+    public String asCoords() {
+        return x + "," + y + "," + z;
     }
 
     @Override

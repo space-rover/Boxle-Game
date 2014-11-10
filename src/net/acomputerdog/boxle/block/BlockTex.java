@@ -2,6 +2,7 @@ package net.acomputerdog.boxle.block;
 
 import com.jme3.material.Material;
 import com.jme3.texture.Texture;
+import net.acomputerdog.boxle.BlockFace;
 import net.acomputerdog.boxle.main.Boxle;
 
 public class BlockTex {
@@ -55,6 +56,25 @@ public class BlockTex {
 
     public Material getBottomMat() {
         return bottomMat;
+    }
+
+    public Material getFaceMat(BlockFace face) {
+        switch (face) {
+            case LEFT:
+                return getLeftMat();
+            case RIGHT:
+                return getRightMat();
+            case FRONT:
+                return getFrontMat();
+            case BACK:
+                return getBackMat();
+            case TOP:
+                return getTopMat();
+            case BOTTOM:
+                return getBottomMat();
+            default:
+                throw new IllegalArgumentException("Impossible BlockFace!");
+        }
     }
 
     public void setFrontMat(Material mat) {

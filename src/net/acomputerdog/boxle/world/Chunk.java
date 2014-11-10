@@ -1,5 +1,6 @@
 package net.acomputerdog.boxle.world;
 
+import com.jme3.scene.Node;
 import net.acomputerdog.boxle.block.Block;
 import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.world.structure.BlockStorage;
@@ -34,6 +35,10 @@ public class Chunk {
      */
     private final BlockStorage blocks;
 
+    private boolean isChanged = true;
+
+    private final Node chunkNode;
+
     /**
      * Creates a new chunk.
      *
@@ -46,6 +51,8 @@ public class Chunk {
         this.world = world;
         this.location = location;
         blocks = new BlockStorage(Chunk.CHUNK_SIZE);
+        chunkNode = new Node();
+        chunkNode.setName("chunk@" + location.asCoords());
     }
 
     /**
@@ -70,6 +77,7 @@ public class Chunk {
      */
     public void setBlockAt(int x, int y, int z, Block block) {
         blocks.setBlock(x, y, z, block);
+        setChanged(true);
     }
 
     /**
@@ -97,5 +105,17 @@ public class Chunk {
      */
     public BlockStorage getBlocks() {
         return blocks;
+    }
+
+    public boolean isChanged() {
+        return isChanged;
+    }
+
+    public void setChanged(boolean changed) {
+        this.isChanged = changed;
+    }
+
+    public Node getChunkNode() {
+        return chunkNode;
     }
 }

@@ -22,7 +22,7 @@ public class Vec2i {
     }
 
     public Vec2i(Vec2f vec2) {
-        this(vec2 == null ? 0 : (int)Math.floor(vec2.x), vec2 == null ? 0 : (int)Math.floor(vec2.y)); //written this way because java doesn't allow check for null before call to "this()"...
+        this(vec2 == null ? 0 : (int) Math.floor(vec2.x), vec2 == null ? 0 : (int) Math.floor(vec2.y)); //written this way because java doesn't allow check for null before call to "this()"...
         if (vec2 == null) {
             throw new IllegalArgumentException("Vec2f cannot be null!");
         }
@@ -36,7 +36,7 @@ public class Vec2i {
     }
 
     public Vec2i(Vec3f vec3) {
-        this(vec3 == null ? 0 : (int)Math.floor(vec3.x), vec3 == null ? 0 : (int)Math.floor(vec3.y)); //written this way because java doesn't allow check for null before call to "this()"...
+        this(vec3 == null ? 0 : (int) Math.floor(vec3.x), vec3 == null ? 0 : (int) Math.floor(vec3.y)); //written this way because java doesn't allow check for null before call to "this()"...
         if (vec3 == null) {
             throw new IllegalArgumentException("Vec3f cannot be null!");
         }
@@ -67,7 +67,11 @@ public class Vec2i {
     }
 
     public Vec2i duplicate() {
-        return new Vec2i(this);
+        return VecPool.copy(this);
+    }
+
+    public String asCoords() {
+        return x + "," + y;
     }
 
     @Override

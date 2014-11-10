@@ -228,6 +228,10 @@ public class Boxle extends SimpleApplication {
         return worlds;
     }
 
+    @Override
+    public void simpleUpdate(float tpf) {
+        renderEngine.render();
+    }
 
     @Override
     public void destroy() {

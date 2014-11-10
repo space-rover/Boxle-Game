@@ -67,7 +67,11 @@ public class Vec2f {
     }
 
     public Vec2f duplicate() {
-        return new Vec2f(this);
+        return VecPool.copy(this);
+    }
+
+    public String asCoords() {
+        return x + "," + y;
     }
 
     @Override
