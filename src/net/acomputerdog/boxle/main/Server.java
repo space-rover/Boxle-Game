@@ -1,5 +1,11 @@
 package net.acomputerdog.boxle.main;
 
+import net.acomputerdog.boxle.world.World;
+
+import java.util.Collections;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
+
 /**
  * Boxle Server instance
  */
@@ -8,6 +14,10 @@ public class Server {
      * The owning Boxle instance;
      */
     private final Boxle boxle;
+
+    private final Set<World> hostedWorlds = new CopyOnWriteArraySet<>();
+
+    private World defaultWorld;
 
     /**
      * Create a new Server instance.
@@ -23,7 +33,9 @@ public class Server {
      * Initializes this server
      */
     public void init() {
-
+        defaultWorld = new World(boxle, "server_default");
+        boxle.getWorlds().addWorld(defaultWorld);
+        hostedWorlds.add(defaultWorld);
     }
 
     /**
@@ -47,5 +59,13 @@ public class Server {
      */
     public Boxle getBoxle() {
         return boxle;
+    }
+
+    public World getDefaultWorld() {
+        return defaultWorld;
+    }
+
+    public Set<World> getHostedWorlds() {
+        return Collections.unmodifiableSet(hostedWorlds);
     }
 }

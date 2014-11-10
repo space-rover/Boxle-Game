@@ -5,8 +5,12 @@ import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
+import net.acomputerdog.boxle.entity.types.EntityPlayer;
+import net.acomputerdog.boxle.math.vec.Vec3f;
 
 public class BoxleFlyByCamera extends FlyByCamera {
+    private EntityPlayer player;
+
     /**
      * Creates a new FlyByCamera to control the given Camera object.
      *
@@ -18,14 +22,17 @@ public class BoxleFlyByCamera extends FlyByCamera {
 
     public void moveCameraStraight(float distance) {
         moveCamera(distance, false);
+        updatePlayerPos();
     }
 
     public void moveCameraVert(float distance) {
         riseCamera(distance);
+        updatePlayerPos();
     }
 
     public void moveCameraSide(float distance) {
         moveCamera(distance, true);
+        updatePlayerPos();
     }
 
     @Override
@@ -47,6 +54,7 @@ public class BoxleFlyByCamera extends FlyByCamera {
 
         if (up.y >= 0 && up.y <= 180) {
             cam.setAxes(q);
+            updatePlayerRot();
         }
     }
 
@@ -81,5 +89,37 @@ public class BoxleFlyByCamera extends FlyByCamera {
     public void toggleMouseGrabbed() {
         enabled = !enabled;
         inputManager.setCursorVisible(!enabled);
+    }
+
+    public EntityPlayer getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(EntityPlayer player) {
+        this.player = player;
+    }
+
+    private void updatePlayerPos() {
+        if (player != null) {
+            Vector3f pos = cam.getLocation();
+            Vec3f pLoc = player.getLocation();
+            pLoc.x = pos.x;
+            pLoc.y = pos.y;
+            pLoc.z = pos.z;
+        }
+    }
+
+    private void updatePlayerRot() {
+        if (player != null) {
+            Quaternion rot = cam.getRotation();
+            Vec3f pRot = player.getRotation();
+            pRot.x = rot.getX();
+            pRot.y = rot.getY();
+            pRot.z = rot.getZ();
+        }
+    }
+
+    public Camera getCamera() {
+        return super.cam;
     }
 }

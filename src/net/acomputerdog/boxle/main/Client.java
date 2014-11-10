@@ -1,5 +1,7 @@
 package net.acomputerdog.boxle.main;
 
+import net.acomputerdog.boxle.entity.types.EntityPlayer;
+
 /**
  * Boxle client instance
  */
@@ -8,6 +10,8 @@ public class Client {
      * The owning Boxle instance;
      */
     private final Boxle boxle;
+
+    private EntityPlayer player;
 
     /**
      * Create a new Client instance.
@@ -23,6 +27,7 @@ public class Client {
      * Initializes this client
      */
     public void init() {
+        player = new EntityPlayer(boxle.getServer().getDefaultWorld());
     }
 
     /**
@@ -45,5 +50,9 @@ public class Client {
      */
     public Boxle getBoxle() {
         return boxle;
+    }
+
+    public EntityPlayer getPlayer() {
+        return player;
     }
 }

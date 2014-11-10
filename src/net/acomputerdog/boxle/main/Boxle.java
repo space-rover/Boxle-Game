@@ -3,6 +3,7 @@ package net.acomputerdog.boxle.main;
 import com.jme3.app.SimpleApplication;
 import com.jme3.system.AppSettings;
 import net.acomputerdog.boxle.config.GameConfig;
+import net.acomputerdog.boxle.entity.types.EntityPlayer;
 import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.render.engine.RenderEngine;
 import net.acomputerdog.boxle.render.util.BoxleFlyByCamera;
@@ -59,6 +60,7 @@ public class Boxle extends SimpleApplication {
 
     private static Boxle instance;
 
+    private BoxleFlyByCamera boxleFlyCam;
     /**
      * Creates a new Boxle instance
      */
@@ -95,8 +97,13 @@ public class Boxle extends SimpleApplication {
 
     @Override
     public void simpleInitApp() {
-        flyCam = new BoxleFlyByCamera(cam);
-        flyCam.registerWithInput(inputManager);
+        boxleFlyCam = new BoxleFlyByCamera(cam);
+        flyCam = boxleFlyCam;
+        boxleFlyCam.registerWithInput(inputManager);
+
+        EntityPlayer player = client.getPlayer();
+        boxleFlyCam.setPlayer(player);
+        player.setFlyby(boxleFlyCam);
 
         renderEngine.init();
     }
@@ -250,5 +257,9 @@ public class Boxle extends SimpleApplication {
 
     public static Boxle instance() {
         return instance;
+    }
+
+    public BoxleFlyByCamera getBoxleFlyCam() {
+        return boxleFlyCam;
     }
 }
