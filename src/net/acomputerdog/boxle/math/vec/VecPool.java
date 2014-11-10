@@ -1,7 +1,7 @@
 package net.acomputerdog.boxle.math.vec;
 
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Pool of temporary Vec classes.
@@ -10,10 +10,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * TODO replace Lists with Queues
  */
 public class VecPool {
-    private static final List<Vec3i> vec3is = new CopyOnWriteArrayList<>();
-    private static final List<Vec2i> vec2is = new CopyOnWriteArrayList<>();
-    private static final List<Vec3f> vec3fs = new CopyOnWriteArrayList<>();
-    private static final List<Vec2f> vec2fs = new CopyOnWriteArrayList<>();
+    private static final Queue<Vec3i> vec3is = new ConcurrentLinkedQueue<>();
+    private static final Queue<Vec2i> vec2is = new ConcurrentLinkedQueue<>();
+    private static final Queue<Vec3f> vec3fs = new ConcurrentLinkedQueue<>();
+    private static final Queue<Vec2f> vec2fs = new ConcurrentLinkedQueue<>();
 
     /**
      * Initializes the VecPool with 5 of each type of vec.
@@ -30,8 +30,8 @@ public class VecPool {
     }
 
     public static Vec3i getVec3i() {
-        if (vec3is.size() >= 0) {
-            return vec3is.remove(0);
+        if (!vec3is.isEmpty()) {
+            return vec3is.remove();
         }
         return new Vec3i();
     }
@@ -45,8 +45,8 @@ public class VecPool {
     }
 
     public static Vec3f getVec3f() {
-        if (vec3fs.size() >= 0) {
-            return vec3fs.remove(0);
+        if (!vec3fs.isEmpty()) {
+            return vec3fs.remove();
         }
         return new Vec3f();
     }
@@ -60,8 +60,8 @@ public class VecPool {
     }
 
     public static Vec2i getVec2i() {
-        if (vec2is.size() >= 0) {
-            return vec2is.remove(0);
+        if (!vec2is.isEmpty()) {
+            return vec2is.remove();
         }
         return new Vec2i();
     }
@@ -74,8 +74,8 @@ public class VecPool {
     }
 
     public static Vec2f getVec2f() {
-        if (vec2fs.size() >= 0) {
-            return vec2fs.remove(0);
+        if (!vec2fs.isEmpty()) {
+            return vec2fs.remove();
         }
         return new Vec2f();
     }

@@ -63,7 +63,6 @@ public class RenderEngine {
         terrainNode = new Node("terrain");
         worldNode.attachChild(terrainNode);
 
-        boxle.getFlyByCamera().setEnabled(false);
         input.init();
 
         AssetManager manager = boxle.getAssetManager();

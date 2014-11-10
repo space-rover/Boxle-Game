@@ -1,10 +1,12 @@
 package net.acomputerdog.boxle.main;
 
+import com.jme3.app.FlyCamAppState;
 import com.jme3.app.SimpleApplication;
 import com.jme3.system.AppSettings;
 import net.acomputerdog.boxle.config.GameConfig;
 import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.render.engine.RenderEngine;
+import net.acomputerdog.boxle.render.util.BoxleFlyByCamera;
 import net.acomputerdog.boxle.world.structure.WorldList;
 import net.acomputerdog.core.java.ThreadUtils;
 import net.acomputerdog.core.logger.CLogger;
@@ -89,6 +91,22 @@ public class Boxle extends SimpleApplication {
     @Override
     public void simpleInitApp() {
         renderEngine.init();
+    }
+
+    @Override
+    public void initialize() {
+        super.initialize();
+
+        stateManager.detach(stateManager.getState(FlyCamAppState.class));
+
+        flyCam = new BoxleFlyByCamera(cam);
+        flyCam.registerWithInput(inputManager);
+
+        inputManager.deleteMapping("FLYCAM_ZoomIn");
+        inputManager.deleteMapping("FLYCAM_ZoomOut");
+        inputManager.deleteMapping("FLYCAM_RotateDrag");
+        inputManager.deleteMapping("FLYCAM_Rise");
+        inputManager.deleteMapping("FLYCAM_Lower");
     }
 
     /**
