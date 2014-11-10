@@ -1,6 +1,5 @@
 package net.acomputerdog.boxle.main;
 
-import com.jme3.app.FlyCamAppState;
 import com.jme3.app.SimpleApplication;
 import com.jme3.system.AppSettings;
 import net.acomputerdog.boxle.config.GameConfig;
@@ -90,23 +89,10 @@ public class Boxle extends SimpleApplication {
 
     @Override
     public void simpleInitApp() {
-        renderEngine.init();
-    }
-
-    @Override
-    public void initialize() {
-        super.initialize();
-
-        stateManager.detach(stateManager.getState(FlyCamAppState.class));
-
         flyCam = new BoxleFlyByCamera(cam);
         flyCam.registerWithInput(inputManager);
 
-        inputManager.deleteMapping("FLYCAM_ZoomIn");
-        inputManager.deleteMapping("FLYCAM_ZoomOut");
-        inputManager.deleteMapping("FLYCAM_RotateDrag");
-        inputManager.deleteMapping("FLYCAM_Rise");
-        inputManager.deleteMapping("FLYCAM_Lower");
+        renderEngine.init();
     }
 
     /**
