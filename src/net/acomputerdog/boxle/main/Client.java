@@ -34,13 +34,13 @@ public class Client {
      * Ticks this client
      */
     public void tick() {
-
     }
 
     /**
      * Shuts down this client
      */
     public void shutdown() {
+
     }
 
     /**

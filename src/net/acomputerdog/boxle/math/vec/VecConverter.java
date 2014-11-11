@@ -19,4 +19,12 @@ public class VecConverter {
     public static Vec3f quaternionToVec3f(Quaternion quat) {
         return VecPool.getVec3f(quat.getX(), quat.getY(), quat.getZ());
     }
+
+    public static Vec3i vec3iFromVec3f(Vec3f vec) {
+        Vec3i vecI = VecPool.getVec3i();
+        vecI.x = (int) Math.floor(vec.x);
+        vecI.y = (int) Math.floor(vec.y);
+        vecI.z = (int) Math.floor(vec.z);
+        return vecI;
+    }
 }

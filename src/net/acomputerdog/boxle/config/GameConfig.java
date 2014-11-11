@@ -50,12 +50,16 @@ public class GameConfig {
     /**
      * Render distance on the X and Z axises
      */
-    public int renderDistanceHorizontal = 10;
+    public int renderDistanceHorizontal = 1;
 
     /**
      * Render distance on the Y axis
      */
-    public int renderDistanceVertical = 5;
+    public int renderDistanceVertical = 1;
+
+    public int maxLoadedChunksPerTick = 100;
+
+    public int maxRenderedChunksPerFrame = 100;
 
     /**
      * Creates a new config for the given boxle instance.

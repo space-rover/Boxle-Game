@@ -3,7 +3,9 @@ package net.acomputerdog.boxle.world;
 import com.jme3.scene.Node;
 import net.acomputerdog.boxle.block.Block;
 import net.acomputerdog.boxle.math.vec.Vec3i;
+import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.world.structure.BlockStorage;
+import net.acomputerdog.boxle.world.structure.block.SimpleBlockStorage;
 
 /**
  * A 16 by 16 chunk of a world
@@ -35,7 +37,7 @@ public class Chunk {
      */
     private final BlockStorage blocks;
 
-    private boolean isChanged = true;
+    private boolean isChanged = false;
 
     private final Node chunkNode;
 
@@ -49,8 +51,10 @@ public class Chunk {
         if (world == null) throw new IllegalArgumentException("World cannot be null!");
         if (location == null) throw new IllegalArgumentException("Location cannot be null!");
         this.world = world;
-        this.location = location;
-        blocks = new BlockStorage(Chunk.CHUNK_SIZE);
+        this.location = VecPool.createVec3i(location); //new one needed for hashing stuff
+        //blocks = new BlockStorage(Chunk.CHUNK_SIZE);
+        blocks = new SimpleBlockStorage();
+        //blocks = new SingleArrayBlockStorage();
         chunkNode = new Node();
         chunkNode.setName("chunk@" + location.asCoords());
     }
@@ -112,10 +116,27 @@ public class Chunk {
     }
 
     public void setChanged(boolean changed) {
+        System.out.println("Setting changed: " + changed + " on " + location.asCoords());
         this.isChanged = changed;
     }
 
     public Node getChunkNode() {
         return chunkNode;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Chunk)) return false;
+
+        Chunk chunk = (Chunk) o;
+
+        return location.equals(chunk.location);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return location.hashCode();
     }
 }

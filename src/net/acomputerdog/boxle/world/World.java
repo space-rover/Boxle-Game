@@ -1,7 +1,11 @@
 package net.acomputerdog.boxle.world;
 
 import net.acomputerdog.boxle.main.Boxle;
+import net.acomputerdog.boxle.math.vec.Vec3i;
+import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.physics.PhysicsEngine;
+import net.acomputerdog.boxle.world.gen.DebugWorldGen;
+import net.acomputerdog.boxle.world.gen.WorldGen;
 import net.acomputerdog.boxle.world.structure.ChunkTable;
 
 /**
@@ -28,6 +32,8 @@ public class World {
      */
     private final ChunkTable chunks;
 
+    private WorldGen generator;
+
     /**
      * Creates a new instance of this World.
      *
@@ -41,6 +47,7 @@ public class World {
         this.name = name;
         physicsEngine = new PhysicsEngine(this);
         chunks = new ChunkTable(this);
+        generator = new DebugWorldGen(this);
     }
 
     /**
@@ -77,5 +84,25 @@ public class World {
      */
     public ChunkTable getChunks() {
         return chunks;
+    }
+
+    public Chunk loadOrGenerateChunk(Vec3i loc) {
+        Chunk chunk = chunks.getChunk(loc);
+        if (chunk == null) {
+            chunk = new Chunk(this, loc);
+            generator.generateChunk(chunk);
+            chunks.addChunk(chunk);
+            boxle.getRenderEngine().addChangedChunk(chunk);
+        }
+        VecPool.free(loc);
+        return chunk;
+    }
+
+    public WorldGen getGenerator() {
+        return generator;
+    }
+
+    public void setGenerator(WorldGen generator) {
+        this.generator = generator;
     }
 }

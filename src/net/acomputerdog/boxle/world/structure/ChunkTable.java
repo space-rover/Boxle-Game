@@ -82,7 +82,7 @@ public class ChunkTable {
     public Chunk removeChunkAt(int x, int y, int z) {
         Vec3i vec = VecPool.getVec3i(x, y, z);
         Chunk chunk = removeChunkAt(vec);
-        VecPool.freeVec3i(vec); //don't forget to free the vec!
+        VecPool.free(vec); //don't forget to free the vec!
         return chunk;
     }
 
@@ -107,7 +107,7 @@ public class ChunkTable {
     public Chunk getChunk(int x, int y, int z) {
         Vec3i vec = VecPool.getVec3i(x, y, z);
         Chunk chunk = getChunk(vec);
-        VecPool.freeVec3i(vec); //don't forget to free the vec!
+        VecPool.free(vec); //don't forget to free the vec!
         return chunk;
     }
 

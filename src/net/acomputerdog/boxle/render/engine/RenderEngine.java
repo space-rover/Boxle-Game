@@ -1,14 +1,12 @@
 package net.acomputerdog.boxle.render.engine;
 
-import com.jme3.material.Material;
-import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
-import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Quad;
-import net.acomputerdog.boxle.BlockFace;
 import net.acomputerdog.boxle.block.Block;
+import net.acomputerdog.boxle.block.BlockFace;
 import net.acomputerdog.boxle.block.BlockTex;
+import net.acomputerdog.boxle.config.GameConfig;
 import net.acomputerdog.boxle.input.InputHandler;
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.math.vec.Vec3i;
@@ -49,14 +47,16 @@ public class RenderEngine {
 
     private final Queue<Chunk> changedChunks = new ConcurrentLinkedQueue<>();
 
+    private final GameConfig config;
+
     /**
      * Input handler
      */
     private final InputHandler input = new InputHandler(this);
 
-    Material grass;
-    Material stone;
-    Material dirt;
+    //Material grass;
+    //Material stone;
+    //Material dirt;
 
     /**
      * Creates a new instance of this RenderEngine.
@@ -66,6 +66,7 @@ public class RenderEngine {
     public RenderEngine(Boxle boxle) {
         if (boxle == null) throw new IllegalArgumentException("Boxle instance must not be null!");
         this.boxle = boxle;
+        config = boxle.getGameConfig();
     }
 
     /**
@@ -88,17 +89,26 @@ public class RenderEngine {
     }
 
     public void render() {
+        int numChunks = 0;
         for (Chunk chunk : changedChunks) {
+            if (numChunks > config.maxRenderedChunksPerFrame) {
+                return;
+            }
             if (chunk.isChanged()) {
+                numChunks++;
                 buildChunk(chunk);
                 Node node = chunk.getChunkNode();
                 if (node.getParent() == null) {
                     terrainNode.attachChild(node);
                 }
                 chunk.setChanged(false);
+                changedChunks.remove(chunk);
             } else {
                 logger.logWarning("An unchanged chunk was marked as changed!");
             }
+        }
+        if (numChunks > 0) {
+            System.out.println("Rendered " + numChunks + " chunks.");
         }
     }
 
@@ -112,10 +122,10 @@ public class RenderEngine {
                     if (block != null && block.isRenderable()) {
                         BlockTex tex = block.getTextures();
                         if (isTransparent(x + 1, y, z, chunk)) {
-                            addFace(node, tex, BlockFace.LEFT, x, y, z);
+                            addFace(node, tex, BlockFace.RIGHT, x, y, z);
                         }
                         if (isTransparent(x - 1, y, z, chunk)) {
-                            addFace(node, tex, BlockFace.RIGHT, x, y, z);
+                            addFace(node, tex, BlockFace.LEFT, x, y, z);
                         }
                         if (isTransparent(x, y + 1, z, chunk)) {
                             addFace(node, tex, BlockFace.TOP, x, y, z);
@@ -136,14 +146,14 @@ public class RenderEngine {
     }
 
     private boolean isTransparent(int x, int y, int z, Chunk chunk) {
-        if (x < chunkSize && x > 0 && y < chunkSize && y > 0 && z < chunkSize && z > 0) {
+        if (x >= chunkSize || x < 0 || y >= chunkSize || y < 0 || z >= chunkSize || z < 0) {
             Chunk newChunk = findNeighborChunk(x, y, z, chunk);
             if (newChunk == null) {
                 return true;
             }
             Vec3i blockPos = findLocInNeighbor(x, y, z);
             Block newBlock = newChunk.getBlockAt(blockPos.x, blockPos.y, blockPos.z);
-            VecPool.freeVec3i(blockPos);
+            VecPool.free(blockPos);
             return newBlock == null || newBlock.isTransparent();
         }
         Block block = chunk.getBlockAt(x, y, z);
@@ -151,31 +161,54 @@ public class RenderEngine {
     }
 
     private Chunk findNeighborChunk(int x, int y, int z, Chunk currChunk) {
-        Vec3i loc = currChunk.getLocation().duplicate();
-        if (x > chunkSize) loc.x += 1; //x - chunkSize;
+        Vec3i loc = currChunk.getLocation();
+        if (x >= chunkSize) loc.x += 1; //x - chunkSize;
         if (x < 0) loc.x -= 1; //0 - x;
-        if (y > chunkSize) loc.y += 1; //y - chunkSize;
+        if (y >= chunkSize) loc.y += 1; //y - chunkSize;
         if (y < 0) loc.y -= 1; //0 - y;
-        if (z > chunkSize) loc.z += 1; //z - chunkSize;
+        if (z >= chunkSize) loc.z += 1; //z - chunkSize;
         if (z < 0) loc.z -= 1; //0 - z;
         Chunk newChunk = currChunk.getWorld().getChunks().getChunk(loc);
-        VecPool.freeVec3i(loc);
+        VecPool.free(loc);
         return newChunk;
     }
 
     private Vec3i findLocInNeighbor(int x, int y, int z) {
         Vec3i vec = VecPool.getVec3i();
-        vec.x = (x > chunkSize) ? 1 : x;
+        if (x >= chunkSize) {
+            vec.x = 0;
+        } else if (x < 0) {
+            vec.x = chunkSize - 1;
+        } else {
+            vec.x = x;
+        }
+        if (y >= chunkSize) {
+            vec.y = 0;
+        } else if (y < 0) {
+            vec.y = chunkSize - 1;
+        } else {
+            vec.y = y;
+        }
+        if (z >= chunkSize) {
+            vec.z = 0;
+        } else if (z < 0) {
+            vec.z = chunkSize - 1;
+        } else {
+            vec.z = z;
+        }
+        /*
+        vec.x = (x >= chunkSize) ? 0 : x;
         vec.x = (x < 0) ? 15 : x;
-        vec.y = (y > chunkSize) ? 1 : y;
+        vec.y = (y >= chunkSize) ? 0 : y;
         vec.y = (y < 0) ? 15 : y;
-        vec.z = (z > chunkSize) ? 1 : z;
+        vec.z = (z >= chunkSize) ? 0 : z;
         vec.z = (z < 0) ? 15 : z;
+        */
         return vec;
     }
 
     private void addFace(Node node, BlockTex tex, BlockFace face, int x, int y, int z) {
-        Geometry geom = new Geometry("face", new Quad(.5f, .5f));
+        Geometry geom = new Geometry("face", new Quad(1f, 1f));
         geom.setMaterial(tex.getFaceMat(face));
         geom.setLocalTranslation(x + face.xPos, y + face.yPos, z + face.zPos);
         geom.rotate(face.xRot, face.yRot, face.zRot);
@@ -199,6 +232,7 @@ public class RenderEngine {
         return boxle;
     }
 
+    /*
     private void tempLoadLevel() {
         Geometry[][][] chunk = new Geometry[16][16][16];
         for (int x = 0; x < 16; x++) {
@@ -266,6 +300,7 @@ public class RenderEngine {
     private boolean isEmpty(Geometry[][][] chunk, int maxX, int maxY, int maxZ, int x, int y, int z) {
         return x < 0 || x >= maxX || y < 0 || y >= maxY || z < 0 || z >= maxZ || chunk[x][y][z] == null;
     }
+    */
 
     public Node getWorldNode() {
         return worldNode;

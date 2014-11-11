@@ -61,16 +61,29 @@ public class Boxle extends SimpleApplication {
     private static Boxle instance;
 
     private BoxleFlyByCamera boxleFlyCam;
+
     /**
      * Creates a new Boxle instance
      */
     private Boxle() {
+        /*
+        new Thread() {
+            @Override
+            public void run() {
+                while (true) {
+                    VecPool.printSizes();
+                    ThreadUtils.sleep(1000);
+                }
+            }
+        }.start();
+        */
+        //ThreadUtils.sleep(20000);
         if (instance != null) {
             throw new IllegalStateException("Multiple Boxles cannot be created!");
         }
         instance = this;
-        this.renderEngine = new RenderEngine(this);
         gameConfig = new GameConfig(this);
+        this.renderEngine = new RenderEngine(this);
         worlds = new WorldList(this);
         client = new Client(this);
         server = new Server(this);
@@ -140,9 +153,10 @@ public class Boxle extends SimpleApplication {
     private void run() {
         LOGGER_MAIN.logInfo("Boxle is starting.");
         while (canRun) {
+            long time = System.currentTimeMillis();
             server.tick(); //todo separate thread
             client.tick(); //todo separate thread
-            ThreadUtils.sleep(10);
+            ThreadUtils.sync(time, 50);
         }
         System.out.println("Stopping.");
         cleanup();

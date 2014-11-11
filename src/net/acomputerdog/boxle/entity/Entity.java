@@ -1,6 +1,7 @@
 package net.acomputerdog.boxle.entity;
 
 import net.acomputerdog.boxle.math.vec.Vec3f;
+import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.world.World;
 
 /**
@@ -65,7 +66,7 @@ public abstract class Entity {
      * @param location The location of this entity
      */
     public Entity(String type, World world, Vec3f location) {
-        this(type, world, location, new Vec3f()); //not using pool, because this is a unique permanent vec.
+        this(type, world, location, VecPool.createVec3f()); //not using pool, because this is a unique permanent vec.
     }
 
     /**

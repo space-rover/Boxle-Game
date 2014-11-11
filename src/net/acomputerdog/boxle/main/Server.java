@@ -1,6 +1,12 @@
 package net.acomputerdog.boxle.main;
 
+import net.acomputerdog.boxle.config.GameConfig;
+import net.acomputerdog.boxle.math.loc.CoordConverter;
+import net.acomputerdog.boxle.math.vec.Vec3i;
+import net.acomputerdog.boxle.math.vec.VecConverter;
+import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.world.World;
+import net.acomputerdog.boxle.world.structure.ChunkTable;
 
 import java.util.Collections;
 import java.util.Set;
@@ -19,6 +25,8 @@ public class Server {
 
     private World defaultWorld;
 
+    private final GameConfig config;
+
     /**
      * Create a new Server instance.
      *
@@ -27,6 +35,7 @@ public class Server {
     public Server(Boxle boxle) {
         if (boxle == null) throw new IllegalArgumentException("Boxle instance must not be null!");
         this.boxle = boxle;
+        config = boxle.getGameConfig();
     }
 
     /**
@@ -42,6 +51,39 @@ public class Server {
      * Ticks this server
      */
     public void tick() {
+        unloadExtraChunks();
+        loadMissingChunks();
+    }
+
+    private void unloadExtraChunks() {
+
+    }
+
+    private void loadMissingChunks() {
+        int loadedChunks = 0;
+        for (World world : hostedWorlds) {
+            ChunkTable chunks = world.getChunks();
+            Vec3i center = CoordConverter.globalToChunk(VecConverter.vec3iFromVec3f(boxle.getClient().getPlayer().getLocation()));
+            GameConfig config = boxle.getGameConfig();
+            int renderDistanceH = config.renderDistanceHorizontal;
+            int renderDistanceV = config.renderDistanceVertical;
+            for (int y = -renderDistanceV; y <= renderDistanceV; y++) {
+                for (int x = -renderDistanceH; x <= renderDistanceH; x++) {
+                    for (int z = -renderDistanceH; z <= renderDistanceH; z++) {
+                        if (loadedChunks > config.maxLoadedChunksPerTick) {
+                            VecPool.free(center);
+                            return;
+                        }
+                        Vec3i newLoc = VecPool.getVec3i(center.x + x, center.y + y, center.z + z);  //don't free
+                        if (chunks.getChunk(newLoc) == null) {
+                            loadedChunks++;
+                            world.loadOrGenerateChunk(newLoc);
+                        }
+                    }
+                }
+            }
+            VecPool.free(center);
+        }
 
     }
 

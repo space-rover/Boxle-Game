@@ -12,7 +12,7 @@ public class EntityPlayer extends Entity {
     private Camera cam;
 
     public EntityPlayer(World world) {
-        super("Player", world, VecPool.getVec3f(0, 0, 0), VecPool.getVec3f(0, 0, 0));
+        super("Player", world, VecPool.getVec3f(), VecPool.getVec3f());
     }
 
     public BoxleFlyByCamera getFlyby() {

@@ -1,12 +1,15 @@
-package net.acomputerdog.boxle;
+package net.acomputerdog.boxle.block;
+
+import com.jme3.math.FastMath;
 
 public enum BlockFace {
-    FRONT(0, 0, .5f, 0, 0, 90f),
-    BACK(0, 0, -.5f, 0, 0, 90f),
-    LEFT(.5f, 0, 0, 90f, 0, 0),
-    RIGHT(-.5f, 0, 0, 90f, 0, 0),
-    TOP(0, .5f, 0, 0, 90f, 0),
-    BOTTOM(0, -.5f, 0, 0, 90f, 0);
+
+    FRONT(-1f, 0, 0f, 0, 0, 0),
+    BACK(0, 0, -1f, (FastMath.PI), 0, FastMath.PI),
+    RIGHT(0, 0, 0, 0, FastMath.PI / 2, 0),
+    LEFT(-1f, 0, -1f, 0, -(FastMath.PI / 2), 0),
+    TOP(-1, 1f, 0, -(FastMath.PI / 2), 0f, 0f),
+    BOTTOM(0, -1f, 0, (FastMath.PI / 2), 0f, 0f);
 
     public final float xPos;
     public final float yPos;

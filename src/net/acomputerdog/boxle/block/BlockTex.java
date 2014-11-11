@@ -2,7 +2,6 @@ package net.acomputerdog.boxle.block;
 
 import com.jme3.material.Material;
 import com.jme3.texture.Texture;
-import net.acomputerdog.boxle.BlockFace;
 import net.acomputerdog.boxle.main.Boxle;
 
 public class BlockTex {
