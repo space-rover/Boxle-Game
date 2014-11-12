@@ -1,10 +1,9 @@
 package net.acomputerdog.boxle.world;
 
-import com.jme3.scene.Node;
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.math.vec.Vec3i;
-import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.physics.PhysicsEngine;
+import net.acomputerdog.boxle.render.util.ChunkNode;
 import net.acomputerdog.boxle.world.gen.AngleWorldGen;
 import net.acomputerdog.boxle.world.gen.WorldGen;
 import net.acomputerdog.boxle.world.structure.ChunkTable;
@@ -95,7 +94,6 @@ public class World {
             generator.generateChunk(chunk);
             chunks.addChunk(chunk);
         }
-        VecPool.free(loc);
         return chunk;
     }
 
@@ -109,8 +107,9 @@ public class World {
 
     public void unloadChunk(Chunk chunk) {
         chunks.removeChunk(chunk);
-        Node node = chunk.getChunkNode();
-        boxle.getRenderEngine().getTerrainNode().detachChild(node);
-        node.detachAllChildren();
+        ChunkNode oldNode = chunk.getChunkNode();
+        if (oldNode.getParent() != null) {
+            boxle.getRenderEngine().removeNode(oldNode);
+        }
     }
 }

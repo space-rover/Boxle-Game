@@ -3,6 +3,7 @@ package net.acomputerdog.boxle.main;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Quad;
+import jme3tools.optimize.GeometryBatchFactory;
 import net.acomputerdog.boxle.block.Block;
 import net.acomputerdog.boxle.block.BlockFace;
 import net.acomputerdog.boxle.block.BlockTex;
@@ -13,7 +14,7 @@ import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.math.vec.VecConverter;
 import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.render.engine.RenderEngine;
-import net.acomputerdog.boxle.render.util.BLNode;
+import net.acomputerdog.boxle.render.util.ChunkNode;
 import net.acomputerdog.boxle.world.Chunk;
 import net.acomputerdog.boxle.world.World;
 import net.acomputerdog.boxle.world.structure.BlockStorage;
@@ -44,12 +45,11 @@ public class Server {
     final int renderDistanceH;
     final int renderDistanceV;
 
-    private final Set<Chunk> changedChunks = new ConcurrentSkipListSet<>();
-
     private final Set<Chunk> rebuildChunks = new ConcurrentSkipListSet<>();
 
     private int numFaces = 0;
     private int numChunks = 0;
+    private int numUnload = 0;
 
     private final CLogger logger;
 
@@ -83,8 +83,15 @@ public class Server {
      * Ticks this server
      */
     public void tick() {
+        numFaces = 0;
+        numChunks = 0;
+        numUnload = 0;
+        rebuildNeighborChunks();
+        rebuildChangedChunks();
         unloadExtraChunks();
-        loadMissingChunks();
+        if (numChunks > 0) {
+            logger.logDetail("Rendered " + numChunks + " chunks and " + numFaces + " faces, removed " + numUnload + " chunks.");
+        }
     }
 
     private void unloadExtraChunks() {
@@ -94,6 +101,8 @@ public class Server {
             for (Chunk chunk : chunks.getAllChunks()) {
                 Vec3i cLoc = chunk.getLocation();
                 if (cLoc.x > center.x + renderDistanceH || cLoc.x < center.x - renderDistanceH || cLoc.y > center.y + renderDistanceV || cLoc.y < center.y - renderDistanceV || cLoc.z > center.z + renderDistanceH || cLoc.z < center.z - renderDistanceH) {
+                    numUnload++;
+                    rebuildChunks.remove(chunk);
                     world.unloadChunk(chunk);
                 }
             }
@@ -101,9 +110,27 @@ public class Server {
         }
     }
 
-    private void loadMissingChunks() {
-        numFaces = 0;
-        numChunks = 0;
+    private void rebuildNeighborChunks() {
+        for (Chunk chunk : rebuildChunks) {
+            rebuildChunks.remove(chunk);
+            numChunks++;
+            Vec3i cLoc = chunk.getLocation();
+            ChunkNode node = new ChunkNode("chunk@" + cLoc.asCoords());
+            VecPool.free(cLoc);
+            buildChunk(chunk, node, false);
+            ChunkNode oldNode = chunk.getChunkNode();
+            if (oldNode.getParent() != null) {
+                engine.removeNode(oldNode);
+            }
+            chunk.setChunkNode(node);
+            engine.addNode(node);
+            if (numChunks > config.maxLoadedChunksPerTick) {
+                return;
+            }
+        }
+    }
+
+    private void rebuildChangedChunks() {
         EntityPlayer player = boxle.getClient().getPlayer();
         World world = player.getWorld();
         ChunkTable chunks = world.getChunks();
@@ -120,23 +147,25 @@ public class Server {
                     Vec3i newLoc = VecPool.getVec3i(center.x + x, center.y + y, center.z + z);
                     Chunk chunk = chunks.getChunk(newLoc);
                     if (chunk == null) {
-                        numChunks++;
                         chunk = world.loadOrGenerateChunk(newLoc);
                     }
                     if (chunk.isChanged()) {
-                        BLNode node = new BLNode("chunk@" + newLoc.asCoords());
+                        numChunks++;
+                        rebuildChunks.remove(chunk); //make sure the chunk is not rendered twice
+                        ChunkNode node = new ChunkNode("chunk@" + newLoc.asCoords());
                         buildChunk(chunk, node, true);
+                        ChunkNode oldNode = chunk.getChunkNode();
+                        if (oldNode.getParent() != null) {
+                            engine.removeNode(chunk.getChunkNode());
+                        }
+                        chunk.setChunkNode(node);
                         engine.addNode(node);
-                        engine.removeNode(chunk.getChunkNode());
                     }
                     VecPool.free(newLoc);
                 }
             }
         }
         VecPool.free(center);
-        if (numChunks > 0) {
-            logger.logDetail("Rendered " + numChunks + " chunks and " + numFaces + " faces.");
-        }
     }
 
 
@@ -174,6 +203,7 @@ public class Server {
                 }
             }
         }
+        GeometryBatchFactory.optimize(node); //enhance!
         if (notifyNeighbors) {
             ChunkTable chunks = chunk.getWorld().getChunks();
             notifyNeighbor(cLoc, 1, 0, 0, chunks);
@@ -207,7 +237,7 @@ public class Server {
 
     private void notifyNeighbor(Vec3i cLoc, int x, int y, int z, ChunkTable chunks) {
         Chunk nChunk = chunks.getChunk(x + cLoc.x, y + cLoc.y, z + cLoc.z);
-        if (nChunk != null && !rebuildChunks.contains(nChunk) && !changedChunks.contains(nChunk)) {
+        if (nChunk != null && !rebuildChunks.contains(nChunk)) {
             //buildChunk(nChunk, false);
             rebuildChunks.add(nChunk);
             nChunk.setChanged(false);

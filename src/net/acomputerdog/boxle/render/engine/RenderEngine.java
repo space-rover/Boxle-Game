@@ -4,7 +4,7 @@ import com.jme3.scene.Node;
 import net.acomputerdog.boxle.config.GameConfig;
 import net.acomputerdog.boxle.input.InputHandler;
 import net.acomputerdog.boxle.main.Boxle;
-import net.acomputerdog.boxle.render.util.BLNode;
+import net.acomputerdog.boxle.render.util.ChunkNode;
 import net.acomputerdog.core.logger.CLogger;
 
 import java.util.Set;
@@ -42,8 +42,8 @@ public class RenderEngine {
      */
     private final InputHandler input = new InputHandler(this);
 
-    private final Set<BLNode> addNodes = new ConcurrentSkipListSet<>();
-    private final Set<BLNode> removeNodes = new ConcurrentSkipListSet<>();
+    private final Set<ChunkNode> addNodes = new ConcurrentSkipListSet<>();
+    private final Set<ChunkNode> removeNodes = new ConcurrentSkipListSet<>();
     //Material grass;
     //Material stone;
     //Material dirt;
@@ -64,7 +64,7 @@ public class RenderEngine {
      */
     public void init() {
         worldNode = boxle.getRootNode();
-        terrainNode = new BLNode("terrain");
+        terrainNode = new ChunkNode("terrain");
         worldNode.attachChild(terrainNode);
 
         input.init();
@@ -78,14 +78,27 @@ public class RenderEngine {
     }
 
     public void render() {
-        for (BLNode node : removeNodes) {
-            node.detachAllChildren();
-            terrainNode.detachChild(node);
+        int renderedChunks = 0;
+        for (ChunkNode node : removeNodes) {
+            /*
+            if (renderedChunks > config.maxRenderedChunksPerFrame) {
+                return;
+            }
+            */
+            renderedChunks++;
+            //System.out.println("Node " + node.getName() + "'s parent is: " + (node.getParent() == null ? "NULL" : node.getParent().getName()));
             removeNodes.remove(node);
+            terrainNode.detachChild(node);
         }
-        for (BLNode node : addNodes) {
-            terrainNode.attachChild(node);
+        for (ChunkNode node : addNodes) {
+            /*
+            if (renderedChunks > config.maxRenderedChunksPerFrame) {
+                return;
+            }
+            */
+            renderedChunks++;
             addNodes.remove(node);
+            terrainNode.attachChild(node);
         }
     }
 
@@ -116,7 +129,7 @@ public class RenderEngine {
         return input;
     }
 
-    public void addNode(BLNode node) {
+    public void addNode(ChunkNode node) {
         if (node == null) {
             logger.logWarning("Null node passed to render engine!");
             return;
@@ -124,7 +137,7 @@ public class RenderEngine {
         addNodes.add(node);
     }
 
-    public void removeNode(BLNode node) {
+    public void removeNode(ChunkNode node) {
         if (node == null) {
             logger.logWarning("Null node passed to render engine!");
             return;
