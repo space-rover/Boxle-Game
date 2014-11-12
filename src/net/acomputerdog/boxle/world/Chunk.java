@@ -1,9 +1,9 @@
 package net.acomputerdog.boxle.world;
 
-import com.jme3.scene.Node;
 import net.acomputerdog.boxle.block.Block;
 import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.math.vec.VecPool;
+import net.acomputerdog.boxle.render.util.BLNode;
 import net.acomputerdog.boxle.world.structure.BlockStorage;
 import net.acomputerdog.boxle.world.structure.block.SimpleBlockStorage;
 
@@ -39,7 +39,7 @@ public class Chunk implements Comparable<Chunk> {
 
     private boolean isChanged = true;
 
-    private final Node chunkNode;
+    private BLNode chunkNode;
 
     /**
      * Creates a new chunk.
@@ -54,9 +54,8 @@ public class Chunk implements Comparable<Chunk> {
         this.location = VecPool.createVec3i(location); //new one needed for hashing stuff
         //blocks = new BlockStorage(Chunk.CHUNK_SIZE);
         blocks = new SimpleBlockStorage();
+        chunkNode = new BLNode("chunk@" + location.asCoords());
         //blocks = new SingleArrayBlockStorage();
-        chunkNode = new Node();
-        chunkNode.setName("chunk@" + location.asCoords());
         //if (location.x > 1 || location.x < -1 || location.y > 1 || location.y < -1 || location.z > 1 || location.z < -1) {
         //    System.out.println("Invalid chunk: " + location.asCoords());
         //    throw new RuntimeException("Invalid chunk!");
@@ -124,9 +123,10 @@ public class Chunk implements Comparable<Chunk> {
         this.isChanged = changed;
     }
 
-    public Node getChunkNode() {
+    public BLNode getChunkNode() {
         return chunkNode;
     }
+
 
     @Override
     public boolean equals(Object o) {

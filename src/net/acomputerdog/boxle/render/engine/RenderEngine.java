@@ -4,7 +4,7 @@ import com.jme3.scene.Node;
 import net.acomputerdog.boxle.config.GameConfig;
 import net.acomputerdog.boxle.input.InputHandler;
 import net.acomputerdog.boxle.main.Boxle;
-import net.acomputerdog.boxle.world.Chunk;
+import net.acomputerdog.boxle.render.util.BLNode;
 import net.acomputerdog.core.logger.CLogger;
 
 import java.util.Set;
@@ -42,7 +42,8 @@ public class RenderEngine {
      */
     private final InputHandler input = new InputHandler(this);
 
-    private final Set<Chunk> addChunks = new ConcurrentSkipListSet<>();
+    private final Set<BLNode> addNodes = new ConcurrentSkipListSet<>();
+    private final Set<BLNode> removeNodes = new ConcurrentSkipListSet<>();
     //Material grass;
     //Material stone;
     //Material dirt;
@@ -63,7 +64,7 @@ public class RenderEngine {
      */
     public void init() {
         worldNode = boxle.getRootNode();
-        terrainNode = new Node("terrain");
+        terrainNode = new BLNode("terrain");
         worldNode.attachChild(terrainNode);
 
         input.init();
@@ -77,11 +78,14 @@ public class RenderEngine {
     }
 
     public void render() {
-        for (Chunk chunk : addChunks) {
-            Node node = chunk.getChunkNode();
+        for (BLNode node : removeNodes) {
+            node.detachAllChildren();
+            terrainNode.detachChild(node);
+            removeNodes.remove(node);
+        }
+        for (BLNode node : addNodes) {
             terrainNode.attachChild(node);
-            chunk.setChanged(false);
-            addChunks.remove(chunk);
+            addNodes.remove(node);
         }
     }
 
@@ -112,12 +116,20 @@ public class RenderEngine {
         return input;
     }
 
-    public void addRenderChunk(Chunk chunk) {
-        if (chunk == null) {
-            logger.logWarning("Null chunk passed to render engine!");
+    public void addNode(BLNode node) {
+        if (node == null) {
+            logger.logWarning("Null node passed to render engine!");
             return;
         }
-        addChunks.add(chunk);
+        addNodes.add(node);
+    }
+
+    public void removeNode(BLNode node) {
+        if (node == null) {
+            logger.logWarning("Null node passed to render engine!");
+            return;
+        }
+        removeNodes.add(node);
     }
 
     public Node getTerrainNode() {

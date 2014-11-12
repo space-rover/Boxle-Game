@@ -12,6 +12,8 @@ import net.acomputerdog.boxle.math.loc.CoordConverter;
 import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.math.vec.VecConverter;
 import net.acomputerdog.boxle.math.vec.VecPool;
+import net.acomputerdog.boxle.render.engine.RenderEngine;
+import net.acomputerdog.boxle.render.util.BLNode;
 import net.acomputerdog.boxle.world.Chunk;
 import net.acomputerdog.boxle.world.World;
 import net.acomputerdog.boxle.world.structure.BlockStorage;
@@ -51,6 +53,8 @@ public class Server {
 
     private final CLogger logger;
 
+    private final RenderEngine engine;
+
     /**
      * Create a new Server instance.
      *
@@ -63,6 +67,7 @@ public class Server {
         renderDistanceH = config.renderDistanceHorizontal;
         renderDistanceV = config.renderDistanceVertical;
         logger = new CLogger("Server", false, true);
+        engine = boxle.getRenderEngine();
     }
 
     /**
@@ -119,8 +124,10 @@ public class Server {
                         chunk = world.loadOrGenerateChunk(newLoc);
                     }
                     if (chunk.isChanged()) {
-                        buildChunk(chunk, true);
-                        boxle.getRenderEngine().addRenderChunk(chunk);
+                        BLNode node = new BLNode("chunk@" + newLoc.asCoords());
+                        buildChunk(chunk, node, true);
+                        engine.addNode(node);
+                        engine.removeNode(chunk.getChunkNode());
                     }
                     VecPool.free(newLoc);
                 }
@@ -133,9 +140,8 @@ public class Server {
     }
 
 
-    public void buildChunk(Chunk chunk, boolean notifyNeighbors) {
-        Node node = chunk.getChunkNode();
-        node.detachAllChildren();
+    public void buildChunk(Chunk chunk, Node node, boolean notifyNeighbors) {
+        chunk.setChanged(false);
         Vec3i cLoc = chunk.getLocation();
         //System.out.println("Building chunk at " + cLoc.asCoords());
         Vec3i gLoc = CoordConverter.chunkToGlobal(cLoc.duplicate());
