@@ -83,6 +83,7 @@ public class Server {
      * Ticks this server
      */
     public void tick() {
+        long oldTime = System.currentTimeMillis();
         numFaces = 0;
         numChunks = 0;
         numUnload = 0;
@@ -90,7 +91,8 @@ public class Server {
         rebuildChangedChunks();
         unloadExtraChunks();
         if (numChunks > 0) {
-            logger.logDetail("Rendered " + numChunks + " chunks and " + numFaces + " faces, removed " + numUnload + " chunks.");
+            long newTime = System.currentTimeMillis();
+            logger.logDetail("Rendered " + numChunks + " chunks and " + numFaces + " faces, removed " + numUnload + " chunks in " + ((newTime - oldTime) / 1000f) + " seconds.");
         }
     }
 

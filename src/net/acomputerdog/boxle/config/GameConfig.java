@@ -50,14 +50,14 @@ public class GameConfig {
     /**
      * Render distance on the X and Z axises
      */
-    public int renderDistanceHorizontal = 2;
+    public int renderDistanceHorizontal = 5;
 
     /**
      * Render distance on the Y axis
      */
-    public int renderDistanceVertical = 2;
+    public int renderDistanceVertical = 5;
 
-    public int maxLoadedChunksPerTick = 100;
+    public int maxLoadedChunksPerTick = 200;
 
     public int maxRenderedChunksPerFrame = 100;
 
