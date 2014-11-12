@@ -131,7 +131,6 @@ public class RenderEngine {
 
     public void buildChunk(Chunk chunk, boolean notifyNeighbors) {
         Node node = chunk.getChunkNode();
-        terrainNode.detachChild(node);
         node.detachAllChildren();
         Vec3i cLoc = chunk.getLocation();
         //System.out.println("Building chunk at " + cLoc.asCoords());
@@ -377,5 +376,9 @@ public class RenderEngine {
             return;
         }
         changedChunks.add(chunk);
+    }
+
+    public Node getTerrainNode() {
+        return terrainNode;
     }
 }

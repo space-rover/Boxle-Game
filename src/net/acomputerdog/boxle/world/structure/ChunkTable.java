@@ -87,6 +87,10 @@ public class ChunkTable {
         return chunk;
     }
 
+    public void removeChunk(Chunk chunk) {
+        removeChunkAt(chunk.getLocation());
+    }
+
     /**
      * Gets a chunk at a given location
      *

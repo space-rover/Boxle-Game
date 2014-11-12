@@ -28,6 +28,9 @@ public class Server {
 
     private final GameConfig config;
 
+    final int renderDistanceH;
+    final int renderDistanceV;
+
     /**
      * Create a new Server instance.
      *
@@ -37,6 +40,8 @@ public class Server {
         if (boxle == null) throw new IllegalArgumentException("Boxle instance must not be null!");
         this.boxle = boxle;
         config = boxle.getGameConfig();
+        renderDistanceH = config.renderDistanceHorizontal;
+        renderDistanceV = config.renderDistanceVertical;
     }
 
     /**
@@ -57,7 +62,17 @@ public class Server {
     }
 
     private void unloadExtraChunks() {
-
+        for (World world : hostedWorlds) {
+            Vec3i center = CoordConverter.globalToChunk(VecConverter.vec3iFromVec3f(boxle.getClient().getPlayer().getLocation(), VecPool.createVec3i()));
+            ChunkTable chunks = world.getChunks();
+            for (Chunk chunk : chunks.getAllChunks()) {
+                Vec3i cLoc = chunk.getLocation();
+                if (cLoc.x > center.x + renderDistanceH || cLoc.x < center.x - renderDistanceH || cLoc.y > center.y + renderDistanceV || cLoc.y < center.y - renderDistanceV || cLoc.z > center.z + renderDistanceH || cLoc.z < center.z - renderDistanceH) {
+                    world.unloadChunk(chunk);
+                }
+            }
+            VecPool.free(center);
+        }
     }
 
     private void loadMissingChunks() {
@@ -67,8 +82,6 @@ public class Server {
             Vec3i center = CoordConverter.globalToChunk(VecConverter.vec3iFromVec3f(boxle.getClient().getPlayer().getLocation(), VecPool.createVec3i()));
             //System.out.println(center.asCoords());
             GameConfig config = boxle.getGameConfig();
-            int renderDistanceH = config.renderDistanceHorizontal;
-            int renderDistanceV = config.renderDistanceVertical;
             for (int y = -renderDistanceV; y <= renderDistanceV; y++) {
                 for (int x = -renderDistanceH; x <= renderDistanceH; x++) {
                     for (int z = -renderDistanceH; z <= renderDistanceH; z++) {

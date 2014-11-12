@@ -1,5 +1,6 @@
 package net.acomputerdog.boxle.world;
 
+import com.jme3.scene.Node;
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.math.vec.VecPool;
@@ -104,5 +105,12 @@ public class World {
 
     public void setGenerator(WorldGen generator) {
         this.generator = generator;
+    }
+
+    public void unloadChunk(Chunk chunk) {
+        chunks.removeChunk(chunk);
+        Node node = chunk.getChunkNode();
+        boxle.getRenderEngine().getTerrainNode().detachChild(node);
+        node.detachAllChildren();
     }
 }
