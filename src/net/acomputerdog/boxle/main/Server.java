@@ -90,10 +90,12 @@ public class Server {
         rebuildNeighborChunks();
         rebuildChangedChunks();
         unloadExtraChunks();
+        /*
         if (numChunks > 0) {
             long newTime = System.currentTimeMillis();
-            logger.logDetail("Rendered " + numChunks + " chunks and " + numFaces + " faces, removed " + numUnload + " chunks in " + ((newTime - oldTime) / 1000f) + " seconds.");
+            logger.logDetail("Built " + numChunks + " chunk meshes from " + numFaces + " faces and unloaded " + numUnload + " chunks in " + ((newTime - oldTime) / 1000f) + " seconds.");
         }
+        */
     }
 
     private void unloadExtraChunks() {
