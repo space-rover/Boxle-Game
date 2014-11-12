@@ -12,4 +12,11 @@ public class CoordConverter {
         global.z = (int) Math.floor((float) global.z / (float) chunkSize);
         return global;
     }
+
+    public static Vec3i chunkToGlobal(Vec3i chunk) {
+        chunk.x *= chunkSize;
+        chunk.y *= chunkSize;
+        chunk.z *= chunkSize;
+        return chunk;
+    }
 }

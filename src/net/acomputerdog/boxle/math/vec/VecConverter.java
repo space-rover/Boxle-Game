@@ -27,4 +27,11 @@ public class VecConverter {
         vecI.z = (int) Math.floor(vec.z);
         return vecI;
     }
+
+    public static Vec3i vec3iFromVec3f(Vec3f vec, Vec3i vec3i) {
+        vec3i.x = (int) Math.floor(vec.x);
+        vec3i.y = (int) Math.floor(vec.y);
+        vec3i.z = (int) Math.floor(vec.z);
+        return vec3i;
+    }
 }

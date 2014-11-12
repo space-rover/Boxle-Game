@@ -9,14 +9,16 @@ import net.acomputerdog.boxle.block.BlockTex;
 import net.acomputerdog.boxle.config.GameConfig;
 import net.acomputerdog.boxle.input.InputHandler;
 import net.acomputerdog.boxle.main.Boxle;
+import net.acomputerdog.boxle.math.loc.CoordConverter;
 import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.world.Chunk;
 import net.acomputerdog.boxle.world.structure.BlockStorage;
+import net.acomputerdog.boxle.world.structure.ChunkTable;
 import net.acomputerdog.core.logger.CLogger;
 
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * Central boxle render engine.
@@ -45,9 +47,13 @@ public class RenderEngine {
      */
     private Node terrainNode;
 
-    private final Queue<Chunk> changedChunks = new ConcurrentLinkedQueue<>();
+    private final Set<Chunk> changedChunks = new ConcurrentSkipListSet<>();
+
+    private final Set<Chunk> rebuildChunks = new ConcurrentSkipListSet<>();
 
     private final GameConfig config;
+
+    private int numFaces = 0;
 
     /**
      * Input handler
@@ -90,30 +96,46 @@ public class RenderEngine {
 
     public void render() {
         int numChunks = 0;
+        numFaces = 0;
+        for (Chunk chunk : rebuildChunks) {
+            if (numChunks > config.maxRenderedChunksPerFrame) {
+                return;
+            }
+            numChunks++;
+            buildChunk(chunk, false);
+            Node node = chunk.getChunkNode();
+            terrainNode.attachChild(node);
+            chunk.setChanged(false);
+            rebuildChunks.remove(chunk);
+            changedChunks.remove(chunk);
+        }
         for (Chunk chunk : changedChunks) {
             if (numChunks > config.maxRenderedChunksPerFrame) {
                 return;
             }
             if (chunk.isChanged()) {
                 numChunks++;
-                buildChunk(chunk);
+                buildChunk(chunk, true);
                 Node node = chunk.getChunkNode();
-                if (node.getParent() == null) {
-                    terrainNode.attachChild(node);
-                }
+                terrainNode.attachChild(node);
                 chunk.setChanged(false);
-                changedChunks.remove(chunk);
             } else {
-                logger.logWarning("An unchanged chunk was marked as changed!");
+                logger.logWarning("An unchanged chunk was marked as changed at " + chunk.getLocation().asCoords());
             }
+            changedChunks.remove(chunk);
         }
         if (numChunks > 0) {
-            System.out.println("Rendered " + numChunks + " chunks.");
+            logger.logDetail("Rendered " + numChunks + " chunks and " + numFaces + " faces.");
         }
     }
 
-    public void buildChunk(Chunk chunk) {
+    public void buildChunk(Chunk chunk, boolean notifyNeighbors) {
         Node node = chunk.getChunkNode();
+        terrainNode.detachChild(node);
+        node.detachAllChildren();
+        Vec3i cLoc = chunk.getLocation();
+        //System.out.println("Building chunk at " + cLoc.asCoords());
+        Vec3i gLoc = CoordConverter.chunkToGlobal(cLoc.duplicate());
         BlockStorage storage = chunk.getBlocks();
         for (int x = 0; x < chunkSize; x++) {
             for (int y = 0; y < chunkSize; y++) {
@@ -122,26 +144,64 @@ public class RenderEngine {
                     if (block != null && block.isRenderable()) {
                         BlockTex tex = block.getTextures();
                         if (isTransparent(x + 1, y, z, chunk)) {
-                            addFace(node, tex, BlockFace.RIGHT, x, y, z);
+                            addFace(node, tex, gLoc, BlockFace.RIGHT, x, y, z);
                         }
                         if (isTransparent(x - 1, y, z, chunk)) {
-                            addFace(node, tex, BlockFace.LEFT, x, y, z);
+                            addFace(node, tex, gLoc, BlockFace.LEFT, x, y, z);
                         }
                         if (isTransparent(x, y + 1, z, chunk)) {
-                            addFace(node, tex, BlockFace.TOP, x, y, z);
+                            addFace(node, tex, gLoc, BlockFace.TOP, x, y, z);
                         }
                         if (isTransparent(x, y - 1, z, chunk)) {
-                            addFace(node, tex, BlockFace.BOTTOM, x, y, z);
+                            addFace(node, tex, gLoc, BlockFace.BOTTOM, x, y, z);
                         }
                         if (isTransparent(x, y, z + 1, chunk)) {
-                            addFace(node, tex, BlockFace.FRONT, x, y, z);
+                            addFace(node, tex, gLoc, BlockFace.FRONT, x, y, z);
                         }
                         if (isTransparent(x, y, z - 1, chunk)) {
-                            addFace(node, tex, BlockFace.BACK, x, y, z);
+                            addFace(node, tex, gLoc, BlockFace.BACK, x, y, z);
                         }
                     }
                 }
             }
+        }
+        if (notifyNeighbors) {
+            ChunkTable chunks = chunk.getWorld().getChunks();
+            notifyNeighbor(cLoc, 1, 0, 0, chunks);
+            notifyNeighbor(cLoc, -1, 0, 0, chunks);
+            notifyNeighbor(cLoc, 0, 1, 0, chunks);
+            notifyNeighbor(cLoc, 0, -1, 0, chunks);
+            notifyNeighbor(cLoc, 0, 0, 1, chunks);
+            notifyNeighbor(cLoc, 0, 0, -1, chunks);
+            /*
+            for (int x = -1; x <= 1; x++) {
+                for (int y = -1; y <= 1; y++) {
+                    for (int z = -1; z <= 1; z++) {
+                        if (!(x == 0 && y == 0 && z == 0)) {
+                            Chunk nChunk = chunks.getChunk(x + cLoc.x, y + cLoc.y, z + cLoc.z);
+                            if (nChunk != null) {
+                                if (!changedChunks.contains(nChunk)) {
+                                    buildChunk(nChunk, false);
+                                    nChunk.setChanged(false);
+                                    changedChunks.remove(nChunk);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            */
+        }
+        VecPool.free(cLoc);
+        VecPool.free(gLoc);
+    }
+
+    private void notifyNeighbor(Vec3i cLoc, int x, int y, int z, ChunkTable chunks) {
+        Chunk nChunk = chunks.getChunk(x + cLoc.x, y + cLoc.y, z + cLoc.z);
+        if (nChunk != null && !rebuildChunks.contains(nChunk) && !changedChunks.contains(nChunk)) {
+            //buildChunk(nChunk, false);
+            rebuildChunks.add(nChunk);
+            nChunk.setChanged(false);
         }
     }
 
@@ -207,10 +267,11 @@ public class RenderEngine {
         return vec;
     }
 
-    private void addFace(Node node, BlockTex tex, BlockFace face, int x, int y, int z) {
+    private void addFace(Node node, BlockTex tex, Vec3i cLoc, BlockFace face, int x, int y, int z) {
+        numFaces++;
         Geometry geom = new Geometry("face", new Quad(1f, 1f));
         geom.setMaterial(tex.getFaceMat(face));
-        geom.setLocalTranslation(x + face.xPos, y + face.yPos, z + face.zPos);
+        geom.setLocalTranslation(cLoc.x + x + face.xPos, cLoc.y + y + face.yPos, cLoc.z + z + face.zPos);
         geom.rotate(face.xRot, face.yRot, face.zRot);
         geom.updateModelBound();
         node.attachChild(geom);

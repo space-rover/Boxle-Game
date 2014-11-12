@@ -5,6 +5,7 @@ import net.acomputerdog.boxle.math.loc.CoordConverter;
 import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.math.vec.VecConverter;
 import net.acomputerdog.boxle.math.vec.VecPool;
+import net.acomputerdog.boxle.world.Chunk;
 import net.acomputerdog.boxle.world.World;
 import net.acomputerdog.boxle.world.structure.ChunkTable;
 
@@ -63,7 +64,8 @@ public class Server {
         int loadedChunks = 0;
         for (World world : hostedWorlds) {
             ChunkTable chunks = world.getChunks();
-            Vec3i center = CoordConverter.globalToChunk(VecConverter.vec3iFromVec3f(boxle.getClient().getPlayer().getLocation()));
+            Vec3i center = CoordConverter.globalToChunk(VecConverter.vec3iFromVec3f(boxle.getClient().getPlayer().getLocation(), VecPool.createVec3i()));
+            //System.out.println(center.asCoords());
             GameConfig config = boxle.getGameConfig();
             int renderDistanceH = config.renderDistanceHorizontal;
             int renderDistanceV = config.renderDistanceVertical;
@@ -74,11 +76,16 @@ public class Server {
                             VecPool.free(center);
                             return;
                         }
-                        Vec3i newLoc = VecPool.getVec3i(center.x + x, center.y + y, center.z + z);  //don't free
-                        if (chunks.getChunk(newLoc) == null) {
+                        Vec3i newLoc = VecPool.getVec3i(center.x + x, center.y + y, center.z + z);
+                        Chunk chunk = chunks.getChunk(newLoc);
+                        if (chunk == null) {
                             loadedChunks++;
-                            world.loadOrGenerateChunk(newLoc);
+                            chunk = world.loadOrGenerateChunk(newLoc);
                         }
+                        if (chunk.isChanged()) {
+                            boxle.getRenderEngine().addChangedChunk(chunk);
+                        }
+                        VecPool.free(newLoc);
                     }
                 }
             }

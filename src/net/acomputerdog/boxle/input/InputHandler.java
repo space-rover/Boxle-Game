@@ -59,6 +59,10 @@ public class InputHandler implements ActionListener, AnalogListener {
         inputManager.addMapping("Move Down", new KeyTrigger(KeyInput.KEY_LSHIFT));
         inputManager.addMapping("Exit", new KeyTrigger(KeyInput.KEY_ESCAPE));
         inputManager.addMapping("Pause", new KeyTrigger(KeyInput.KEY_P));
+
+        inputManager.addMapping("Debug", new KeyTrigger(KeyInput.KEY_B));
+        inputManager.addListener(this, "Debug");
+
         inputManager.addListener(this, "Move Left", "Move Right", "Move Forward", "Move Back", "Move Up", "Move Down", "Exit", "Pause");
 
         AppStateManager stateManager = engine.getBoxle().getStateManager();
@@ -84,6 +88,8 @@ public class InputHandler implements ActionListener, AnalogListener {
             engine.getBoxle().stop();
         } else if ("Pause".equals(name) && !isPressed) {
             flyby.toggleMouseGrabbed();
+        } else if ("Debug".equals(name)) {
+            logger.logDebug("Player position: " + engine.getBoxle().getClient().getPlayer().getLocation().asCoords());
         }
     }
 

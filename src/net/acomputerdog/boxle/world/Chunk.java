@@ -10,7 +10,7 @@ import net.acomputerdog.boxle.world.structure.block.SimpleBlockStorage;
 /**
  * A 16 by 16 chunk of a world
  */
-public class Chunk {
+public class Chunk implements Comparable<Chunk> {
 
     /**
      * The axis-size of a chunk.
@@ -37,7 +37,7 @@ public class Chunk {
      */
     private final BlockStorage blocks;
 
-    private boolean isChanged = false;
+    private boolean isChanged = true;
 
     private final Node chunkNode;
 
@@ -57,6 +57,10 @@ public class Chunk {
         //blocks = new SingleArrayBlockStorage();
         chunkNode = new Node();
         chunkNode.setName("chunk@" + location.asCoords());
+        //if (location.x > 1 || location.x < -1 || location.y > 1 || location.y < -1 || location.z > 1 || location.z < -1) {
+        //    System.out.println("Invalid chunk: " + location.asCoords());
+        //    throw new RuntimeException("Invalid chunk!");
+        //}
     }
 
     /**
@@ -116,7 +120,7 @@ public class Chunk {
     }
 
     public void setChanged(boolean changed) {
-        System.out.println("Setting changed: " + changed + " on " + location.asCoords());
+        //System.out.println("Setting changed: " + changed + " on " + location.asCoords());
         this.isChanged = changed;
     }
 
@@ -138,5 +142,10 @@ public class Chunk {
     @Override
     public int hashCode() {
         return location.hashCode();
+    }
+
+    @Override
+    public int compareTo(Chunk o) {
+        return this.hashCode() - o.hashCode();
     }
 }

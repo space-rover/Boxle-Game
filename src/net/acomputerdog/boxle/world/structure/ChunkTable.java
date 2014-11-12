@@ -5,11 +5,12 @@ import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.world.Chunk;
 import net.acomputerdog.boxle.world.World;
 
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Holds chunks for a world.  Thread-safe.
@@ -22,7 +23,7 @@ public class ChunkTable {
     /**
      * List of all loaded chunks
      */
-    private final List<Chunk> chunkList;
+    private final Queue<Chunk> allChunks;
 
     /**
      * World that these chunks belong to
@@ -38,7 +39,7 @@ public class ChunkTable {
         if (world == null) throw new IllegalArgumentException("World cannot be null!");
         this.world = world;
         chunkLocMap = new ConcurrentHashMap<>(); //concurrent HashMap for thread safety
-        chunkList = new CopyOnWriteArrayList<>(); //thread-safe list implementation
+        allChunks = new ConcurrentLinkedQueue<>(); //thread-safe list implementation
     }
 
     /**
@@ -49,10 +50,10 @@ public class ChunkTable {
      */
     public Chunk addChunk(Chunk chunk) {
         if (chunk == null) throw new IllegalArgumentException("Chunk cannot be null!");
-        chunkList.add(chunk); //add chunk to list of all chunks
+        allChunks.add(chunk); //add chunk to list of all chunks
         Chunk oldChunk = chunkLocMap.put(chunk.getLocation(), chunk); //get existing chunk, or null
         if (oldChunk != null) {
-            chunkList.remove(oldChunk); //if chunk exists, remove from chunkList
+            allChunks.remove(oldChunk); //if chunk exists, remove from allChunks
         }
         return oldChunk;
     }
@@ -66,7 +67,7 @@ public class ChunkTable {
     public Chunk removeChunkAt(Vec3i loc) {
         Chunk chunk = chunkLocMap.remove(loc); //get existing chunk, or null
         if (chunk != null) {
-            chunkList.remove(chunk); //if chunk exists, remove from chunkList
+            allChunks.remove(chunk); //if chunk exists, remove from allChunks
         }
         return chunk;
     }
@@ -112,12 +113,12 @@ public class ChunkTable {
     }
 
     /**
-     * Get a list of all loaded chunks
+     * Get a set of all loaded chunks
      *
-     * @return Return a list of all loaded chunks
+     * @return Return a set of all loaded chunks
      */
-    public List<Chunk> getAllChunks() {
-        return Collections.unmodifiableList(chunkList);
+    public Collection<Chunk> getAllChunks() {
+        return Collections.unmodifiableCollection(allChunks);
     }
 
     /**

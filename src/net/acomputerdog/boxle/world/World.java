@@ -92,7 +92,6 @@ public class World {
             chunk = new Chunk(this, loc);
             generator.generateChunk(chunk);
             chunks.addChunk(chunk);
-            boxle.getRenderEngine().addChangedChunk(chunk);
         }
         VecPool.free(loc);
         return chunk;
