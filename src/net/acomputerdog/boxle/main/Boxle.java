@@ -62,6 +62,8 @@ public class Boxle extends SimpleApplication {
 
     private BoxleFlyByCamera boxleFlyCam;
 
+    private boolean hasStarted = false;
+
     /**
      * Creates a new Boxle instance
      */
@@ -119,6 +121,7 @@ public class Boxle extends SimpleApplication {
         player.setFlyby(boxleFlyCam);
 
         renderEngine.init();
+        hasStarted = true;
     }
 
     /**
@@ -154,8 +157,10 @@ public class Boxle extends SimpleApplication {
         LOGGER_MAIN.logInfo("Boxle is starting.");
         while (canRun) {
             long time = System.currentTimeMillis();
-            server.tick(); //todo separate thread
-            client.tick(); //todo separate thread
+            if (hasStarted) {
+                server.tick(); //todo separate thread
+                client.tick(); //todo separate thread
+            }
             ThreadUtils.sync(time, 50);
         }
         System.out.println("Stopping.");
