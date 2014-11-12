@@ -13,6 +13,7 @@ public class BlockDirt extends BlockSolid {
         super("dirt", boxle);
     }
 
+    /*
     @Override
     public BlockTex getTextures() {
         if (tex == null) {
@@ -26,4 +27,5 @@ public class BlockDirt extends BlockSolid {
         }
         return tex;
     }
+    */
 }

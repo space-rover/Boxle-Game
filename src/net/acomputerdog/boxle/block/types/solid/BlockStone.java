@@ -10,6 +10,7 @@ public class BlockStone extends BlockSolid {
         super("stone", boxle);
     }
 
+    /*
     @Override
     public BlockTex getTextures() {
         if (tex == null) {
@@ -23,4 +24,5 @@ public class BlockStone extends BlockSolid {
         }
         return tex;
     }
+    */
 }

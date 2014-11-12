@@ -4,7 +4,7 @@ import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.physics.PhysicsEngine;
-import net.acomputerdog.boxle.world.gen.DebugWorldGen;
+import net.acomputerdog.boxle.world.gen.AngleWorldGen;
 import net.acomputerdog.boxle.world.gen.WorldGen;
 import net.acomputerdog.boxle.world.structure.ChunkTable;
 
@@ -47,7 +47,8 @@ public class World {
         this.name = name;
         physicsEngine = new PhysicsEngine(this);
         chunks = new ChunkTable(this);
-        generator = new DebugWorldGen(this);
+        //generator = new DebugWorldGen(this);
+        generator = new AngleWorldGen();
     }
 
     /**
