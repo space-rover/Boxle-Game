@@ -50,7 +50,7 @@ public class GameConfig {
     /**
      * Render distance on the X and Z axises
      */
-    public int renderDistanceHorizontal = 5;
+    public int renderDistanceHorizontal = 7;
 
     /**
      * Render distance on the Y axis
@@ -59,7 +59,7 @@ public class GameConfig {
 
     public int maxLoadedChunksPerTick = 200;
 
-    public int maxRenderedChunksPerFrame = 100;
+    public int notifyNeighborsMode = 0; //0=only adjacent neighbors, 1=adjacent+"edge" neighbors, 2=adjacent+edge+"corner" neighbors, 3=adjacent+edge+corner+another layer of adjacent, -1=NO notifications
 
     /**
      * Creates a new config for the given boxle instance.

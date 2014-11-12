@@ -209,13 +209,51 @@ public class Server {
         }
         GeometryBatchFactory.optimize(node); //enhance!
         if (notifyNeighbors) {
-            ChunkTable chunks = chunk.getWorld().getChunks();
-            notifyNeighbor(cLoc, 1, 0, 0, chunks);
-            notifyNeighbor(cLoc, -1, 0, 0, chunks);
-            notifyNeighbor(cLoc, 0, 1, 0, chunks);
-            notifyNeighbor(cLoc, 0, -1, 0, chunks);
-            notifyNeighbor(cLoc, 0, 0, 1, chunks);
-            notifyNeighbor(cLoc, 0, 0, -1, chunks);
+            if (config.notifyNeighborsMode >= 0) {
+                ChunkTable chunks = chunk.getWorld().getChunks();
+                //immediate neighbors
+                notifyNeighbor(cLoc, 1, 0, 0, chunks);
+                notifyNeighbor(cLoc, -1, 0, 0, chunks);
+                notifyNeighbor(cLoc, 0, 1, 0, chunks);
+                notifyNeighbor(cLoc, 0, -1, 0, chunks);
+                notifyNeighbor(cLoc, 0, 0, 1, chunks);
+                notifyNeighbor(cLoc, 0, 0, -1, chunks);
+                if (config.notifyNeighborsMode >= 1) {
+                    //edges
+                    notifyNeighbor(cLoc, 1, 1, 0, chunks);
+                    notifyNeighbor(cLoc, 1, -1, 0, chunks);
+                    notifyNeighbor(cLoc, -1, 1, 0, chunks);
+                    notifyNeighbor(cLoc, -1, -1, 0, chunks);
+                    notifyNeighbor(cLoc, 1, 0, 1, chunks);
+                    notifyNeighbor(cLoc, 1, 0, -1, chunks);
+                    notifyNeighbor(cLoc, -1, 0, 1, chunks);
+                    notifyNeighbor(cLoc, 1, 0, -1, chunks);
+                    notifyNeighbor(cLoc, 0, 1, 1, chunks);
+                    notifyNeighbor(cLoc, 0, -1, 1, chunks);
+                    notifyNeighbor(cLoc, 0, 1, -1, chunks);
+                    notifyNeighbor(cLoc, 0, -1, -1, chunks);
+                    if (config.notifyNeighborsMode >= 2) {
+                        //corners
+                        notifyNeighbor(cLoc, 1, 1, 1, chunks);
+                        notifyNeighbor(cLoc, 1, 1, -1, chunks);
+                        notifyNeighbor(cLoc, -1, 1, 1, chunks);
+                        notifyNeighbor(cLoc, -1, 1, -1, chunks);
+                        notifyNeighbor(cLoc, 1, -1, 1, chunks);
+                        notifyNeighbor(cLoc, 1, -1, -1, chunks);
+                        notifyNeighbor(cLoc, -1, -1, 1, chunks);
+                        notifyNeighbor(cLoc, -1, -1, -1, chunks);
+                        if (config.notifyNeighborsMode >= 3) {
+                            //2nd layer immediates
+                            notifyNeighbor(cLoc, 2, 0, 0, chunks);
+                            notifyNeighbor(cLoc, -2, 0, 0, chunks);
+                            notifyNeighbor(cLoc, 0, 2, 0, chunks);
+                            notifyNeighbor(cLoc, 0, -2, 0, chunks);
+                            notifyNeighbor(cLoc, 0, 0, 2, chunks);
+                            notifyNeighbor(cLoc, 0, 0, -2, chunks);
+                        }
+                    }
+                }
+            }
             /*
             for (int x = -1; x <= 1; x++) {
                 for (int y = -1; y <= 1; y++) {
