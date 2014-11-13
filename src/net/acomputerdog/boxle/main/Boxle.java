@@ -112,6 +112,9 @@ public class Boxle extends SimpleApplication {
 
     @Override
     public void simpleInitApp() {
+        cam.setFrustumPerspective(gameConfig.fov, (float) gameConfig.screenWidth / (float) gameConfig.screenHeight, .2f, 1000f);
+        cam.update();
+
         boxleFlyCam = new BoxleFlyByCamera(cam);
         flyCam = boxleFlyCam;
         boxleFlyCam.registerWithInput(inputManager);

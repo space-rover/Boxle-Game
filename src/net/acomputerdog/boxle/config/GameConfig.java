@@ -25,12 +25,12 @@ public class GameConfig {
     /**
      * Screen width
      */
-    public int screenWidth = 800;
+    public int screenWidth = 1280;
 
     /**
      * Screen height
      */
-    public int screenHeight = 600;
+    public int screenHeight = 720;
 
     /**
      * If true, limit FPS to screen refresh rate.
@@ -40,7 +40,7 @@ public class GameConfig {
     /**
      * Field of view
      */
-    public float fov = 60.0f;
+    public float fov = 45.0f;
 
     /**
      * If true, game will run in fullscreen mode
