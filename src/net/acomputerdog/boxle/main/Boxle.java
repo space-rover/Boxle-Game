@@ -1,6 +1,7 @@
 package net.acomputerdog.boxle.main;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.math.ColorRGBA;
 import com.jme3.system.AppSettings;
 import net.acomputerdog.boxle.config.GameConfig;
 import net.acomputerdog.boxle.entity.types.EntityPlayer;
@@ -122,6 +123,10 @@ public class Boxle extends SimpleApplication {
         EntityPlayer player = client.getPlayer();
         boxleFlyCam.setPlayer(player);
         player.setFlyby(boxleFlyCam);
+
+        super.setPauseOnLostFocus(false);
+
+        getViewPort().setBackgroundColor(new ColorRGBA(.25f, .5f, 1f, 1f));
 
         renderEngine.init();
         hasStarted = true;

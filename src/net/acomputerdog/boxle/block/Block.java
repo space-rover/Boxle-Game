@@ -24,7 +24,7 @@ public abstract class Block {
      * @param name  The name of this block.
      * @param boxle
      */
-    protected Block(String name, Boxle boxle) {
+    public Block(String name, Boxle boxle) {
         this.boxle = boxle;
         if (name == null) throw new IllegalArgumentException("Block name cannot be null!");
         this.name = name;

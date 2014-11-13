@@ -11,7 +11,7 @@ public abstract class BlockSolid extends BlockConfigurable {
      *
      * @param name The name of this block.
      */
-    protected BlockSolid(String name, Boxle boxle) {
+    public BlockSolid(String name, Boxle boxle) {
         super(name, boxle);
         super.setBlocksMovement(true);
         super.setTransparent(false);

@@ -1,9 +1,7 @@
 package net.acomputerdog.boxle.block;
 
 import net.acomputerdog.boxle.block.types.nonsolid.BlockAir;
-import net.acomputerdog.boxle.block.types.solid.BlockDirt;
-import net.acomputerdog.boxle.block.types.solid.BlockGrass;
-import net.acomputerdog.boxle.block.types.solid.BlockStone;
+import net.acomputerdog.boxle.block.types.solid.*;
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.core.logger.CLogger;
 
@@ -31,6 +29,8 @@ public class Blocks {
     public static final BlockDirt dirt = new BlockDirt(boxle);
     public static final BlockStone stone = new BlockStone(boxle);
     public static final BlockGrass grass = new BlockGrass(boxle);
+    public static final BlockSteel steel = new BlockSteel(boxle);
+    public static final BlockGrassySteel grassySteel = new BlockGrassySteel(boxle);
 
     /**
      * Registers a block into the registry

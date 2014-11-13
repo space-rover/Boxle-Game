@@ -23,7 +23,7 @@ public abstract class BlockConfigurable extends Block {
      *
      * @param name The name of this block.
      */
-    protected BlockConfigurable(String name, Boxle boxle) {
+    public BlockConfigurable(String name, Boxle boxle) {
         super(name, boxle);
     }
 

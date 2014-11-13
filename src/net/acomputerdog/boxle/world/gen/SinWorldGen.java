@@ -1,6 +1,6 @@
 package net.acomputerdog.boxle.world.gen;
 
-public class SinWorldGen extends AbstractWorldGen {
+public class SinWorldGen extends SimpleWorldGen {
 
     @Override
     public int getGroundHeight(int x, int y) {

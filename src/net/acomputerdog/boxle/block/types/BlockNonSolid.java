@@ -11,7 +11,7 @@ public abstract class BlockNonSolid extends BlockConfigurable {
      *
      * @param name The name of this block.
      */
-    protected BlockNonSolid(String name, Boxle boxle) {
+    public BlockNonSolid(String name, Boxle boxle) {
         super(name, boxle);
         super.setBlocksMovement(false);
         super.setTransparent(true);
