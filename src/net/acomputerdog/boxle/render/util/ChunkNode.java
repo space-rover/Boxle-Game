@@ -11,7 +11,6 @@ public class ChunkNode extends Node implements Comparable<Node> {
     @Override
     public int hashCode() {
         return this.name.hashCode();
-        //return super.hashCode();
     }
 
     @Override
@@ -20,7 +19,6 @@ public class ChunkNode extends Node implements Comparable<Node> {
         if (obj == this) return true;
         if (!(obj instanceof ChunkNode)) return false;
         return this.name.equals(((ChunkNode) obj).getName());
-        //return this == obj;
     }
 
     @Override

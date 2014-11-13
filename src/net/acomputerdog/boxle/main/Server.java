@@ -90,12 +90,12 @@ public class Server {
         rebuildNeighborChunks();
         rebuildChangedChunks();
         unloadExtraChunks();
-        /*
-        if (numChunks > 0) {
+
+        if (config.outputRenderDebugInfo && numChunks > 0) {
             long newTime = System.currentTimeMillis();
             logger.logDetail("Built " + numChunks + " chunk meshes from " + numFaces + " faces and unloaded " + numUnload + " chunks in " + ((newTime - oldTime) / 1000f) + " seconds.");
         }
-        */
+
     }
 
     private void unloadExtraChunks() {
@@ -139,7 +139,6 @@ public class Server {
         World world = player.getWorld();
         ChunkTable chunks = world.getChunks();
         Vec3i center = CoordConverter.globalToChunk(VecConverter.vec3iFromVec3f(player.getLocation(), VecPool.createVec3i()));
-        //System.out.println(center.asCoords());
         GameConfig config = boxle.getGameConfig();
         chunkLimitReached:
         for (int y = -renderDistanceV; y <= renderDistanceV; y++) {
@@ -176,7 +175,6 @@ public class Server {
     public void buildChunk(Chunk chunk, Node node, boolean notifyNeighbors) {
         chunk.setChanged(false);
         Vec3i cLoc = chunk.getLocation();
-        //System.out.println("Building chunk at " + cLoc.asCoords());
         Vec3i gLoc = CoordConverter.chunkToGlobal(cLoc.duplicate());
         BlockStorage storage = chunk.getBlocks();
         for (int x = 0; x < chunkSize; x++) {
@@ -254,24 +252,6 @@ public class Server {
                     }
                 }
             }
-            /*
-            for (int x = -1; x <= 1; x++) {
-                for (int y = -1; y <= 1; y++) {
-                    for (int z = -1; z <= 1; z++) {
-                        if (!(x == 0 && y == 0 && z == 0)) {
-                            Chunk nChunk = chunks.getChunk(x + cLoc.x, y + cLoc.y, z + cLoc.z);
-                            if (nChunk != null) {
-                                if (!changedChunks.contains(nChunk)) {
-                                    buildChunk(nChunk, false);
-                                    nChunk.setChanged(false);
-                                    changedChunks.remove(nChunk);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            */
         }
         VecPool.free(cLoc);
         VecPool.free(gLoc);
@@ -280,7 +260,6 @@ public class Server {
     private void notifyNeighbor(Vec3i cLoc, int x, int y, int z, ChunkTable chunks) {
         Chunk nChunk = chunks.getChunk(x + cLoc.x, y + cLoc.y, z + cLoc.z);
         if (nChunk != null && !rebuildChunks.contains(nChunk)) {
-            //buildChunk(nChunk, false);
             rebuildChunks.add(nChunk);
             nChunk.setChanged(false);
         }
@@ -303,12 +282,12 @@ public class Server {
 
     private Chunk findNeighborChunk(int x, int y, int z, Chunk currChunk) {
         Vec3i loc = currChunk.getLocation();
-        if (x >= chunkSize) loc.x += 1; //x - chunkSize;
-        if (x < 0) loc.x -= 1; //0 - x;
-        if (y >= chunkSize) loc.y += 1; //y - chunkSize;
-        if (y < 0) loc.y -= 1; //0 - y;
-        if (z >= chunkSize) loc.z += 1; //z - chunkSize;
-        if (z < 0) loc.z -= 1; //0 - z;
+        if (x >= chunkSize) loc.x += 1;
+        if (x < 0) loc.x -= 1;
+        if (y >= chunkSize) loc.y += 1;
+        if (y < 0) loc.y -= 1;
+        if (z >= chunkSize) loc.z += 1;
+        if (z < 0) loc.z -= 1;
         Chunk newChunk = currChunk.getWorld().getChunks().getChunk(loc);
         VecPool.free(loc);
         return newChunk;
@@ -337,14 +316,6 @@ public class Server {
         } else {
             vec.z = z;
         }
-        /*
-        vec.x = (x >= chunkSize) ? 0 : x;
-        vec.x = (x < 0) ? 15 : x;
-        vec.y = (y >= chunkSize) ? 0 : y;
-        vec.y = (y < 0) ? 15 : y;
-        vec.z = (z >= chunkSize) ? 0 : z;
-        vec.z = (z < 0) ? 15 : z;
-        */
         return vec;
     }
 

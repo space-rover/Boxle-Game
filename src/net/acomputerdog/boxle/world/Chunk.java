@@ -52,14 +52,8 @@ public class Chunk implements Comparable<Chunk> {
         if (location == null) throw new IllegalArgumentException("Location cannot be null!");
         this.world = world;
         this.location = VecPool.createVec3i(location); //new one needed for hashing stuff
-        //blocks = new BlockStorage(Chunk.CHUNK_SIZE);
         blocks = new SimpleBlockStorage();
         chunkNode = new ChunkNode("chunk@" + location.asCoords());
-        //blocks = new SingleArrayBlockStorage();
-        //if (location.x > 1 || location.x < -1 || location.y > 1 || location.y < -1 || location.z > 1 || location.z < -1) {
-        //    System.out.println("Invalid chunk: " + location.asCoords());
-        //    throw new RuntimeException("Invalid chunk!");
-        //}
     }
 
     /**
@@ -119,7 +113,6 @@ public class Chunk implements Comparable<Chunk> {
     }
 
     public void setChanged(boolean changed) {
-        //System.out.println("Setting changed: " + changed + " on " + location.asCoords());
         this.isChanged = changed;
     }
 

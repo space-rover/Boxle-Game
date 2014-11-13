@@ -44,9 +44,6 @@ public class RenderEngine {
 
     private final Set<ChunkNode> addNodes = new ConcurrentSkipListSet<>();
     private final Set<ChunkNode> removeNodes = new ConcurrentSkipListSet<>();
-    //Material grass;
-    //Material stone;
-    //Material dirt;
 
     /**
      * Creates a new instance of this RenderEngine.
@@ -68,41 +65,18 @@ public class RenderEngine {
         worldNode.attachChild(terrainNode);
 
         input.init();
-        //AssetManager manager = boxle.getAssetManager();
-
-        //grass = Blocks.grass.getTextures().getTopMat();
-        //dirt = Blocks.dirt.getTextures().getFrontMat();
-        //stone = Blocks.stone.getTextures().getFrontMat();
-
-        //tempLoadLevel();
     }
 
     public void render() {
-        int renderedChunks = 0;
         for (ChunkNode node : removeNodes) {
-            /*
-            if (renderedChunks > config.maxRenderedChunksPerFrame) {
-                return;
-            }
-            */
-            renderedChunks++;
-            //System.out.println("Node " + node.getName() + "'s parent is: " + (node.getParent() == null ? "NULL" : node.getParent().getName()));
             removeNodes.remove(node);
             terrainNode.detachChild(node);
         }
         for (ChunkNode node : addNodes) {
-            /*
-            if (renderedChunks > config.maxRenderedChunksPerFrame) {
-                return;
-            }
-            */
-            renderedChunks++;
             addNodes.remove(node);
             terrainNode.attachChild(node);
         }
     }
-
-
 
 
     /**

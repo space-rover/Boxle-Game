@@ -10,15 +10,15 @@ public class ThreadVecPool {
     private final List<Vec2f> vec2fs = new LinkedList<>();
 
     Vec3i getVec3i() {
-        //if (vec3is.size() > 0) {
-        //    return vec3is.remove(0);
-        //}
+        if (vec3is.size() > 0) {
+            return vec3is.remove(0);
+        }
         return new Vec3i();
     }
 
     void addVec3i(Vec3i vec) {
         if (vec != null) {
-            //vec3is.add(vec);
+            vec3is.add(vec);
         }
     }
 

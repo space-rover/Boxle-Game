@@ -69,18 +69,6 @@ public class Boxle extends SimpleApplication {
      * Creates a new Boxle instance
      */
     private Boxle() {
-        /*
-        new Thread() {
-            @Override
-            public void run() {
-                while (true) {
-                    VecPool.printSizes();
-                    ThreadUtils.sleep(1000);
-                }
-            }
-        }.start();
-        */
-        //ThreadUtils.sleep(20000);
         if (instance != null) {
             throw new IllegalStateException("Multiple Boxles cannot be created!");
         }

@@ -61,6 +61,8 @@ public class GameConfig {
 
     public int notifyNeighborsMode = 0; //0=only adjacent neighbors, 1=adjacent+"edge" neighbors, 2=adjacent+edge+"corner" neighbors, 3=adjacent+edge+corner+another layer of adjacent, -1=NO notifications
 
+    public boolean outputRenderDebugInfo = false;
+
     /**
      * Creates a new config for the given boxle instance.
      *

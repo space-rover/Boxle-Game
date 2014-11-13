@@ -11,8 +11,8 @@ public class SimplexWorldGen extends SimpleWorldGen {
 
     @Override
     public int getGroundHeight(int x, int y) {
-        //return (int)Math.floor(simplex.eval(x / 20d, y / 20d) * 10d);
-        //return (int)Math.floor(simplex.eval(x / 50d, y / 50d) * 10d);
+        //Alternate mode: return (int)Math.floor(simplex.eval(x / 20d, y / 20d) * 10d);
+        //Alternate mode: return (int)Math.floor(simplex.eval(x / 50d, y / 50d) * 10d);
         return (int) Math.floor(simplex.eval(x / 50d, y / 50d) * 20d);
     }
 
