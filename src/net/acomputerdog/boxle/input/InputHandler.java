@@ -59,11 +59,12 @@ public class InputHandler implements ActionListener, AnalogListener {
         inputManager.addMapping("Move Down", new KeyTrigger(KeyInput.KEY_LSHIFT));
         inputManager.addMapping("Exit", new KeyTrigger(KeyInput.KEY_ESCAPE));
         inputManager.addMapping("Pause", new KeyTrigger(KeyInput.KEY_P));
+        inputManager.addMapping("Sprint", new KeyTrigger(KeyInput.KEY_R));
 
         inputManager.addMapping("Debug", new KeyTrigger(KeyInput.KEY_B));
         inputManager.addListener(this, "Debug");
 
-        inputManager.addListener(this, "Move Left", "Move Right", "Move Forward", "Move Back", "Move Up", "Move Down", "Exit", "Pause");
+        inputManager.addListener(this, "Move Left", "Move Right", "Move Forward", "Move Back", "Move Up", "Move Down", "Exit", "Pause", "Sprint");
 
         AppStateManager stateManager = engine.getBoxle().getStateManager();
         stateManager.detach(stateManager.getState(FlyCamAppState.class));
@@ -90,6 +91,8 @@ public class InputHandler implements ActionListener, AnalogListener {
             flyby.toggleMouseGrabbed();
         } else if ("Debug".equals(name)) {
             logger.logDebug("Player position: " + engine.getBoxle().getClient().getPlayer().getLocation().asCoords());
+        } else if ("Sprint".equals(name)) {
+            flyby.setMoveSpeed(isPressed ? 2f : 1f);
         }
     }
 
