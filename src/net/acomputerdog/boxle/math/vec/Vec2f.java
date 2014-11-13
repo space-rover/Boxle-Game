@@ -70,6 +70,10 @@ public class Vec2f {
         return VecPool.copy(this);
     }
 
+    public Vec2f copy() {
+        return VecPool.createVec2f(this);
+    }
+
     public String asCoords() {
         return x + "," + y;
     }

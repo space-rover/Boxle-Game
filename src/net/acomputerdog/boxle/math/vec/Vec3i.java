@@ -84,6 +84,10 @@ public class Vec3i {
         return VecPool.copy(this);
     }
 
+    public Vec3i copy() {
+        return VecPool.createVec3i(this);
+    }
+
     public String asCoords() {
         return x + "," + y + "," + z;
     }

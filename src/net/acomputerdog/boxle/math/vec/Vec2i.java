@@ -70,6 +70,10 @@ public class Vec2i {
         return VecPool.copy(this);
     }
 
+    public Vec2i copy() {
+        return VecPool.createVec2i(this);
+    }
+
     public String asCoords() {
         return x + "," + y;
     }
