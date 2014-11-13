@@ -86,9 +86,14 @@ public class BoxleFlyByCamera extends FlyByCamera {
         cam.setLocation(pos);
     }
 
+    @Override
+    public void setEnabled(boolean enable) {
+        enabled = enable;
+        inputManager.setCursorVisible(!enable);
+    }
+
     public void toggleMouseGrabbed() {
-        enabled = !enabled;
-        inputManager.setCursorVisible(!enabled);
+        setEnabled(!enabled);
     }
 
     public EntityPlayer getPlayer() {

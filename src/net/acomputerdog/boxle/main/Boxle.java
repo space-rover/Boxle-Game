@@ -281,4 +281,16 @@ public class Boxle extends SimpleApplication {
     public BoxleFlyByCamera getBoxleFlyCam() {
         return boxleFlyCam;
     }
+
+    @Override
+    public void gainFocus() {
+        super.gainFocus();
+        boxleFlyCam.setEnabled(true);
+    }
+
+    @Override
+    public void loseFocus() {
+        super.loseFocus();
+        boxleFlyCam.setEnabled(false);
+    }
 }
