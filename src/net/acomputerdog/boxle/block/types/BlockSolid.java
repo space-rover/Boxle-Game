@@ -13,7 +13,7 @@ public abstract class BlockSolid extends BlockConfigurable {
      */
     public BlockSolid(String name, Boxle boxle) {
         super(name, boxle);
-        super.setBlocksMovement(true);
+        super.setCollidable(true);
         super.setTransparent(false);
         super.setLightReduction((byte) 255);
     }

@@ -1,6 +1,7 @@
 package net.acomputerdog.boxle.block;
 
 import net.acomputerdog.boxle.main.Boxle;
+import net.acomputerdog.boxle.math.aabb.AABBF;
 import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.world.World;
 
@@ -18,6 +19,7 @@ public abstract class Block {
 
     private BlockTex tex;
 
+    private final AABBF bounds;
     /**
      * Creates a new Block
      *
@@ -29,6 +31,7 @@ public abstract class Block {
         if (name == null) throw new IllegalArgumentException("Block name cannot be null!");
         this.name = name;
         Blocks.registerBlock(this);
+        bounds = new AABBF(0f, 0f, 0f, 1f, 1f, 1f);
     }
 
     /**
@@ -121,7 +124,7 @@ public abstract class Block {
      *
      * @return Return true if the block can be collided with, false otherwise.
      */
-    public boolean blocksMovement() {
+    public boolean isCollidable() {
         return true;
     }
 
@@ -154,6 +157,10 @@ public abstract class Block {
 
     public boolean isRenderable() {
         return true;
+    }
+
+    public AABBF getBlockBounds() {
+        return bounds;
     }
 
     public BlockTex getTextures() {

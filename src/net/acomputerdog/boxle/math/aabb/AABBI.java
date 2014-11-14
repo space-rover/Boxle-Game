@@ -17,8 +17,18 @@ public class AABBI {
     }
 
     public AABBI(Vec3i corner1, Vec3i corner2) {
-        this.corner1 = corner1.copy();
-        this.corner2 = corner2.copy();
+        this(corner1.x, corner1.y, corner1.z, corner2.x, corner2.y, corner2.z);
+    }
+
+    public AABBI(int x1, int y1, int z1, int x2, int y2, int z2) {
+        this.corner1 = VecPool.createVec3i();
+        this.corner2 = VecPool.createVec3i();
+        corner1.x = x1;
+        corner2.x = x2;
+        corner1.y = y1;
+        corner2.y = y2;
+        corner1.z = z1;
+        corner2.z = z2;
         center = VecPool.createVec3i();
         sortCorners();
         calculateDims();

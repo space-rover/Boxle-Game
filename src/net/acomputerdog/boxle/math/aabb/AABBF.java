@@ -17,8 +17,18 @@ public class AABBF {
     }
 
     public AABBF(Vec3f corner1, Vec3f corner2) {
-        this.corner1 = corner1.copy();
-        this.corner2 = corner2.copy();
+        this(corner1.x, corner1.y, corner1.z, corner2.x, corner2.y, corner2.z);
+    }
+
+    public AABBF(float x1, float y1, float z1, float x2, float y2, float z2) {
+        this.corner1 = VecPool.createVec3f();
+        this.corner2 = VecPool.createVec3f();
+        corner1.x = x1;
+        corner2.x = x2;
+        corner1.y = y1;
+        corner2.y = y2;
+        corner1.z = z1;
+        corner2.z = z2;
         center = VecPool.createVec3f();
         sortCorners();
         calculateDims();

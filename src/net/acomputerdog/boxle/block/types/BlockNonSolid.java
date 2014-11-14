@@ -13,7 +13,7 @@ public abstract class BlockNonSolid extends BlockConfigurable {
      */
     public BlockNonSolid(String name, Boxle boxle) {
         super(name, boxle);
-        super.setBlocksMovement(false);
+        super.setCollidable(false);
         super.setTransparent(true);
         super.setLightReduction((byte) 0);
     }

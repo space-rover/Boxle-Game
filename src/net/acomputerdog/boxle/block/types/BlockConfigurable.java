@@ -2,6 +2,7 @@ package net.acomputerdog.boxle.block.types;
 
 import net.acomputerdog.boxle.block.Block;
 import net.acomputerdog.boxle.main.Boxle;
+import net.acomputerdog.boxle.math.aabb.AABBF;
 
 /**
  * Abstract block subclass that adds methods and fields for values such as strength,, resitance, light value, etc.
@@ -12,11 +13,12 @@ public abstract class BlockConfigurable extends Block {
     private float explosionResistance = 1.0f;
     private float strength = 100f;
     private float hardness = .1f;
-    private boolean blocksMovement = true;
+    private boolean isCollidable = true;
     private boolean isTransparent = false;
     private byte lightReduction = (byte) 255;
     private byte lightOutput = 0;
     private boolean renderable = true;
+    private AABBF bounds;
 
     /**
      * Creates a new Block
@@ -25,6 +27,7 @@ public abstract class BlockConfigurable extends Block {
      */
     public BlockConfigurable(String name, Boxle boxle) {
         super(name, boxle);
+        bounds = super.getBlockBounds();
     }
 
     @Override
@@ -53,8 +56,8 @@ public abstract class BlockConfigurable extends Block {
     }
 
     @Override
-    public boolean blocksMovement() {
-        return blocksMovement;
+    public boolean isCollidable() {
+        return isCollidable;
     }
 
     @Override
@@ -77,6 +80,11 @@ public abstract class BlockConfigurable extends Block {
         return renderable;
     }
 
+    @Override
+    public AABBF getBlockBounds() {
+        return bounds;
+    }
+
     public void setBreakable(boolean isBreakable) {
         this.isBreakable = isBreakable;
     }
@@ -97,8 +105,8 @@ public abstract class BlockConfigurable extends Block {
         this.hardness = hardness;
     }
 
-    public void setBlocksMovement(boolean blocksMovement) {
-        this.blocksMovement = blocksMovement;
+    public void setCollidable(boolean collidable) {
+        this.isCollidable = collidable;
     }
 
     public void setTransparent(boolean isTransparent) {
@@ -115,5 +123,9 @@ public abstract class BlockConfigurable extends Block {
 
     public void setRenderable(boolean renderable) {
         this.renderable = renderable;
+    }
+
+    public void setBounds(AABBF bounds) {
+        this.bounds = bounds;
     }
 }
