@@ -9,7 +9,7 @@ public enum BlockFace {
     RIGHT(0, 0, 0, 0, FastMath.PI / 2, 0),
     LEFT(-1f, 0, -1f, 0, -(FastMath.PI / 2), 0),
     TOP(-1, 1f, 0, -(FastMath.PI / 2), 0f, 0f),
-    BOTTOM(-1, -1f, 0, (FastMath.PI / 2), 0f, 0f);
+    BOTTOM(-1, 0, -1, (FastMath.PI / 2), 0f, 0f);
 
     public final float xPos;
     public final float yPos;

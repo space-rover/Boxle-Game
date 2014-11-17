@@ -1,7 +1,11 @@
 package net.acomputerdog.boxle.world;
 
+import net.acomputerdog.boxle.block.Block;
+import net.acomputerdog.boxle.block.Blocks;
 import net.acomputerdog.boxle.main.Boxle;
+import net.acomputerdog.boxle.math.loc.CoordConverter;
 import net.acomputerdog.boxle.math.vec.Vec3i;
+import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.physics.PhysicsEngine;
 import net.acomputerdog.boxle.render.util.ChunkNode;
 import net.acomputerdog.boxle.world.gen.CachingWorldGen;
@@ -115,5 +119,42 @@ public class World {
         if (oldNode.getParent() != null) {
             boxle.getRenderEngine().removeNode(oldNode);
         }
+    }
+
+    public Block getBlockAt(int x, int y, int z) {
+        Vec3i vec = VecPool.getVec3i(x, y, z);
+        Block block = getBlockAt(vec);
+        VecPool.free(vec);
+        return block;
+    }
+
+    public Block getBlockAt(Vec3i loc) {
+        Vec3i cLoc = CoordConverter.globalToChunk(loc.duplicate());
+        Chunk chunk = chunks.getChunk(cLoc);
+        Block block = null;
+        if (chunk != null) {
+            Vec3i bLoc = CoordConverter.globalToBlock(loc.duplicate());
+            block = chunk.getBlockAt(bLoc);
+            VecPool.free(bLoc);
+        }
+        VecPool.free(cLoc);
+        return block == null ? Blocks.air : block;
+    }
+
+    public void setBlockAt(int x, int y, int z, Block block) {
+        Vec3i vec = VecPool.getVec3i(x, y, z);
+        setBlockAt(vec, block);
+        VecPool.free(vec);
+    }
+
+    public void setBlockAt(Vec3i loc, Block block) {
+        Vec3i cLoc = CoordConverter.globalToChunk(loc.duplicate());
+        Chunk chunk = chunks.getChunk(cLoc);
+        if (chunk != null) {
+            Vec3i bLoc = CoordConverter.globalToBlock(loc.duplicate());
+            chunk.setBlockAt(bLoc, block);
+            VecPool.free(bLoc);
+        }
+        VecPool.free(cLoc);
     }
 }

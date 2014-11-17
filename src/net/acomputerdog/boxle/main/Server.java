@@ -323,7 +323,7 @@ public class Server {
         numFaces++;
         Geometry geom = new Geometry("face", new Quad(1f, 1f));
         geom.setMaterial(tex.getFaceMat(face));
-        geom.setLocalTranslation(cLoc.x + x + face.xPos, cLoc.y + y + face.yPos, cLoc.z + z + face.zPos);
+        geom.setLocalTranslation(cLoc.x + x + face.xPos + 1, cLoc.y + y + face.yPos, cLoc.z + z + face.zPos + 1);
         geom.rotate(face.xRot, face.yRot, face.zRot);
         geom.updateModelBound();
         node.attachChild(geom);

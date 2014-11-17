@@ -63,6 +63,8 @@ public class GameConfig {
 
     public boolean outputRenderDebugInfo = false;
 
+    public int ticksPerSecond = 50;
+
     /**
      * Creates a new config for the given boxle instance.
      *

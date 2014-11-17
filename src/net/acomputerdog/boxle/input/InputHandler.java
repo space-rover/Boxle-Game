@@ -8,8 +8,15 @@ import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.renderer.Camera;
+import net.acomputerdog.boxle.block.Blocks;
+import net.acomputerdog.boxle.entity.types.EntityPlayer;
+import net.acomputerdog.boxle.math.loc.CoordConverter;
+import net.acomputerdog.boxle.math.vec.Vec3i;
+import net.acomputerdog.boxle.math.vec.VecConverter;
+import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.render.engine.RenderEngine;
 import net.acomputerdog.boxle.render.util.BoxleFlyByCamera;
+import net.acomputerdog.boxle.world.World;
 import net.acomputerdog.core.logger.CLogger;
 
 /**
@@ -89,8 +96,15 @@ public class InputHandler implements ActionListener, AnalogListener {
             engine.getBoxle().stop();
         } else if ("Pause".equals(name) && !isPressed) {
             flyby.toggleMouseGrabbed();
-        } else if ("Debug".equals(name)) {
-            logger.logDebug("Player position: " + engine.getBoxle().getClient().getPlayer().getLocation().asCoords());
+        } else if ("Debug".equals(name) && !isPressed) {
+            EntityPlayer player = engine.getBoxle().getClient().getPlayer();
+            Vec3i pLoc = VecConverter.vec3iFromVec3f(player.getLocation());
+            logger.logDebug("Player position: " + pLoc.asCoords() + " OR " + CoordConverter.globalToChunk(pLoc.duplicate()).asCoords() + "/" + CoordConverter.globalToBlock(pLoc.duplicate()));
+            World world = player.getWorld();
+            world.setBlockAt(pLoc, Blocks.acomputerdog);
+            pLoc.y -= 1;
+            world.setBlockAt(pLoc, Blocks.seamusFD);
+            VecPool.free(pLoc);
         } else if ("Sprint".equals(name)) {
             flyby.setMoveSpeed(isPressed ? 2f : 1f);
         }

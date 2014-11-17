@@ -5,6 +5,7 @@ import net.acomputerdog.boxle.block.Blocks;
 import net.acomputerdog.boxle.world.Chunk;
 import net.acomputerdog.boxle.world.structure.BlockStorage;
 
+@Deprecated
 /**
  * Class used to hold blocks for a Chunk.
  * Not yet thread-safe!
@@ -64,6 +65,11 @@ public class SquaresBlockStorage implements BlockStorage {
         int indexZ = findIndex(z, blockArray[0][0].length);
         Block block = blockArray[indexX][indexY][indexZ];
         return block == null ? Blocks.air : block;
+    }
+
+    @Override
+    public void clear(Block block) {
+
     }
 
     /**

@@ -157,7 +157,7 @@ public class Boxle extends SimpleApplication {
                 server.tick(); //todo separate thread
                 client.tick(); //todo separate thread
             }
-            ThreadUtils.sync(time, 50);
+            ThreadUtils.sync(time, 1000 / gameConfig.ticksPerSecond);
         }
         System.out.println("Stopping.");
         cleanup();

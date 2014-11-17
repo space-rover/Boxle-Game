@@ -13,10 +13,32 @@ public class CoordConverter {
         return global;
     }
 
+    public static Vec3i globalToBlock(Vec3i global) {
+        global.x = globalToBlock(global.x);
+        global.y = globalToBlock(global.y);
+        global.z = globalToBlock(global.z);
+        return global;
+    }
+
+    public static int globalToBlock(int global) {
+        if (global >= 0) {
+            return global % chunkSize;
+        } else {
+            return chunkSize - 1 + ((global + 1) % chunkSize);
+        }
+
+    }
+
     public static Vec3i chunkToGlobal(Vec3i chunk) {
         chunk.x *= chunkSize;
         chunk.y *= chunkSize;
         chunk.z *= chunkSize;
         return chunk;
+    }
+
+    public static void main(String[] args) {
+        for (int x = -35; x <= 20; x++) {
+            System.out.println(x + " -> " + globalToBlock(x));
+        }
     }
 }

@@ -25,6 +25,10 @@ public class CellsWorldGen extends AbstractWorldGen {
         chunk.setChanged(true);
         Vec3i cLoc = chunk.getLocation();
         int chunkY = cLoc.y * chunkSize;
+        if (chunkY + chunkSize < 0) {
+            chunk.clear(Blocks.steel);
+            return;
+        }
         int chunkX = cLoc.x * chunkSize;
         int chunkZ = cLoc.z * chunkSize;
         for (int x = 0; x < chunkSize; x++) {

@@ -5,6 +5,7 @@ import net.acomputerdog.boxle.block.Blocks;
 import net.acomputerdog.boxle.world.Chunk;
 import net.acomputerdog.boxle.world.structure.BlockStorage;
 
+@Deprecated
 public class SingleArrayBlockStorage implements BlockStorage {
     private static final int chunkSize = Chunk.CHUNK_SIZE;
     private static final int chunkSlice = chunkSize * chunkSize;
@@ -23,6 +24,11 @@ public class SingleArrayBlockStorage implements BlockStorage {
             block = blocks[index] = Blocks.air;
         }
         return block;
+    }
+
+    @Override
+    public void clear(Block block) {
+
     }
 
     @Override

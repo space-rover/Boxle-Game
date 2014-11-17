@@ -31,6 +31,8 @@ public class Blocks {
     public static final BlockGrass grass = new BlockGrass(boxle);
     public static final BlockSteel steel = new BlockSteel(boxle);
     public static final BlockGrassySteel grassySteel = new BlockGrassySteel(boxle);
+    public static final BlockAcomputerdog acomputerdog = new BlockAcomputerdog(boxle);
+    public static final BlockSeamusFD seamusFD = new BlockSeamusFD(boxle);
 
     /**
      * Registers a block into the registry
