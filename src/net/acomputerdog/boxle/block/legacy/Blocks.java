@@ -1,5 +1,6 @@
 package net.acomputerdog.boxle.block.legacy;
 
+import net.acomputerdog.boxle.block.block.Block;
 import net.acomputerdog.boxle.block.legacy.types.nonsolid.BlockAir;
 import net.acomputerdog.boxle.block.legacy.types.solid.*;
 import net.acomputerdog.boxle.main.Boxle;

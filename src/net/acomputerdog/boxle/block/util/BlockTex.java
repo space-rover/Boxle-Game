@@ -1,7 +1,8 @@
-package net.acomputerdog.boxle.block.legacy;
+package net.acomputerdog.boxle.block.util;
 
 import com.jme3.material.Material;
 import com.jme3.texture.Texture;
+import net.acomputerdog.boxle.block.block.Block;
 import net.acomputerdog.boxle.main.Boxle;
 
 public class BlockTex {

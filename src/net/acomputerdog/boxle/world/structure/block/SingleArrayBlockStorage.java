@@ -1,6 +1,6 @@
 package net.acomputerdog.boxle.world.structure.block;
 
-import net.acomputerdog.boxle.block.legacy.Block;
+import net.acomputerdog.boxle.block.block.Block;
 import net.acomputerdog.boxle.block.legacy.Blocks;
 import net.acomputerdog.boxle.world.Chunk;
 import net.acomputerdog.boxle.world.structure.BlockStorage;

@@ -1,6 +1,6 @@
 package net.acomputerdog.boxle.item.type;
 
-import net.acomputerdog.boxle.block.legacy.Block;
+import net.acomputerdog.boxle.block.block.Block;
 import net.acomputerdog.boxle.item.Item;
 import net.acomputerdog.boxle.item.ItemStack;
 import net.acomputerdog.boxle.math.vec.Vec3i;

@@ -1,6 +1,6 @@
 package net.acomputerdog.boxle.world;
 
-import net.acomputerdog.boxle.block.legacy.Block;
+import net.acomputerdog.boxle.block.block.Block;
 import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.render.util.ChunkNode;
