@@ -4,10 +4,12 @@ import net.acomputerdog.boxle.block.sim.sim.Sim;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.concurrent.LinkedBlockingDeque;
 
 public class Stack {
 
     private final Deque<StackItem> stackItems;
+    private int stackSize = 0;
     private final Sim sim;
 
     private Stack(Sim sim, Deque<StackItem> stackItems) {
@@ -16,7 +18,7 @@ public class Stack {
     }
 
     public Stack(Sim sim) {
-        this(sim, new ArrayDeque<StackItem>());
+        this(sim, new LinkedBlockingDeque<StackItem>());
     }
 
     public Sim getSim() {
@@ -24,11 +26,11 @@ public class Stack {
     }
 
     public int size() {
-        return stackItems.size() - 1;
+        return stackSize - 1;
     }
 
     public boolean isEmpty() {
-        return stackItems.size() > 1;
+        return stackSize > 1;
     }
 
     public void push(Object obj, String typeID) {
@@ -37,6 +39,7 @@ public class Stack {
 
     public void push(StackItem item) {
         stackItems.push(item);
+        stackSize++;
     }
 
     public StackItem peek() {
@@ -44,7 +47,12 @@ public class Stack {
     }
 
     public StackItem pop() {
-        return stackItems.isEmpty() ? null : stackItems.pop();
+        if (stackSize == 0) {
+            return null;
+        } else {
+            stackSize--;
+            return stackItems.pop();
+        }
     }
 
     public Stack copy() {

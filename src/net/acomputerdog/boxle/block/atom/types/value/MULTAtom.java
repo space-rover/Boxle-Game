@@ -11,7 +11,7 @@ import net.acomputerdog.boxle.block.util.SimUtils;
 public class MULTAtom extends Atom {
 
     public MULTAtom() {
-        super("MULT", "MULT");
+        super("MULT");
     }
 
     @Override

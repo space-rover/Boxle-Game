@@ -9,6 +9,9 @@ import java.util.List;
 
 public class SimUtils {
     public static boolean verifyStack(Stack stack, String... types) {
+        if (types.length == 0) {
+            return true;
+        }
         List<StackItem> stacks = new ArrayList<>();
         boolean result = true;
         for (String str : types) {
