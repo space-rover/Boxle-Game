@@ -1,6 +1,6 @@
 package net.acomputerdog.boxle.item;
 
-import net.acomputerdog.boxle.block.Block;
+import net.acomputerdog.boxle.block.legacy.Block;
 import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.world.World;
 
@@ -26,10 +26,10 @@ public abstract class Item {
     /**
      * Checks if this tool can break a block
      *
-     * @param world     The world the block is in
-     * @param block     The type of block being broken
-     * @param location  The location of the block
-     * @param item      The itemStack being used to break the block
+     * @param world    The world the block is in
+     * @param block    The type of block being broken
+     * @param location The location of the block
+     * @param item     The itemStack being used to break the block
      * @return Return true if the block can be broken, false otherwise
      */
     public boolean canBreak(World world, Vec3i location, Block block, ItemStack item) {
@@ -39,10 +39,10 @@ public abstract class Item {
     /**
      * Checks if this tool can use (right-click) on a block
      *
-     * @param world     The world the block is in
-     * @param block     The type of block being broken
-     * @param location  The location of the block
-     * @param item      The itemStack being used to break the block
+     * @param world    The world the block is in
+     * @param block    The type of block being broken
+     * @param location The location of the block
+     * @param item     The itemStack being used to break the block
      * @return Return true if the block can be used, false otherwise
      */
     public boolean canUseBlock(World world, Vec3i location, Block block, ItemStack item) {
@@ -52,10 +52,10 @@ public abstract class Item {
     /**
      * Called when the item is used to break a block
      *
-     * @param world     The world the block is in
-     * @param block     The type of block being broken
-     * @param location  The location of the block
-     * @param item      The itemStack being used to break the block
+     * @param world    The world the block is in
+     * @param block    The type of block being broken
+     * @param location The location of the block
+     * @param item     The itemStack being used to break the block
      */
     public void onBreakBlock(World world, Vec3i location, Block block, ItemStack item) {
 
@@ -64,10 +64,10 @@ public abstract class Item {
     /**
      * Called when the item is used (right-clicked) on a block
      *
-     * @param world     The world the block is in
-     * @param block     The type of block being broken
-     * @param location  The location of the block
-     * @param item      The itemStack being used to break the block
+     * @param world    The world the block is in
+     * @param block    The type of block being broken
+     * @param location The location of the block
+     * @param item     The itemStack being used to break the block
      */
     public void onUseBlock(World world, Block block, Vec3i location, ItemStack item) {
 

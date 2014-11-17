@@ -1,7 +1,7 @@
-package net.acomputerdog.boxle.block;
+package net.acomputerdog.boxle.block.legacy;
 
-import net.acomputerdog.boxle.block.types.nonsolid.BlockAir;
-import net.acomputerdog.boxle.block.types.solid.*;
+import net.acomputerdog.boxle.block.legacy.types.nonsolid.BlockAir;
+import net.acomputerdog.boxle.block.legacy.types.solid.*;
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.core.logger.CLogger;
 

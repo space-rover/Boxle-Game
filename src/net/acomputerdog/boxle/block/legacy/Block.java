@@ -1,4 +1,4 @@
-package net.acomputerdog.boxle.block;
+package net.acomputerdog.boxle.block.legacy;
 
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.math.aabb.AABBF;
@@ -20,6 +20,7 @@ public abstract class Block {
     private BlockTex tex;
 
     private final AABBF bounds;
+
     /**
      * Creates a new Block
      *

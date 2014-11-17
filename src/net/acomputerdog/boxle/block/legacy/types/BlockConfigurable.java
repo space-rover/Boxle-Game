@@ -1,6 +1,6 @@
-package net.acomputerdog.boxle.block.types;
+package net.acomputerdog.boxle.block.legacy.types;
 
-import net.acomputerdog.boxle.block.Block;
+import net.acomputerdog.boxle.block.legacy.Block;
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.math.aabb.AABBF;
 

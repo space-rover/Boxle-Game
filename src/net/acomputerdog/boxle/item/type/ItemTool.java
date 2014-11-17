@@ -1,6 +1,6 @@
 package net.acomputerdog.boxle.item.type;
 
-import net.acomputerdog.boxle.block.Block;
+import net.acomputerdog.boxle.block.legacy.Block;
 import net.acomputerdog.boxle.item.Item;
 import net.acomputerdog.boxle.item.ItemStack;
 import net.acomputerdog.boxle.math.vec.Vec3i;
@@ -45,10 +45,10 @@ public abstract class ItemTool extends Item {
     /**
      * Called when the tool breaks.
      *
-     * @param world     The world the block is in
-     * @param block     The type of block being broken
-     * @param location  The location of the block
-     * @param item      The itemStack being used to break the block
+     * @param world    The world the block is in
+     * @param block    The type of block being broken
+     * @param location The location of the block
+     * @param item     The itemStack being used to break the block
      */
     public void onToolBreak(World world, Vec3i location, Block block, ItemStack item) {
 

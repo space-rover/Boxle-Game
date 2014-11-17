@@ -1,4 +1,4 @@
-package net.acomputerdog.boxle.block.types;
+package net.acomputerdog.boxle.block.legacy.types;
 
 import net.acomputerdog.boxle.main.Boxle;
 

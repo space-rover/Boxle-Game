@@ -1,7 +1,7 @@
-package net.acomputerdog.boxle.block.types.nonsolid;
+package net.acomputerdog.boxle.block.legacy.types.nonsolid;
 
-import net.acomputerdog.boxle.block.BlockTex;
-import net.acomputerdog.boxle.block.types.BlockNonSolid;
+import net.acomputerdog.boxle.block.legacy.BlockTex;
+import net.acomputerdog.boxle.block.legacy.types.BlockNonSolid;
 import net.acomputerdog.boxle.main.Boxle;
 
 /**

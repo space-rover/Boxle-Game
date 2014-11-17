@@ -1,7 +1,7 @@
-package net.acomputerdog.boxle.block.types.solid;
+package net.acomputerdog.boxle.block.legacy.types.solid;
 
-import net.acomputerdog.boxle.block.BlockTex;
-import net.acomputerdog.boxle.block.types.BlockSolid;
+import net.acomputerdog.boxle.block.legacy.BlockTex;
+import net.acomputerdog.boxle.block.legacy.types.BlockSolid;
 import net.acomputerdog.boxle.main.Boxle;
 
 public class BlockGrassySteel extends BlockSolid {
