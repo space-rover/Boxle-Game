@@ -1,0 +1,17 @@
+# Steel sim file
+
+# Structure is
+# <Input_Atom_Name>:
+#     <Output_Atom_Name>;
+# #comment
+# $variable=value
+
+$id=steel
+$name=Steel
+
+VALUE.PUSH_BOOLEAN_TRUE:
+    PROPERTY.COLLIDABLE;
+VALUE.PUSH_BOOLEAN_FALSE:
+    PROPERTY.TRANSPARENT;
+VALUE.PUSH_INT_255:
+    PROPERTY.LIGHT_REDUCTION;
