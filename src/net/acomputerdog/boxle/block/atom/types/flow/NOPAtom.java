@@ -6,13 +6,13 @@ import net.acomputerdog.boxle.block.sim.sim.Sim;
 import net.acomputerdog.boxle.block.sim.sim.exec.SimException;
 import net.acomputerdog.boxle.block.sim.stack.Stack;
 
-public class NOPAtom extends Atom {
-    public NOPAtom(String name) {
+public class NopAtom extends Atom {
+    public NopAtom(String name) {
         super(null, "FLOW.NOP", name);
     }
 
     @Override
     public void execute(Sim sim, Stack stack, Block block) throws SimException {
-
+        //does nothing
     }
 }
