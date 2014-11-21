@@ -8,9 +8,9 @@ import net.acomputerdog.boxle.block.sim.stack.Stack;
 import net.acomputerdog.boxle.block.sim.stack.StackItem;
 import net.acomputerdog.boxle.block.util.SimUtils;
 
-public class MultAtom extends Atom {
+public class MultAtom2 extends Atom {
 
-    public MultAtom(String name) {
+    public MultAtom2(String name) {
         super(null, "MATH.MULT", name);
     }
 

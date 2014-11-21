@@ -8,8 +8,8 @@ import net.acomputerdog.boxle.block.sim.sim.exec.SimException;
 import net.acomputerdog.boxle.block.sim.stack.Stack;
 import net.acomputerdog.boxle.block.sim.stack.StackItem;
 
-public class DupeAtom extends Atom {
-    public DupeAtom(String name) {
+public class DupeAtom2 extends Atom {
+    public DupeAtom2(String name) {
         super(null, "MATH.DUPE", name);
     }
 

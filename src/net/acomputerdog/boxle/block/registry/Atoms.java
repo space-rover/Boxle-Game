@@ -1,7 +1,7 @@
 package net.acomputerdog.boxle.block.registry;
 
 import net.acomputerdog.boxle.block.atom.Atom;
-import net.acomputerdog.boxle.block.atom.types.flow.NopAtom;
+import net.acomputerdog.boxle.block.atom.types.flow.NopAtom2;
 import net.acomputerdog.boxle.block.atom.types.property.*;
 import net.acomputerdog.boxle.block.atom.types.value.*;
 
@@ -16,10 +16,10 @@ public class Atoms {
     public static final PushBooleanAtom valPushTrue = ATOMS.register(new PushBooleanAtom("Push TRUE", true));
     public static final PushBooleanAtom valPushFalse = ATOMS.register(new PushBooleanAtom("Push FALSE", false));
 
-    public static final DupeAtom mathDupe = ATOMS.register(new DupeAtom("Duplicate"));
-    public static final MultAtom mathMult = ATOMS.register(new MultAtom("Multiply"));
+    public static final DupeAtom2 mathDupe = ATOMS.register(new DupeAtom2("Duplicate"));
+    public static final MultAtom2 mathMult = ATOMS.register(new MultAtom2("Multiply"));
 
-    public static final NopAtom flowNop = ATOMS.register(new NopAtom("NOP"));
+    public static final NopAtom2 flowNop = ATOMS.register(new NopAtom2("NOP"));
 
     public static final BoundsAtom propertyBounds = ATOMS.register(new BoundsAtom("Set Bounds"));
     public static final BreakableAtom propertyBreakable = ATOMS.register(new BreakableAtom("Set Breakable"));
