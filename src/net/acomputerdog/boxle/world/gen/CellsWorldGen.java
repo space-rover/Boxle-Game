@@ -1,6 +1,6 @@
 package net.acomputerdog.boxle.world.gen;
 
-import net.acomputerdog.boxle.block.legacy.Blocks;
+import net.acomputerdog.boxle.block.registry.Blocks;
 import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.world.Chunk;
 import net.acomputerdog.boxle.world.gen.noise.OpenSimplexNoise;

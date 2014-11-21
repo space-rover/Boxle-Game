@@ -1,6 +1,6 @@
 package net.acomputerdog.boxle.block.block;
 
-import net.acomputerdog.boxle.block.legacy.Blocks;
+import net.acomputerdog.boxle.block.dynamic.Identifiable;
 import net.acomputerdog.boxle.block.util.BlockTex;
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.math.aabb.AABBF;
@@ -9,32 +9,52 @@ import net.acomputerdog.boxle.world.World;
 
 /**
  * Represents a type of Block.
- * TODO: remove block data
  */
-public abstract class Block {
+public class Block implements Identifiable {
     /**
      * Name of this block.  Used internally to identify it.
      */
-    public final String name;
+    private final String name;
+
+    private final String id;
 
     private final Boxle boxle;
 
-    private BlockTex tex;
+    private boolean isBreakable = true;
+    private float resistance = 1.0f;
+    private float explosionResistance = 1.0f;
+    private float strength = 100f;
+    private float hardness = .1f;
+    private boolean isCollidable = true;
+    private boolean isTransparent = false;
+    private byte lightReduction = (byte) 255;
+    private byte lightOutput = 0;
+    private boolean renderable = true;
+    private AABBF bounds = new AABBF(0f, 0f, 0f, 1f, 1f, 1f);
 
-    private final AABBF bounds;
+    private BlockTex tex;
 
     /**
      * Creates a new Block
      *
      * @param name  The name of this block.
-     * @param boxle
+     * @param id
      */
-    public Block(String name, Boxle boxle) {
-        this.boxle = boxle;
+    public Block(String id, String name) {
+        this.id = id;
         if (name == null) throw new IllegalArgumentException("Block name cannot be null!");
         this.name = name;
-        Blocks.registerBlock(this);
-        bounds = new AABBF(0f, 0f, 0f, 1f, 1f, 1f);
+        boxle = Boxle.instance();
+    }
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public String getDefinition() {
+        return name;
     }
 
     /**
@@ -83,7 +103,7 @@ public abstract class Block {
      * @return Return true if the block can be destroyed.
      */
     public boolean isBreakable() {
-        return true;
+        return isBreakable;
     }
 
     /**
@@ -92,7 +112,7 @@ public abstract class Block {
      * @return Return a float representing the resistance of the block
      */
     public float getResistance() {
-        return 1.0f;
+        return resistance;
     }
 
     /**
@@ -101,7 +121,7 @@ public abstract class Block {
      * @return Return a float representing the explosion resistance of the block
      */
     public float getExplosionResistance() {
-        return 1.0f;
+        return explosionResistance;
     }
 
     /**
@@ -110,7 +130,7 @@ public abstract class Block {
      * @return Return a float of the strength of the block
      */
     public float getStrength() {
-        return 100f;
+        return strength;
     }
 
     /**
@@ -119,7 +139,7 @@ public abstract class Block {
      * @return Return a float of the hardness of this block
      */
     public float getHardness() {
-        return .1f;
+        return hardness;
     }
 
     /**
@@ -128,7 +148,7 @@ public abstract class Block {
      * @return Return true if the block can be collided with, false otherwise.
      */
     public boolean isCollidable() {
-        return true;
+        return isCollidable;
     }
 
     /**
@@ -137,7 +157,7 @@ public abstract class Block {
      * @return Return true if the block is clear
      */
     public boolean isTransparent() {
-        return false;
+        return isTransparent;
     }
 
     /**
@@ -146,7 +166,7 @@ public abstract class Block {
      * @return return a byte of the reduction of light passing through this block
      */
     public byte getLightReduction() {
-        return (byte) 255;
+        return lightReduction;
     }
 
     /**
@@ -155,11 +175,11 @@ public abstract class Block {
      * @return Return a byte of the amount of light emitted by this block.
      */
     public byte getLightOutput() {
-        return 0;
+        return lightOutput;
     }
 
     public boolean isRenderable() {
-        return true;
+        return renderable;
     }
 
     public AABBF getBlockBounds() {
@@ -172,6 +192,54 @@ public abstract class Block {
             tex.loadAllDefault();
         }
         return tex;
+    }
+
+    public void setBreakable(boolean isBreakable) {
+        this.isBreakable = isBreakable;
+    }
+
+    public void setResistance(float resistance) {
+        this.resistance = resistance;
+    }
+
+    public void setExplosionResistance(float explosionResistance) {
+        this.explosionResistance = explosionResistance;
+    }
+
+    public void setStrength(float strength) {
+        this.strength = strength;
+    }
+
+    public void setHardness(float hardness) {
+        this.hardness = hardness;
+    }
+
+    public void setCollidable(boolean collidable) {
+        this.isCollidable = collidable;
+    }
+
+    public void setTransparent(boolean isTransparent) {
+        this.isTransparent = isTransparent;
+    }
+
+    public void setLightReduction(byte lightReduction) {
+        this.lightReduction = lightReduction;
+    }
+
+    public void setLightOutput(byte lightOutput) {
+        this.lightOutput = lightOutput;
+    }
+
+    public void setRenderable(boolean renderable) {
+        this.renderable = renderable;
+    }
+
+    public void setBounds(AABBF bounds) {
+        this.bounds = bounds;
+    }
+
+    public void setTextures(BlockTex tex) {
+        this.tex = tex;
     }
 
     @Override
@@ -194,5 +262,9 @@ public abstract class Block {
         return "Block{" +
                 "name='" + name +
                 '}';
+    }
+
+    public Boxle getBoxle() {
+        return boxle;
     }
 }

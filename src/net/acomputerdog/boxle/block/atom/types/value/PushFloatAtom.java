@@ -1,4 +1,22 @@
 package net.acomputerdog.boxle.block.atom.types.value;
 
-public class PushFloatAtom {
+import net.acomputerdog.boxle.block.atom.Atom;
+import net.acomputerdog.boxle.block.block.Block;
+import net.acomputerdog.boxle.block.sim.sim.Sim;
+import net.acomputerdog.boxle.block.sim.sim.exec.SimException;
+import net.acomputerdog.boxle.block.sim.stack.Stack;
+import net.acomputerdog.boxle.block.sim.stack.StackItem;
+
+public class PushFloatAtom extends Atom {
+    private final float val;
+
+    public PushFloatAtom(String name, float val) {
+        super(null, "VALUE.PUSH_FLOAT_" + val, name);
+        this.val = val;
+    }
+
+    @Override
+    public void execute(Sim sim, Stack stack, Block block) throws SimException {
+        stack.push(new StackItem(val, StackItem.TYPE_FLOAT));
+    }
 }

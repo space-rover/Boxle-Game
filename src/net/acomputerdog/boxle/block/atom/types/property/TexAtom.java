@@ -6,23 +6,33 @@ import net.acomputerdog.boxle.block.sim.sim.Sim;
 import net.acomputerdog.boxle.block.sim.sim.exec.SimException;
 import net.acomputerdog.boxle.block.sim.stack.Stack;
 import net.acomputerdog.boxle.block.sim.stack.StackItem;
+import net.acomputerdog.boxle.block.util.BlockTex;
 import net.acomputerdog.boxle.block.util.SimUtils;
-import net.acomputerdog.boxle.math.aabb.AABBF;
 
 public class TexAtom extends Atom {
     public TexAtom(String name) {
-        super(null, "PROPERTY.BOUNDS", name);
+        super(null, "PROPERTY.TEX", name);
     }
 
     @Override
     public void execute(Sim sim, Stack stack, Block block) throws SimException {
-        SimUtils.verifyStack(sim, this, stack, StackItem.TYPE_FLOAT, StackItem.TYPE_FLOAT, StackItem.TYPE_FLOAT, StackItem.TYPE_FLOAT, StackItem.TYPE_FLOAT, StackItem.TYPE_FLOAT);
-        float z2 = (Float)stack.pop().getObj();
-        float y2 = (Float)stack.pop().getObj();
-        float x2 = (Float)stack.pop().getObj();
-        float z1 = (Float)stack.pop().getObj();
-        float y1 = (Float)stack.pop().getObj();
-        float x1 = (Float)stack.pop().getObj();
-        block.setBounds(new AABBF(x1, y1, z1, x2, y2, z2));
+        SimUtils.verifyStack(sim, this, stack, StackItem.TYPE_STRING, StackItem.TYPE_STRING, StackItem.TYPE_STRING, StackItem.TYPE_STRING, StackItem.TYPE_STRING, StackItem.TYPE_STRING);
+
+        String bottom = (String) stack.pop().getObj();
+        String right = (String) stack.pop().getObj();
+        String left = (String) stack.pop().getObj();
+        String back = (String) stack.pop().getObj();
+        String front = (String) stack.pop().getObj();
+        String top = (String) stack.pop().getObj();
+        //TODO: if textures are the same do not reload each time.
+
+        BlockTex tex = new BlockTex(block);
+        tex.loadBottomTex(bottom);
+        tex.loadRightTex(right);
+        tex.loadLeftTex(left);
+        tex.loadBackTex(back);
+        tex.loadFrontTex(front);
+        tex.loadTopTex(top);
+        block.setTextures(tex);
     }
 }

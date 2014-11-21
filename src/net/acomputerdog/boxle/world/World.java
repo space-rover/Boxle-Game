@@ -1,7 +1,7 @@
 package net.acomputerdog.boxle.world;
 
 import net.acomputerdog.boxle.block.block.Block;
-import net.acomputerdog.boxle.block.legacy.Blocks;
+import net.acomputerdog.boxle.block.registry.Blocks;
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.math.loc.CoordConverter;
 import net.acomputerdog.boxle.math.vec.Vec3i;

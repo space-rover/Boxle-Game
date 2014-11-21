@@ -30,7 +30,7 @@ public class Stack {
     }
 
     public boolean isEmpty() {
-        return stackSize > 1;
+        return stackSize < 1;
     }
 
     public void push(Object obj, String typeID) {
@@ -63,12 +63,11 @@ public class Stack {
 
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("Stack Contents:");
+        builder.append("Stack {");
         Stack copy = this.copy();
-        StackItem item;
         while (!copy.stackItems.isEmpty()) {
-            builder.append("\n ");
-            builder.append(copy.stackItems.pop());
+            builder.append(copy.stackItems.pop().toString());
+            builder.append("<");
         }
         return builder.toString();
     }

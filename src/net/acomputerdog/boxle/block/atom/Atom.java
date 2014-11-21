@@ -4,31 +4,26 @@ import net.acomputerdog.boxle.block.dynamic.Identifiable;
 import net.acomputerdog.boxle.block.sim.program.Instruction;
 
 public abstract class Atom extends Instruction implements Identifiable {
-    private final String id;
     private final String name;
+    private final String def;
 
-    public Atom(String id) {
-        this(id, id);
-    }
-
-    public Atom(String id, String name) {
-        this(id, name, true);
-    }
-
-    public Atom(String id, String name, boolean addToRegistry) {
+    public Atom(String def, String id, String name) {
         super(id);
         if (id == null) {
-            throw new NullPointerException("id cannot be null!");
+            throw new NullPointerException("ID cannot be null!");
         }
         if (name == null) {
-            name = "";
+            name = id;
         }
-        this.id = id;
+        if (def == null) {
+            def = id;
+        }
+        this.def = def;
         this.name = name;
     }
 
-    public String getId() {
-        return id;
+    public String getDefinition() {
+        return def;
     }
 
     public String getName() {
@@ -41,17 +36,17 @@ public abstract class Atom extends Instruction implements Identifiable {
         if (!(o instanceof Atom)) return false;
 
         Atom atom = (Atom) o;
-        return id.equals(atom.id);
+        return getId().equals(atom.getId());
 
     }
 
     @Override
     public int hashCode() {
-        return id.hashCode();
+        return getId().hashCode();
     }
 
     @Override
     public String toString() {
-        return ("".equals(name)) ? id : name;
+        return name;
     }
 }

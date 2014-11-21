@@ -8,15 +8,15 @@ import net.acomputerdog.boxle.block.sim.stack.Stack;
 import net.acomputerdog.boxle.block.sim.stack.StackItem;
 
 public class PushBooleanAtom extends Atom {
-    private final float val;
+    private final boolean val;
 
-    public PushBooleanAtom(float val) {
-        super("VALUE.PUSH_FLOAT");
+    public PushBooleanAtom(String name, boolean val) {
+        super(null, "VALUE.PUSH_BOOLEAN_" + String.valueOf(val).toUpperCase(), name);
         this.val = val;
     }
 
     @Override
     public void execute(Sim sim, Stack stack, Block block) throws SimException {
-        stack.push(new StackItem(val, StackItem.TYPE_FLOAT));
+        stack.push(new StackItem(val, StackItem.TYPE_BOOLEAN));
     }
 }

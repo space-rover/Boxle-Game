@@ -10,15 +10,15 @@ $id=grassy_steel
 $name=Grassy Steel
 
 VALUE.PUSH_BOOLEAN_TRUE:
-    PROPERTY.COLLIDABLE;
+    PROPERTY.COLLIDABLE;;
 VALUE.PUSH_BOOLEAN_FALSE:
-    PROPERTY.TRANSPARENT;
+    PROPERTY.TRANSPARENT;;
 VALUE.PUSH_INT_255:
-    PROPERTY.LIGHT_REDUCTION;
+    PROPERTY.LIGHT_REDUCTION;;
 VALUE.PUSH_STRING_tex/block/grass_top.png:
     VALUE.PUSH_STRING_tex/block/grassy_steel.png:
-        VALUE.DUPE:
-            VALUE.DUPE:
-                VALUE.DUPE:
+        MATH.DUPE:
+            MATH.DUPE:
+                MATH.DUPE:
                     VALUE.PUSH_STRING_tex/block/steel.png:
                         PROPERTY.TEX;;;;;;;

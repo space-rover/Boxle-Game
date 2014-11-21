@@ -1,5 +1,6 @@
 package net.acomputerdog.boxle.block.sim.program.instruction.math;
 
+import net.acomputerdog.boxle.block.block.Block;
 import net.acomputerdog.boxle.block.sim.program.Instruction;
 import net.acomputerdog.boxle.block.sim.sim.Sim;
 import net.acomputerdog.boxle.block.sim.sim.exec.InvalidStackDataException;
@@ -13,7 +14,7 @@ public class InstructionAdd extends Instruction {
     }
 
     @Override
-    public void execute(Sim sim, Stack stack) throws SimException {
+    public void execute(Sim sim, Stack stack, Block block) throws SimException {
         if (stack.size() < 2) {
             throw new InvalidStackDataException(sim, this, "Not enough items in stack!");
         }

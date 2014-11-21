@@ -1,5 +1,6 @@
 package net.acomputerdog.boxle.block.sim.sim;
 
+import net.acomputerdog.boxle.block.block.Block;
 import net.acomputerdog.boxle.block.sim.program.Instruction;
 import net.acomputerdog.boxle.block.sim.program.Program;
 import net.acomputerdog.boxle.block.sim.program.tree.InstructionBranch;
@@ -21,30 +22,32 @@ public class Sim {
         stack.push(StackItem.NULL);
     }
 
-    public SimResult startSim() {
+    public SimResult startSim() throws SimException {
         programState = SimState.RUNNING;
-        simulate();
-        return new SimResult(stack, programState);
+        Block block = simulate();
+        return new SimResult(stack, programState, block);
     }
 
-    private void simulate() {
+    private Block simulate() throws SimException {
         InstructionTree tree = program.getInstructions();
+        Block block = new Block(program.getId(), program.getName());
         try {
-            simBranch(tree.getStartInstruction(), stack);
+            simBranch(tree.getStartInstruction(), stack, block);
             programState = SimState.FINISHED;
         } catch (SimException e) {
             this.programState = new SimStateExec(e);
+            throw e;
         }
+        return block;
     }
 
-    private SimState simBranch(InstructionBranch branch, Stack stack) throws SimException {
+    private SimState simBranch(InstructionBranch branch, Stack stack, Block block) throws SimException {
         Instruction currIns = null;
         try {
-            (currIns = branch.getInstruction()).execute(this, stack);
+            (currIns = branch.getInstruction()).execute(this, stack, block);
             SimState lastState = SimState.RUNNING;
             for (InstructionBranch subBranch : branch.getOutputs()) {
-                Stack branchStack = stack.copy();
-                lastState = simBranch(subBranch, branchStack);
+                lastState = simBranch(subBranch, stack, block);
                 if (!lastState.equals(SimState.RUNNING) || !programState.equals(SimState.RUNNING)) {
                     break;
                 }

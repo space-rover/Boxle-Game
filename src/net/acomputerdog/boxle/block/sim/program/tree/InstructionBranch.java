@@ -39,7 +39,7 @@ public class InstructionBranch extends Branch<Instruction> {
     }
 
     public InstructionBranch addOutput(Instruction ins) {
-        return addOutput(ins.getName() + RandomGen.nextString(), ins);
+        return addOutput(ins.getId() + RandomGen.nextString(), ins);
     }
 
     public InstructionBranch addOutput(String name, Instruction ins) {

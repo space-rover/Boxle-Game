@@ -2,6 +2,10 @@ package net.acomputerdog.boxle.block.sim.stack;
 
 public class StackItem {
     public static final String TYPE_INT = "INT";
+    public static final String TYPE_BOOLEAN = "BOOL";
+    public static final String TYPE_FLOAT = "FLOAT";
+    public static final String TYPE_STRING = "STRING";
+    public static final String TYPE_NULL = "NULL";
     public static final StackItem NULL = new StackItem(null, "NULL");
 
     private final Object obj;
@@ -25,6 +29,6 @@ public class StackItem {
     }
 
     public String toString() {
-        return type;
+        return type + (obj == null ? "" : "(" + obj.toString() + ")");
     }
 }

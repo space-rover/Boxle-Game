@@ -1,6 +1,6 @@
 package net.acomputerdog.boxle.world.gen;
 
-import net.acomputerdog.boxle.block.legacy.Blocks;
+import net.acomputerdog.boxle.block.registry.Blocks;
 import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.world.Chunk;
 import net.acomputerdog.boxle.world.structure.BlockStorage;
@@ -24,11 +24,11 @@ public abstract class SimpleWorldGen extends AbstractWorldGen {
                     if (currY > height) {
                         blocks.setBlock(x, y, z, Blocks.air);
                     } else if (currY == height) {
-                        blocks.setBlock(x, y, z, Blocks.grass);
+                        //blocks.setBlock(x, y, z, Blocks.grass);
                     } else if (currY - height >= -3) {
-                        blocks.setBlock(x, y, z, Blocks.dirt);
+                        //blocks.setBlock(x, y, z, Blocks.dirt);
                     } else {
-                        blocks.setBlock(x, y, z, Blocks.stone);
+                        //blocks.setBlock(x, y, z, Blocks.stone);
                     }
                 }
             }
