@@ -6,8 +6,8 @@ import net.acomputerdog.boxle.block.sim.sim.Sim;
 import net.acomputerdog.boxle.block.sim.sim.exec.SimException;
 import net.acomputerdog.boxle.block.sim.stack.Stack;
 
-public class NopAtom2 extends Atom {
-    public NopAtom2(String name) {
+public class NopAtom extends Atom {
+    public NopAtom(String name) {
         super(null, "FLOW.NOP", name);
     }
 
