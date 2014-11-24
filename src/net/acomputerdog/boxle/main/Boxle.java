@@ -129,7 +129,7 @@ public class Boxle extends SimpleApplication {
         LOGGER_MAIN.logInfo("Boxle is initializing.");
         gameConfig.load();
 
-        File tempDir = new File(gameConfig.tempDir);
+        File tempDir = new File(gameConfig.cacheDir);
         if (!(tempDir.isDirectory() || tempDir.mkdirs())) {
             LOGGER_MAIN.logError("Could not create temporary directory!");
             LOGGER_MAIN.logError("Make sure boxle has write access to the current directory, or run boxle from a directory with write access!");

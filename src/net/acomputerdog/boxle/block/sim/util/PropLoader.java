@@ -1,9 +1,19 @@
 package net.acomputerdog.boxle.block.sim.util;
 
+import net.acomputerdog.boxle.block.atom.Atom;
+import net.acomputerdog.boxle.block.atom.types.value.PushBooleanAtom;
+import net.acomputerdog.boxle.block.atom.types.value.PushFloatAtom;
+import net.acomputerdog.boxle.block.atom.types.value.PushIntAtom;
+import net.acomputerdog.boxle.block.atom.types.value.PushStringAtom;
 import net.acomputerdog.boxle.block.block.Block;
-import net.acomputerdog.boxle.block.util.BlockTex;
+import net.acomputerdog.boxle.block.registry.Atoms;
+import net.acomputerdog.boxle.block.sim.program.Program;
+import net.acomputerdog.boxle.block.sim.program.tree.InstructionBranch;
+import net.acomputerdog.boxle.block.sim.program.tree.InstructionTree;
+import net.acomputerdog.boxle.block.sim.sim.Sim;
+import net.acomputerdog.boxle.block.sim.sim.SimResult;
+import net.acomputerdog.boxle.block.sim.sim.state.SimState;
 import net.acomputerdog.boxle.main.Boxle;
-import net.acomputerdog.boxle.math.aabb.AABBF;
 import net.acomputerdog.core.java.Patterns;
 
 import java.io.IOException;
@@ -31,6 +41,9 @@ public class PropLoader {
             prop = new Properties();
             try {
                 prop.load(in);
+                try {
+                    in.close();
+                } catch (Exception ignored) {}
                 prop.setProperty("prop_name", name);
             } catch (IOException e) {
                 throw new RuntimeException("Exception reading property file!");
@@ -41,57 +54,110 @@ public class PropLoader {
         return prop;
     }
 
-    public static Block createBlock(Properties prop) {
-        //TODO possibly replace with generated StackSim script
-        String parent = prop.getProperty("parent");
-        Block block;
-        if (parent != null) {
-            Properties parentProp = new Properties(loadProp(parent, PropLoader.class.getResourceAsStream(parent)));
-            if (!parentProp.containsKey("id")) parentProp.setProperty("id", prop.getProperty("id"));
-            if (!parentProp.containsKey("name")) parentProp.setProperty("name", prop.getProperty("name"));
-            block = createBlock(parentProp);
-        } else {
-            block = new Block(prop.getProperty("id"), prop.getProperty("name"));
+    private static Properties getParent(Properties prop) {
+        if (prop.containsKey("parent")) {
+            String parentName = prop.getProperty("parent");
+            Properties parentProp = getParent(loadProp(parentName, PropLoader.class.getResourceAsStream(parentName)));
+            Properties temp = new Properties(parentProp);
+            temp.putAll(prop);
+            prop.putAll(temp);
         }
-        //TODO add helper methods to parse bools, ints, etc
-        if (prop.containsKey("breakable")) block.setBreakable(Boolean.parseBoolean(prop.getProperty("breakable")));
-        if (prop.containsKey("collidable")) block.setCollidable(Boolean.parseBoolean(prop.getProperty("collidable")));
-        if (prop.containsKey("transparent")) block.setTransparent(Boolean.parseBoolean(prop.getProperty("transparent")));
-        if (prop.containsKey("renderable")) block.setRenderable(Boolean.parseBoolean(prop.getProperty("renderable")));
-        if (prop.containsKey("light_reduction")) block.setLightReduction(Byte.parseByte(prop.getProperty("light_reduction")));
-        if (prop.containsKey("light_output")) block.setLightOutput(Byte.parseByte(prop.getProperty("light_output")));
-        if (prop.containsKey("resistance")) block.setResistance(Float.parseFloat(prop.getProperty("resistance")));
-        if (prop.containsKey("explosion_resistance")) block.setResistance(Float.parseFloat(prop.getProperty("explosion_resistance")));
-        if (prop.containsKey("strength")) block.setResistance(Float.parseFloat(prop.getProperty("strength")));
-        if (prop.containsKey("hardness")) block.setResistance(Float.parseFloat(prop.getProperty("hardness")));
+        return prop;
+    }
+
+    public static Block createBlock(Properties prop) {
+        getParent(prop);
+        Program program = new Program();
+        program.setId(prop.getProperty("id"));
+        program.setName(prop.getProperty("name"));
+        InstructionTree tree = program.getInstructions();
+        InstructionBranch root = tree.getStartInstruction();
+
+        if (prop.containsKey("breakable")) addProperty(root, getBool(prop.getProperty("breakable")), Atoms.propertyBreakable);
+        if (prop.containsKey("collidable")) addProperty(root, getBool(prop.getProperty("collidable")), Atoms.propertyCollidable);
+        if (prop.containsKey("transparent")) addProperty(root, getBool(prop.getProperty("transparent")), Atoms.propertyTransparent);
+        if (prop.containsKey("renderable")) addProperty(root, getBool(prop.getProperty("renderable")), Atoms.propertyRenderable);
+        if (prop.containsKey("light_reduction"))
+            addProperty(root, getInt(prop.getProperty("light_reduction")), Atoms.propertyLightReduction);
+        if (prop.containsKey("light_output")) addProperty(root, getInt(prop.getProperty("light_output")), Atoms.propertyLightOutput);
+        if (prop.containsKey("resistance")) addProperty(root, getFloat(prop.getProperty("resistance")), Atoms.propertyResistance);
+        if (prop.containsKey("explosion_resistance"))
+            addProperty(root, getFloat(prop.getProperty("explosion_resistance")), Atoms.propertyExplosionResistance);
+        if (prop.containsKey("strength")) addProperty(root, getFloat(prop.getProperty("strength")), Atoms.propertyStregth);
+        if (prop.containsKey("hardness")) addProperty(root, getFloat(prop.getProperty("hardness")), Atoms.propertyHardness);
         if (prop.containsKey("bounds")) {
             String[] boundStrings = prop.getProperty("bounds").split(Patterns.COMMA);
             if (boundStrings.length < 6) {
                 Boxle.instance().LOGGER_MAIN.logWarning("Improperly formatted bounds: \"" + prop.getProperty("bounds") + "\".  Should be 6 comma-separated float values.");
             } else {
-                float[] bounds = new float[6];
+                InstructionBranch last = root;
                 for (int index = 0; index < 6; index++) {
-                    bounds[index] = Float.parseFloat(boundStrings[index]);
+                    last = last.addOutput(getFloat(boundStrings[index]));
                 }
-                block.setBounds(new AABBF(bounds));
+                last.addOutput(Atoms.propertyBounds);
             }
         }
         if (prop.containsKey("tex")) {
+            //TODO actually embed the textures
             String[] texPaths = prop.getProperty("tex").split(Patterns.COMMA);
             if (texPaths.length < 6) {
                 Boxle.instance().LOGGER_MAIN.logWarning("Improperly formatted texture paths: \"" + prop.getProperty("tex") + "\".  Should be 6 comma-separated strings.");
             } else {
-                BlockTex tex = new BlockTex(block);
-                //TODO don't reload existing textures
-                tex.loadTopTex(texPaths[0]);
-                tex.loadFrontTex(texPaths[1]);
-                tex.loadBackTex(texPaths[2]);
-                tex.loadLeftTex(texPaths[3]);
-                tex.loadRightTex(texPaths[4]);
-                tex.loadBottomTex(texPaths[5]);
-                block.setTextures(tex);
+                InstructionBranch last = root;
+                for (int index = 0; index < 6; index++) {
+                    last = last.addOutput(getString(texPaths[index]));
+                }
+                last.addOutput(Atoms.propertyTex);
             }
         }
-        return block;
+
+        try {
+            Sim sim = new Sim(program);
+            SimResult result = sim.startSim();
+            SimState endState = result.getEndState();
+            if (endState != SimState.FINISHED) {
+                throw new RuntimeException("Sim finished unexpectedly with state " + endState.getState());
+            }
+            return result.getBlock();
+        } catch (Exception e) {
+            throw new RuntimeException("Caught exception simulating block!", e);
+        }
+    }
+
+    private static void addProperty(InstructionBranch root, Atom value, Atom property) {
+        root.addOutput(value).addOutput(property);
+    }
+
+    private static PushBooleanAtom getBool(String value) {
+        return Boolean.parseBoolean(value) ? Atoms.valPushTrue : Atoms.valPushFalse;
+    }
+
+    private static PushIntAtom getInt(String value) {
+        PushIntAtom atom = (PushIntAtom) Atoms.ATOMS.getFromId("VALUE.PUSH_INT_" + value);
+        if (atom == null) {
+            int atomVal = Integer.parseInt(value);
+            atom = new PushIntAtom("Push " + atomVal + "i", atomVal);
+            Atoms.ATOMS.register(atom);
+        }
+        return atom;
+    }
+
+    private static PushFloatAtom getFloat(String value) {
+        PushFloatAtom atom = (PushFloatAtom) Atoms.ATOMS.getFromId("VALUE.PUSH_FLOAT_" + value);
+        if (atom == null) {
+            float atomVal = Float.parseFloat(value);
+            atom = new PushFloatAtom("Push " + atomVal + "f", atomVal);
+            Atoms.ATOMS.register(atom);
+        }
+        return atom;
+    }
+
+    private static PushStringAtom getString(String value) {
+        PushStringAtom atom = (PushStringAtom) Atoms.ATOMS.getFromId("VALUE.PUSH_STRING_" + value);
+        if (atom == null) {
+            atom = new PushStringAtom("Push string " + value, value);
+            Atoms.ATOMS.register(atom);
+        }
+        return atom;
     }
 }
