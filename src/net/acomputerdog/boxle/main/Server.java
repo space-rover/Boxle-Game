@@ -8,6 +8,7 @@ import net.acomputerdog.boxle.block.block.Block;
 import net.acomputerdog.boxle.block.util.BlockFace;
 import net.acomputerdog.boxle.block.util.BlockTex;
 import net.acomputerdog.boxle.config.GameConfig;
+import net.acomputerdog.boxle.entity.Entity;
 import net.acomputerdog.boxle.entity.types.EntityPlayer;
 import net.acomputerdog.boxle.math.loc.CoordConverter;
 import net.acomputerdog.boxle.math.spiral.Spiral2i;
@@ -97,12 +98,16 @@ public class Server {
         rebuildNeighborChunks();
         rebuildChangedChunks();
         unloadExtraChunks();
-
         if (config.outputRenderDebugInfo && numChunks > 0) {
             long newTime = System.currentTimeMillis();
             logger.logDetail("Built " + numChunks + " chunk meshes from " + numFaces + " faces and unloaded " + numUnload + " chunks in " + ((newTime - oldTime) / 1000f) + " seconds.");
         }
 
+        for (World world : hostedWorlds) {
+            for (Entity entity : world.getEntities()) {
+                entity.onTick();
+            }
+        }
     }
 
     private void unloadExtraChunks() {

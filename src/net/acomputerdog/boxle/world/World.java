@@ -2,6 +2,7 @@ package net.acomputerdog.boxle.world;
 
 import net.acomputerdog.boxle.block.block.Block;
 import net.acomputerdog.boxle.block.registry.Blocks;
+import net.acomputerdog.boxle.entity.Entity;
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.math.loc.CoordConverter;
 import net.acomputerdog.boxle.math.vec.Vec3i;
@@ -13,6 +14,10 @@ import net.acomputerdog.boxle.world.gen.CellsWorldGen;
 import net.acomputerdog.boxle.world.gen.WorldGen;
 import net.acomputerdog.boxle.world.structure.ChunkTable;
 import net.acomputerdog.core.logger.CLogger;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A world, made of blocks :)
@@ -41,6 +46,8 @@ public class World {
     private final CLogger logger;
 
     private WorldGen generator;
+
+    private final Map<Integer, Entity> entities = new HashMap<>();
 
     /**
      * Creates a new instance of this World.
@@ -165,5 +172,26 @@ public class World {
 
     public CLogger getLogger() {
         return logger;
+    }
+
+    public void spawnEntity(Entity entity) {
+        entities.put(entity.getEntityID(), entity);
+        entity.onSpawn();
+    }
+
+    public Collection<Entity> getEntities() {
+        return entities.values();
+    }
+
+    public boolean containsEntity(int id) {
+        return entities.containsKey(id);
+    }
+
+    public boolean containsEntity(Entity entity) {
+        return entities.containsKey(entity.getEntityID());
+    }
+
+    public Entity getEntity(int id) {
+        return entities.get(id);
     }
 }

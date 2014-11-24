@@ -76,6 +76,10 @@ public abstract class Entity {
 
     }
 
+    public void onSpawn() {
+
+    }
+
     /**
      * Gets the type of this entity
      *
