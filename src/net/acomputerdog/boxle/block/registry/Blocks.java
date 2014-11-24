@@ -15,25 +15,16 @@ import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.core.java.Patterns;
 
 import java.io.*;
-import java.util.Enumeration;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 public class Blocks {
     public static final Registry<Block> BLOCKS = new Registry<>();
 
-    static {
-        //loadInternalSims();
-    }
-
     public static final Block air = createAirBlock();
-    //public static final Block steel = loadInternalBlock("steel");
-    //public static final Block grassySteel = loadInternalBlock("grassy_steel");
-    public static final Block steel = PropLoader.loadAndCreateBlock("steel", Blocks.class.getResourceAsStream("/prop/block/steel.prop"));
-    public static final Block grassySteel = PropLoader.loadAndCreateBlock("grassy_steel", Blocks.class.getResourceAsStream("/prop/block/grassy_steel.prop"));
-    public static final Block acomputerdog = loadInternalBlock("acomputerdog");
+    public static final Block steel = loadInternalProp("steel");
+    public static final Block grassySteel = loadInternalProp("grassy_steel");
+    public static final Block acomputerdog = loadInternalSim("acomputerdog");
 
     private static Block createAirBlock() {
         Block block = new Block("air", "Air");
@@ -49,7 +40,11 @@ public class Blocks {
         return block;
     }
 
-    private static Block loadInternalBlock(String name) {
+    private static Block loadInternalProp(String name) {
+        return PropLoader.loadAndCreateBlock(name, Blocks.class.getResourceAsStream("/prop/block/" + name + ".prop"));
+    }
+
+    private static Block loadInternalSim(String name) {
         try {
             return loadSim(Blocks.class.getResourceAsStream("/sim/block/" + name + ".sim"));
         } catch (Throwable t) {
@@ -58,33 +53,39 @@ public class Blocks {
         }
     }
 
-    private static void loadInternalSims() {
-        ZipFile jar = null;
-        try {
-            File jarFile = new File(Blocks.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-            jar = new ZipFile(jarFile.getAbsoluteFile());
-            Enumeration<? extends ZipEntry> entries = jar.entries();
-            while (entries.hasMoreElements()) {
-                ZipEntry entry = entries.nextElement();
-                if (entry.getName().startsWith("sim/")) {
+    public static void loadExternalSims() {
+        File userDir = new File("./user/sims/");
+        if (!(userDir.isDirectory() || userDir.mkdirs())) {
+            Boxle.instance().LOGGER_MAIN.logWarning("Unable to create user sims directory!");
+        }
+        File saveDir = new File("./save/sims/");
+        if (!(saveDir.isDirectory() || saveDir.mkdirs())) {
+            Boxle.instance().LOGGER_MAIN.logWarning("Unable to create save sims directory!");
+        }
+        int loadedFiles = 0;
+        loadedFiles += loadSimsInDir(userDir);
+        loadedFiles += loadSimsInDir(saveDir);
+        Boxle.instance().LOGGER_MAIN.logDetail("Loaded " + loadedFiles + " external sims.");
+
+    }
+
+    private static int loadSimsInDir(File dir) {
+        File[] files = dir.listFiles();
+        int loadedFiles = 0;
+        if (files != null && files.length > 0) {
+            for (File file : files) {
+                if (file.isFile() && file.getName().endsWith(".sim")) {
                     try {
-                        loadSim(jar.getInputStream(entry));
-                    } catch (Exception e) {
-                        Boxle.instance().LOGGER_MAIN.logError("Unable to load sim script: " + entry.getName(), e);
+                        loadSim(new FileInputStream(file));
+                        loadedFiles++;
+                    } catch (IOException e) {
+                        Boxle.instance().LOGGER_MAIN.logWarning("Unable to read sim: " + file.getPath());
+                        e.printStackTrace();
                     }
-                } else {
-                    Boxle.instance().LOGGER_MAIN.logDetail("Skipping entry: " + entry.getName());
                 }
             }
-        } catch (Exception e) {
-            Boxle.instance().LOGGER_MAIN.logError("Unable to load internal sim scripts!", e);
-        } finally {
-            if (jar != null) {
-                try {
-                    jar.close();
-                } catch (IOException ignored) {}
-            }
         }
+        return loadedFiles;
     }
 
     public static Block loadSim(InputStream in) {
