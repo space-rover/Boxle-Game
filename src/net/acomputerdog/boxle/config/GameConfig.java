@@ -65,6 +65,8 @@ public class GameConfig {
 
     public int ticksPerSecond = 50;
 
+    public String tempDir = "./temp/";
+
     /**
      * Creates a new config for the given boxle instance.
      *

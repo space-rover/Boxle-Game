@@ -1,0 +1,6 @@
+# Block "properties" file.  Used to auto-generate block sim script for a simple block.
+
+parent=/prop/block/templates/solid.prop
+
+id=steel
+name=Steel

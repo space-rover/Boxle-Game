@@ -1,0 +1,8 @@
+# Grassy steel properties file
+
+parent=/prop/block/steel.prop
+
+id=grassy_steel
+name=Grassy Steel
+
+tex=tex/block/grass_top.png,tex/block/grassy_steel.png,tex/block/grassy_steel.png,tex/block/grassy_steel.png,tex/block/grassy_steel.png,tex/block/steel.png

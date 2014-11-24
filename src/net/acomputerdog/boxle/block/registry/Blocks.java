@@ -9,6 +9,7 @@ import net.acomputerdog.boxle.block.sim.program.tree.InstructionTree;
 import net.acomputerdog.boxle.block.sim.sim.Sim;
 import net.acomputerdog.boxle.block.sim.sim.SimResult;
 import net.acomputerdog.boxle.block.sim.sim.state.SimState;
+import net.acomputerdog.boxle.block.sim.util.PropLoader;
 import net.acomputerdog.boxle.block.util.IllegalSimFormat;
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.core.java.Patterns;
@@ -28,8 +29,11 @@ public class Blocks {
     }
 
     public static final Block air = createAirBlock();
-    public static final Block steel = loadInternalBlock("steel");
-    public static final Block grassySteel = loadInternalBlock("grassy_steel");
+    //public static final Block steel = loadInternalBlock("steel");
+    //public static final Block grassySteel = loadInternalBlock("grassy_steel");
+    public static final Block steel = PropLoader.loadAndCreateBlock("steel", Blocks.class.getResourceAsStream("/prop/block/steel.prop"));
+    public static final Block grassySteel = PropLoader.loadAndCreateBlock("grassy_steel", Blocks.class.getResourceAsStream("/prop/block/grassy_steel.prop"));
+    public static final Block acomputerdog = loadInternalBlock("acomputerdog");
 
     private static Block createAirBlock() {
         Block block = new Block("air", "Air");
@@ -49,9 +53,8 @@ public class Blocks {
         try {
             return loadSim(Blocks.class.getResourceAsStream("/sim/block/" + name + ".sim"));
         } catch (Throwable t) {
-            //System.err.println("Unable to create block: " + name + " at " + "sim/block/" + name + ".sim");
             t.printStackTrace();
-            throw new RuntimeException("Excpetion creating block!");
+            throw new RuntimeException("Exception creating block!");
         }
     }
 
@@ -109,7 +112,7 @@ public class Blocks {
             }
             Block block = result.getBlock();
             BLOCKS.register(block);
-            Boxle.instance().LOGGER_MAIN.logDetail("Loaded block: " + result.getBlock().getId());
+            Boxle.instance().LOGGER_MAIN.logDetail("Loaded block from sim: " + result.getBlock().getId());
             return block;
         } catch (Exception e) {
             try {

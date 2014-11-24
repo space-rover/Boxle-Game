@@ -19,13 +19,13 @@ public class SimException extends Exception {
         this.instruction = instruction;
     }
 
-    protected SimException(Sim sim, Instruction instruction, Throwable parent) {
+    public SimException(Sim sim, Instruction instruction, Throwable parent) {
         super(parent);
         this.sim = sim;
         this.instruction = instruction;
     }
 
-    protected SimException(Sim sim, Instruction instruction, String message, Throwable parent) {
+    public SimException(Sim sim, Instruction instruction, String message, Throwable parent) {
         super(message, parent);
         this.sim = sim;
         this.instruction = instruction;

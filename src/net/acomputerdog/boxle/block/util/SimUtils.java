@@ -43,7 +43,7 @@ public class SimUtils {
     public static void verifyStack(Sim sim, Atom atom, Stack stack, String... types) throws InvalidStackDataException {
         //System.out.println(stack.toString());
         if (!verifyStack(stack, types)) {
-            //System.out.println(stack.toString());
+            System.out.println("Found: " + stack.toString());
             throw new InvalidStackDataException(sim, atom, "Invalid stack items!");
         }
     }

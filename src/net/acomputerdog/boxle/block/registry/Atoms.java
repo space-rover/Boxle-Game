@@ -2,8 +2,13 @@ package net.acomputerdog.boxle.block.registry;
 
 import net.acomputerdog.boxle.block.atom.Atom;
 import net.acomputerdog.boxle.block.atom.types.flow.NopAtom;
+import net.acomputerdog.boxle.block.atom.types.math.DupeAtom;
+import net.acomputerdog.boxle.block.atom.types.math.MultAtom;
 import net.acomputerdog.boxle.block.atom.types.property.*;
-import net.acomputerdog.boxle.block.atom.types.value.*;
+import net.acomputerdog.boxle.block.atom.types.util.CreateTexAtom;
+import net.acomputerdog.boxle.block.atom.types.value.PushBooleanAtom;
+import net.acomputerdog.boxle.block.atom.types.value.PushFloatAtom;
+import net.acomputerdog.boxle.block.atom.types.value.PushIntAtom;
 
 public class Atoms {
     public static final Registry<Atom> ATOMS = new Registry<>();
@@ -33,5 +38,7 @@ public class Atoms {
     public static final StrengthAtom propertyStregth = ATOMS.register(new StrengthAtom("Set Strength"));
     public static final TexAtom propertyTex = ATOMS.register(new TexAtom("Set Tex"));
     public static final TransparentAtom propertyTransparent = ATOMS.register(new TransparentAtom("Set Transparent"));
+
+    public static final CreateTexAtom utilCreateTex = ATOMS.register(new CreateTexAtom("Create Texture"));
 }
 

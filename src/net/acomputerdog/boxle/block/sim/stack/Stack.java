@@ -63,12 +63,15 @@ public class Stack {
 
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("Stack {");
+        builder.append("Stack{");
         Stack copy = this.copy();
         while (!copy.stackItems.isEmpty()) {
             builder.append(copy.stackItems.pop().toString());
-            builder.append("<");
+            if (!copy.stackItems.isEmpty()) {
+                builder.append(" < ");
+            }
         }
+        builder.append("}");
         return builder.toString();
     }
 }

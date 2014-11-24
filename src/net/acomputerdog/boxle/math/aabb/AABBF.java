@@ -34,6 +34,10 @@ public class AABBF {
         calculateDims();
     }
 
+    public AABBF(float[] corners) {
+        this(corners[0], corners[1], corners[2], corners[3], corners[4], corners[5]);
+    }
+
     private void calculateDims() {
         length = Math.abs(corner2.z - corner1.z);
         width = Math.abs(corner2.x - corner1.x);

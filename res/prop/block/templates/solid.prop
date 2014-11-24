@@ -1,0 +1,6 @@
+# Template for "solid" blocks
+
+collidable=true
+transparent=false
+light_reduction=255
+light_output=0

@@ -1,4 +1,4 @@
-package net.acomputerdog.boxle.block.atom.types.value;
+package net.acomputerdog.boxle.block.atom.types.math;
 
 import net.acomputerdog.boxle.block.atom.Atom;
 import net.acomputerdog.boxle.block.block.Block;
