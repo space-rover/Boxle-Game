@@ -58,7 +58,7 @@ public class PropLoader {
                 throw new RuntimeException("Exception reading property file!");
             }
             propertyMap.put(name, prop);
-            Boxle.instance().LOGGER_MAIN.logDetail("Loaded block from prop: " + name);
+            Boxle.instance().LOGGER_MAIN.logDetail("Loaded block from internal prop: " + name);
         }
         return prop;
     }
@@ -85,7 +85,6 @@ public class PropLoader {
         File simFile = new File(simDir, "/" + prop.getProperty("prop_name") + ".sim");
         try {
             if (simFile.exists() && isValid(prop, simFile)) {
-                Boxle.instance().LOGGER_MAIN.logDetail("Loading cached sim for " + program.getId());
                 return Blocks.loadSim(new FileInputStream(simFile));
             }
         } catch (Exception e) {
@@ -134,7 +133,6 @@ public class PropLoader {
             }
         }
 
-        //TODO load this if it exists
         try {
             program.saveToScript(simFile);
         } catch (IOException e) {
@@ -165,6 +163,9 @@ public class PropLoader {
                 break;
             }
         }
+        try {
+            reader.close();
+        } catch (IOException ignored) {}
         return found;
     }
 

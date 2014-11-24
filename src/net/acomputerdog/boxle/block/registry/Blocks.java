@@ -112,7 +112,7 @@ public class Blocks {
             }
             Block block = result.getBlock();
             BLOCKS.register(block);
-            Boxle.instance().LOGGER_MAIN.logDetail("Loaded block from sim: " + result.getBlock().getId());
+            Boxle.instance().LOGGER_MAIN.logDetail("Loaded block from internal sim: " + result.getBlock().getId());
             return block;
         } catch (Exception e) {
             try {

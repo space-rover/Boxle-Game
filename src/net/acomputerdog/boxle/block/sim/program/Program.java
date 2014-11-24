@@ -68,7 +68,6 @@ public class Program {
 
 
     public void saveToScript(File scriptPath) throws IOException {
-        System.out.println("Saving script for: " + name);
         Writer writer = null;
         try {
             writer = new BufferedWriter(new FileWriter(scriptPath));
