@@ -7,6 +7,7 @@ import net.acomputerdog.boxle.block.atom.types.value.PushIntAtom;
 import net.acomputerdog.boxle.block.atom.types.value.PushStringAtom;
 import net.acomputerdog.boxle.block.block.Block;
 import net.acomputerdog.boxle.block.registry.Atoms;
+import net.acomputerdog.boxle.block.registry.Blocks;
 import net.acomputerdog.boxle.block.sim.program.Program;
 import net.acomputerdog.boxle.block.sim.program.tree.InstructionBranch;
 import net.acomputerdog.boxle.block.sim.program.tree.InstructionTree;
@@ -16,9 +17,7 @@ import net.acomputerdog.boxle.block.sim.sim.state.SimState;
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.core.java.Patterns;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -81,6 +80,19 @@ public class PropLoader {
         Program program = new Program();
         program.setId(prop.getProperty("id"));
         program.setName(prop.getProperty("name"));
+        program.setVariable("$prop_hash", String.valueOf(prop.hashCode()));
+
+        File simFile = new File(simDir, "/" + prop.getProperty("prop_name") + ".sim");
+        try {
+            if (simFile.exists() && isValid(prop, simFile)) {
+                Boxle.instance().LOGGER_MAIN.logDetail("Loading cached sim for " + program.getId());
+                return Blocks.loadSim(new FileInputStream(simFile));
+            }
+        } catch (Exception e) {
+            Boxle.instance().LOGGER_MAIN.logWarning("Unable to load cached sim for block " + program.getId());
+            e.printStackTrace();
+        }
+
         InstructionTree tree = program.getInstructions();
         InstructionBranch root = tree.getStartInstruction();
 
@@ -124,7 +136,7 @@ public class PropLoader {
 
         //TODO load this if it exists
         try {
-            program.saveToScript(new File(simDir, "/" + prop.getProperty("prop_name") + ".sim"));
+            program.saveToScript(simFile);
         } catch (IOException e) {
             Boxle.instance().LOGGER_MAIN.logWarning("Unable to save generated sim script!");
             e.printStackTrace();
@@ -141,6 +153,19 @@ public class PropLoader {
         } catch (Exception e) {
             throw new RuntimeException("Caught exception simulating block!", e);
         }
+    }
+
+    private static boolean isValid(Properties prop, File simFile) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(simFile));
+        String hash = "$prop_hash=" + prop.hashCode();
+        boolean found = false;
+        while (reader.ready()) {
+            if (reader.readLine().equals(hash)) {
+                found = true;
+                break;
+            }
+        }
+        return found;
     }
 
     private static void addProperty(InstructionBranch root, Atom value, Atom property) {

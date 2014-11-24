@@ -87,7 +87,7 @@ public class Blocks {
         }
     }
 
-    private static Block loadSim(InputStream in) {
+    public static Block loadSim(InputStream in) {
         BufferedReader reader = null;
         try {
             Program program = new Program();

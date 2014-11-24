@@ -46,6 +46,7 @@ public class Program {
 
     public void setName(String name) {
         this.name = name;
+        setVariable("$name", name);
     }
 
     public String getId() {
@@ -54,6 +55,7 @@ public class Program {
 
     public void setId(String id) {
         this.id = id;
+        setVariable("$id", id);
     }
 
     public void setVariable(String var, String value) {
@@ -70,12 +72,12 @@ public class Program {
         Writer writer = null;
         try {
             writer = new BufferedWriter(new FileWriter(scriptPath));
-            writer.write("$id=");
-            writer.write(id);
-            writer.write("\n");
-            writer.write("$name=");
-            writer.write(name);
-            writer.write("\n");
+            for (String str : variables.keySet()) {
+                writer.write(str);
+                writer.write("=");
+                writer.write(variables.get(str));
+                writer.write("\n");
+            }
             writer.write("\n");
             writeBranch(writer, instructions.root(), 0, 0);
             writer.close();
