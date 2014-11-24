@@ -26,17 +26,17 @@ public abstract class Entity {
     /**
      * The world this entity is in
      */
-    private World world;
+    protected World world;
 
     /**
      * Gets the location of this entity
      */
-    private Vec3f location;
+    protected Vec3f location;
 
     /**
      * Gets the rotation of this entity
      */
-    private Vec3f rotation;
+    protected Vec3f rotation;
 
     /**
      * Creates a new Entity

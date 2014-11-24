@@ -1,7 +1,6 @@
 package net.acomputerdog.boxle.main;
 
 import net.acomputerdog.boxle.entity.types.EntityPlayer;
-import net.acomputerdog.boxle.world.World;
 
 /**
  * Boxle client instance
@@ -13,6 +12,8 @@ public class Client {
     private final Boxle boxle;
 
     private EntityPlayer player;
+
+    private boolean playerSpawned = false;
 
     /**
      * Create a new Client instance.
@@ -28,15 +29,17 @@ public class Client {
      * Initializes this client
      */
     public void init() {
-        World world = boxle.getServer().getDefaultWorld();
-        player = new EntityPlayer(world);
-        world.spawnEntity(player);
+        player = new EntityPlayer(boxle.getServer().getDefaultWorld());
     }
 
     /**
      * Ticks this client
      */
     public void tick() {
+        if (!playerSpawned) {
+            playerSpawned = true;
+            player.getWorld().spawnEntity(player);
+        }
     }
 
     /**
