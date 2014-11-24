@@ -1,0 +1,6 @@
+
+parent=/prop/block/templates/solid.prop
+prop_name=dirt
+
+id=dirt
+name=Dirt

@@ -9,7 +9,7 @@ import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.physics.PhysicsEngine;
 import net.acomputerdog.boxle.render.util.ChunkNode;
 import net.acomputerdog.boxle.world.gen.CachingWorldGen;
-import net.acomputerdog.boxle.world.gen.CellsWorldGen;
+import net.acomputerdog.boxle.world.gen.Simplex3DWorldGen;
 import net.acomputerdog.boxle.world.gen.WorldGen;
 import net.acomputerdog.boxle.world.structure.ChunkTable;
 import net.acomputerdog.core.logger.CLogger;
@@ -60,7 +60,8 @@ public class World {
         //generator = new AngleWorldGen();
         //generator = new CachingWorldGen(new SinWorldGen());
         //generator = new CachingWorldGen(new SimplexWorldGen(1234L));
-        generator = new CachingWorldGen(new CellsWorldGen(name.hashCode()));
+        //generator = new CachingWorldGen(new CellsWorldGen(name.hashCode()));
+        generator = new CachingWorldGen(new Simplex3DWorldGen(name.hashCode()));
     }
 
     /**

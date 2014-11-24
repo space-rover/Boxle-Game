@@ -22,9 +22,17 @@ public class Blocks {
     public static final Registry<Block> BLOCKS = new Registry<>();
 
     public static final Block air = createAirBlock();
+
     public static final Block steel = loadInternalProp("steel");
     public static final Block grassySteel = loadInternalProp("grassy_steel");
-    public static final Block acomputerdog = loadInternalSim("acomputerdog");
+
+    public static final Block dirt = loadInternalProp("dirt");
+    public static final Block grass = loadInternalProp("grass");
+    public static final Block stone = loadInternalProp("stone");
+
+    public static final Block acomputerdog = loadInternalProp("acomputerdog");
+    public static final Block seamusFD = loadInternalProp("SeamusFD");
+
 
     private static Block createAirBlock() {
         Block block = new Block("air", "Air");

@@ -24,11 +24,11 @@ public abstract class SimpleWorldGen extends AbstractWorldGen {
                     if (currY > height) {
                         blocks.setBlock(x, y, z, Blocks.air);
                     } else if (currY == height) {
-                        //blocks.setBlock(x, y, z, Blocks.grass);
+                        blocks.setBlock(x, y, z, Blocks.grass);
                     } else if (currY - height >= -3) {
-                        //blocks.setBlock(x, y, z, Blocks.dirt);
+                        blocks.setBlock(x, y, z, Blocks.dirt);
                     } else {
-                        //blocks.setBlock(x, y, z, Blocks.stone);
+                        blocks.setBlock(x, y, z, Blocks.stone);
                     }
                 }
             }

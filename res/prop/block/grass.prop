@@ -1,0 +1,9 @@
+# Grass properties file
+
+parent=/prop/block/dirt.prop
+prop_name=grass
+
+id=grass
+name=Grass
+
+tex=tex/block/grass_top.png,tex/block/grass_side.png,tex/block/grass_side.png,tex/block/grass_side.png,tex/block/grass_side.png,tex/block/dirt.png
