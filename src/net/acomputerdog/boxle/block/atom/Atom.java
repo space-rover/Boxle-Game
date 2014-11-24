@@ -2,8 +2,11 @@ package net.acomputerdog.boxle.block.atom;
 
 import net.acomputerdog.boxle.block.dynamic.Identifiable;
 import net.acomputerdog.boxle.block.sim.program.Instruction;
+import net.acomputerdog.core.logger.CLogger;
 
 public abstract class Atom extends Instruction implements Identifiable {
+    public static final CLogger LOGGER = new CLogger("Atom", false, true);
+
     private final String name;
     private final String def;
 

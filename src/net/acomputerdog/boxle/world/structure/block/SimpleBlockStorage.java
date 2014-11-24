@@ -2,7 +2,6 @@ package net.acomputerdog.boxle.world.structure.block;
 
 import net.acomputerdog.boxle.block.block.Block;
 import net.acomputerdog.boxle.block.registry.Blocks;
-import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.world.Chunk;
 import net.acomputerdog.boxle.world.structure.BlockStorage;
 
@@ -38,7 +37,7 @@ public class SimpleBlockStorage implements BlockStorage {
     @Override
     public void setBlock(int x, int y, int z, Block block) {
         if (block == null) {
-            Boxle.instance().LOGGER_MAIN.logWarning("Attempted to set a null block, storing air instead!");
+            chunk.getWorld().getLogger().logWarning("Attempted to set a null block, storing air instead!");
             block = Blocks.air;
         }
         blocks[x][y][z] = block;

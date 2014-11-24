@@ -30,7 +30,7 @@ public class PropLoader {
     private static File createSimDir() {
         File simDir = new File(Boxle.instance().getGameConfig().cacheDir, "/sims/");
         if (!(simDir.isDirectory() || simDir.mkdirs())) {
-            Boxle.instance().LOGGER_MAIN.logWarning("Unable to create sim cache!");
+            Sim.LOGGER.logWarning("Unable to create sim cache!");
         }
         return simDir;
     }
@@ -39,8 +39,7 @@ public class PropLoader {
         try {
             return createBlock(loadProp(name, in));
         } catch (Exception e) {
-            System.err.println("Exception loading block: " + name);
-            e.printStackTrace();
+            Sim.LOGGER.logError("Exception loading block: " + name, e);
             throw new RuntimeException("Exception loading block", e);
         }
     }
@@ -58,7 +57,7 @@ public class PropLoader {
                 throw new RuntimeException("Exception reading property file!");
             }
             propertyMap.put(name, prop);
-            Boxle.instance().LOGGER_MAIN.logDetail("Loaded block from internal prop: " + name);
+            Sim.LOGGER.logDetail("Loaded block from internal prop: " + name);
         }
         return prop;
     }
@@ -88,7 +87,7 @@ public class PropLoader {
                 return Blocks.loadSim(new FileInputStream(simFile));
             }
         } catch (Exception e) {
-            Boxle.instance().LOGGER_MAIN.logWarning("Unable to load cached sim for block " + program.getId());
+            Sim.LOGGER.logWarning("Unable to load cached sim for block " + program.getId());
             e.printStackTrace();
         }
 
@@ -110,7 +109,7 @@ public class PropLoader {
         if (prop.containsKey("bounds")) {
             String[] boundStrings = prop.getProperty("bounds").split(Patterns.COMMA);
             if (boundStrings.length < 6) {
-                Boxle.instance().LOGGER_MAIN.logWarning("Improperly formatted bounds: \"" + prop.getProperty("bounds") + "\".  Should be 6 comma-separated float values.");
+                Sim.LOGGER.logWarning("Improperly formatted bounds: \"" + prop.getProperty("bounds") + "\".  Should be 6 comma-separated float values.");
             } else {
                 InstructionBranch last = root;
                 for (int index = 0; index < 6; index++) {
@@ -123,7 +122,7 @@ public class PropLoader {
             //TODO actually embed the textures
             String[] texPaths = prop.getProperty("tex").split(Patterns.COMMA);
             if (texPaths.length < 6) {
-                Boxle.instance().LOGGER_MAIN.logWarning("Improperly formatted texture paths: \"" + prop.getProperty("tex") + "\".  Should be 6 comma-separated strings.");
+                Sim.LOGGER.logWarning("Improperly formatted texture paths: \"" + prop.getProperty("tex") + "\".  Should be 6 comma-separated strings.");
             } else {
                 InstructionBranch last = root;
                 for (int index = 0; index < 6; index++) {
@@ -136,7 +135,7 @@ public class PropLoader {
         try {
             program.saveToScript(simFile);
         } catch (IOException e) {
-            Boxle.instance().LOGGER_MAIN.logWarning("Unable to save generated sim script!");
+            Sim.LOGGER.logWarning("Unable to save generated sim script!");
             e.printStackTrace();
         }
 

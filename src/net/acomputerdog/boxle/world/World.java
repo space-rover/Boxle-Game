@@ -12,6 +12,7 @@ import net.acomputerdog.boxle.world.gen.CachingWorldGen;
 import net.acomputerdog.boxle.world.gen.CellsWorldGen;
 import net.acomputerdog.boxle.world.gen.WorldGen;
 import net.acomputerdog.boxle.world.structure.ChunkTable;
+import net.acomputerdog.core.logger.CLogger;
 
 /**
  * A world, made of blocks :)
@@ -37,6 +38,8 @@ public class World {
      */
     private final ChunkTable chunks;
 
+    private final CLogger logger;
+
     private WorldGen generator;
 
     /**
@@ -52,6 +55,7 @@ public class World {
         this.name = name;
         physicsEngine = new PhysicsEngine(this);
         chunks = new ChunkTable(this);
+        logger = new CLogger("World_" + name, false, true);
         //generator = new DebugWorldGen(this);
         //generator = new AngleWorldGen();
         //generator = new CachingWorldGen(new SinWorldGen());
@@ -156,5 +160,9 @@ public class World {
             VecPool.free(bLoc);
         }
         VecPool.free(cLoc);
+    }
+
+    public CLogger getLogger() {
+        return logger;
     }
 }

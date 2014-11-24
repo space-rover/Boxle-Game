@@ -56,16 +56,16 @@ public class Blocks {
     public static void loadExternalSims() {
         File userDir = new File("./user/sims/");
         if (!(userDir.isDirectory() || userDir.mkdirs())) {
-            Boxle.instance().LOGGER_MAIN.logWarning("Unable to create user sims directory!");
+            Sim.LOGGER.logWarning("Unable to create user sims directory!");
         }
         File saveDir = new File("./save/sims/");
         if (!(saveDir.isDirectory() || saveDir.mkdirs())) {
-            Boxle.instance().LOGGER_MAIN.logWarning("Unable to create save sims directory!");
+            Sim.LOGGER.logWarning("Unable to create save sims directory!");
         }
         int loadedFiles = 0;
         loadedFiles += loadSimsInDir(userDir);
         loadedFiles += loadSimsInDir(saveDir);
-        Boxle.instance().LOGGER_MAIN.logDetail("Loaded " + loadedFiles + " external sims.");
+        Sim.LOGGER.logDetail("Loaded " + loadedFiles + " external sims.");
 
     }
 
@@ -79,7 +79,7 @@ public class Blocks {
                         loadSim(new FileInputStream(file));
                         loadedFiles++;
                     } catch (IOException e) {
-                        Boxle.instance().LOGGER_MAIN.logWarning("Unable to read sim: " + file.getPath());
+                        Sim.LOGGER.logWarning("Unable to read sim: " + file.getPath());
                         e.printStackTrace();
                     }
                 }
@@ -113,7 +113,7 @@ public class Blocks {
             }
             Block block = result.getBlock();
             BLOCKS.register(block);
-            Boxle.instance().LOGGER_MAIN.logDetail("Loaded block from internal sim: " + result.getBlock().getId());
+            Sim.LOGGER.logDetail("Loaded block from internal sim: " + result.getBlock().getId());
             return block;
         } catch (Exception e) {
             try {

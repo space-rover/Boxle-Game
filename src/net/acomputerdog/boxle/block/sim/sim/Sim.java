@@ -11,8 +11,11 @@ import net.acomputerdog.boxle.block.sim.sim.state.SimState;
 import net.acomputerdog.boxle.block.sim.sim.state.SimStateExec;
 import net.acomputerdog.boxle.block.sim.stack.Stack;
 import net.acomputerdog.boxle.block.sim.stack.StackItem;
+import net.acomputerdog.core.logger.CLogger;
 
 public class Sim {
+    public static final CLogger LOGGER = new CLogger("Sim", false, true);
+
     private final Stack stack = new Stack(this);
     private final Program program;
     private SimState programState;

@@ -6,11 +6,14 @@ import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.math.aabb.AABBF;
 import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.world.World;
+import net.acomputerdog.core.logger.CLogger;
 
 /**
  * Represents a type of Block.
  */
 public class Block implements Identifiable {
+    public static final CLogger LOGGER = new CLogger("Block", false, true);
+
     /**
      * Name of this block.  Used internally to identify it.
      */

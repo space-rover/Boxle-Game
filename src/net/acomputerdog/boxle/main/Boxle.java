@@ -22,15 +22,15 @@ public class Boxle extends SimpleApplication {
     /**
      * Logger that logs without date or time.  Useful for high-output debug messages.
      */
-    public final CLogger LOGGER_FAST = new CLogger("Boxle", false, false);
+    public static final CLogger LOGGER_FAST = new CLogger("Boxle", false, false);
     /**
      * Normal logger that just logs time.
      */
-    public final CLogger LOGGER_MAIN = new CLogger("Boxle", false, true);
+    public static final CLogger LOGGER_MAIN = new CLogger("Boxle", false, true);
     /**
      * Full logger that outputs date and time.  Useful for crash messages.
      */
-    public final CLogger LOGGER_FULL = new CLogger("Boxle", true, true);
+    public static final CLogger LOGGER_FULL = new CLogger("Boxle", true, true);
 
     /**
      * Central render engine

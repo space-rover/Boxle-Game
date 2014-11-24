@@ -22,8 +22,8 @@ public class CreateTexAtom extends Atom {
         super(null, "UTIL.CREATE_TEXTURE", name);
         generatePath = new File(Boxle.instance().getGameConfig().cacheDir, "/tex/");
         if (!(generatePath.isDirectory() || generatePath.mkdirs())) {
-            Boxle.instance().LOGGER_MAIN.logError("Could not create temporary textures directory!");
-            Boxle.instance().LOGGER_MAIN.logError("Make sure boxle has write access to the current directory, or run boxle from a directory with write access!");
+            Atom.LOGGER.logError("Could not create temporary textures directory!");
+            Atom.LOGGER.logError("Make sure boxle has write access to the current directory, or run boxle from a directory with write access!");
         }
     }
 
