@@ -3,6 +3,7 @@ package net.acomputerdog.boxle.block.sim.program;
 import net.acomputerdog.boxle.block.sim.program.tree.InstructionBranch;
 import net.acomputerdog.boxle.block.sim.program.tree.InstructionTree;
 
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -61,5 +62,45 @@ public class Program {
 
     public String getVariable(String var) {
         return variables.get(var);
+    }
+
+
+    public void saveToScript(File scriptPath) throws IOException {
+        System.out.println("Saving script for: " + name);
+        Writer writer = null;
+        try {
+            writer = new BufferedWriter(new FileWriter(scriptPath));
+            writer.write("$id=");
+            writer.write(id);
+            writer.write("\n");
+            writer.write("$name=");
+            writer.write(name);
+            writer.write("\n");
+            writer.write("\n");
+            writeBranch(writer, instructions.root(), 0, 0);
+            writer.close();
+        } catch (IOException e) {
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (IOException ignored) {}
+            }
+        }
+    }
+
+    private void writeBranch(Writer out, InstructionBranch branch, int initialDepth, int currDepth) throws IOException {
+        for (InstructionBranch currBranch : branch.getOutputs()) {
+            out.write(currBranch.getInstruction().getId());
+            if (currBranch.getOutputs().isEmpty()) {
+                for (int count = 0; count <= currDepth - initialDepth; count++) {
+                    out.write(";");
+                }
+                out.write("\n");
+            } else {
+                out.write(":");
+                out.write("\n");
+                writeBranch(out, currBranch, initialDepth, currDepth + 1);
+            }
+        }
     }
 }

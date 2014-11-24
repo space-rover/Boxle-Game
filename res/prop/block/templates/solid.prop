@@ -1,5 +1,7 @@
 # Template for "solid" blocks
 
+prop_name=solid.prop
+
 collidable=true
 transparent=false
 light_reduction=255

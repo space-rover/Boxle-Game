@@ -1,6 +1,7 @@
 # Grassy steel properties file
 
 parent=/prop/block/steel.prop
+prop_name=grassy_steel
 
 id=grassy_steel
 name=Grassy Steel

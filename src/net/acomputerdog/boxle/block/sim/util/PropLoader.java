@@ -16,6 +16,7 @@ import net.acomputerdog.boxle.block.sim.sim.state.SimState;
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.core.java.Patterns;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -24,6 +25,16 @@ import java.util.Properties;
 
 public class PropLoader {
     private static final Map<String, Properties> propertyMap = new HashMap<>();
+
+    private static final File simDir = createSimDir();
+
+    private static File createSimDir() {
+        File simDir = new File(Boxle.instance().getGameConfig().cacheDir, "/sims/");
+        if (!(simDir.isDirectory() || simDir.mkdirs())) {
+            Boxle.instance().LOGGER_MAIN.logWarning("Unable to create sim cache!");
+        }
+        return simDir;
+    }
 
     public static Block loadAndCreateBlock(String name, InputStream in) {
         try {
@@ -44,7 +55,6 @@ public class PropLoader {
                 try {
                     in.close();
                 } catch (Exception ignored) {}
-                prop.setProperty("prop_name", name);
             } catch (IOException e) {
                 throw new RuntimeException("Exception reading property file!");
             }
@@ -58,7 +68,8 @@ public class PropLoader {
         if (prop.containsKey("parent")) {
             String parentName = prop.getProperty("parent");
             Properties parentProp = getParent(loadProp(parentName, PropLoader.class.getResourceAsStream(parentName)));
-            Properties temp = new Properties(parentProp);
+            Properties temp = new Properties();
+            temp.putAll(parentProp);
             temp.putAll(prop);
             prop.putAll(temp);
         }
@@ -109,6 +120,14 @@ public class PropLoader {
                 }
                 last.addOutput(Atoms.propertyTex);
             }
+        }
+
+        //TODO load this if it exists
+        try {
+            program.saveToScript(new File(simDir, "/" + prop.getProperty("prop_name") + ".sim"));
+        } catch (IOException e) {
+            Boxle.instance().LOGGER_MAIN.logWarning("Unable to save generated sim script!");
+            e.printStackTrace();
         }
 
         try {
