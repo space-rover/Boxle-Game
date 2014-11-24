@@ -10,6 +10,8 @@ import net.acomputerdog.boxle.block.util.BlockTex;
 import net.acomputerdog.boxle.config.GameConfig;
 import net.acomputerdog.boxle.entity.types.EntityPlayer;
 import net.acomputerdog.boxle.math.loc.CoordConverter;
+import net.acomputerdog.boxle.math.spiral.Spiral2i;
+import net.acomputerdog.boxle.math.vec.Vec2i;
 import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.math.vec.VecConverter;
 import net.acomputerdog.boxle.math.vec.VecPool;
@@ -51,6 +53,10 @@ public class Server {
     private int numChunks = 0;
     private int numUnload = 0;
 
+    private Vec3i lastPlayerCLoc;
+    private Spiral2i spiral;
+    private final Vec2i spiralLoc;
+
     private final CLogger logger;
 
     private final RenderEngine engine;
@@ -68,6 +74,7 @@ public class Server {
         renderDistanceV = config.renderDistanceVertical;
         logger = new CLogger("Server", false, true);
         engine = boxle.getRenderEngine();
+        spiralLoc = VecPool.getVec2i(0, 0);
     }
 
     /**
@@ -139,36 +146,40 @@ public class Server {
         World world = player.getWorld();
         ChunkTable chunks = world.getChunks();
         Vec3i center = CoordConverter.globalToChunk(VecConverter.vec3iFromVec3f(player.getLocation(), VecPool.createVec3i()));
+        if (!center.equals(lastPlayerCLoc)) {
+            VecPool.free(lastPlayerCLoc);
+            lastPlayerCLoc = center;
+            spiral = new Spiral2i(VecPool.getVec2i(center.x, center.z));
+        }
         GameConfig config = boxle.getGameConfig();
-        chunkLimitReached:
-        for (int y = -renderDistanceV; y <= renderDistanceV; y++) {
-            for (int x = -renderDistanceH; x <= renderDistanceH; x++) {
-                for (int z = -renderDistanceH; z <= renderDistanceH; z++) {
-                    if (numChunks > config.maxLoadedChunksPerTick) {
-                        break chunkLimitReached;
-                    }
-                    Vec3i newLoc = VecPool.getVec3i(center.x + x, center.y + y, center.z + z);
-                    Chunk chunk = chunks.getChunk(newLoc);
-                    if (chunk == null) {
-                        chunk = world.loadOrGenerateChunk(newLoc);
-                    }
-                    if (chunk.isChanged()) {
-                        numChunks++;
-                        rebuildChunks.remove(chunk); //make sure the chunk is not rendered twice
-                        ChunkNode node = new ChunkNode("chunk@" + newLoc.asCoords());
-                        buildChunk(chunk, node, true);
-                        ChunkNode oldNode = chunk.getChunkNode();
-                        if (oldNode.getParent() != null) {
-                            engine.removeNode(chunk.getChunkNode());
-                        }
-                        chunk.setChunkNode(node);
-                        engine.addNode(node);
-                    }
-                    VecPool.free(newLoc);
+        while (numChunks < config.maxLoadedChunksPerTick) {
+            spiral.next(spiralLoc);
+            int sX = spiralLoc.x;
+            int sY = spiralLoc.y;
+            if (Math.abs(sX - center.x) >= renderDistanceH) {
+                break;
+            }
+            for (int y = -renderDistanceV; y <= renderDistanceV; y++) {
+                Vec3i newLoc = VecPool.getVec3i(sX, center.y + y, sY);
+                Chunk chunk = chunks.getChunk(newLoc);
+                if (chunk == null) {
+                    chunk = world.loadOrGenerateChunk(newLoc);
                 }
+                if (chunk.isChanged()) {
+                    numChunks++;
+                    rebuildChunks.remove(chunk); //make sure the chunk is not rendered twice
+                    ChunkNode node = new ChunkNode("chunk@" + newLoc.asCoords());
+                    buildChunk(chunk, node, true);
+                    ChunkNode oldNode = chunk.getChunkNode();
+                    if (oldNode.getParent() != null) {
+                        engine.removeNode(chunk.getChunkNode());
+                    }
+                    chunk.setChunkNode(node);
+                    engine.addNode(node);
+                }
+                VecPool.free(newLoc);
             }
         }
-        VecPool.free(center);
     }
 
 

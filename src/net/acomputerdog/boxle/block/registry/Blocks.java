@@ -54,7 +54,9 @@ public class Blocks {
 
     private static Block loadInternalSim(String name) {
         try {
-            return loadSim(Blocks.class.getResourceAsStream("/sim/block/" + name + ".sim"));
+            Block block = loadSim(Blocks.class.getResourceAsStream("/sim/block/" + name + ".sim"));
+            Sim.LOGGER.logDetail("Loaded block from internal sim: " + block.getId());
+            return block;
         } catch (Throwable t) {
             t.printStackTrace();
             throw new RuntimeException("Exception creating block!");
@@ -84,7 +86,8 @@ public class Blocks {
             for (File file : files) {
                 if (file.isFile() && file.getName().endsWith(".sim")) {
                     try {
-                        loadSim(new FileInputStream(file));
+                        Block block = loadSim(new FileInputStream(file));
+                        Sim.LOGGER.logDetail("Loaded block from external sim: " + block.getId());
                         loadedFiles++;
                     } catch (IOException e) {
                         Sim.LOGGER.logWarning("Unable to read sim: " + file.getPath());
@@ -121,7 +124,6 @@ public class Blocks {
             }
             Block block = result.getBlock();
             BLOCKS.register(block);
-            Sim.LOGGER.logDetail("Loaded block from internal sim: " + result.getBlock().getId());
             return block;
         } catch (Exception e) {
             try {
