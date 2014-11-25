@@ -187,12 +187,12 @@ public class Server {
         while (numChunks < config.maxLoadedChunksPerTick) {
             spiral.next(spiralLoc);
             int sX = spiralLoc.x;
-            int sY = spiralLoc.y;
-            if (Math.abs(sX - center.x) >= renderDistanceH) {
+            int sZ = spiralLoc.y;
+            if (Math.abs(sX - center.x) >= renderDistanceH || Math.abs(sZ - center.z) >= renderDistanceH) {
                 break;
             }
-            for (int y = -renderDistanceV; y <= renderDistanceV; y++) {
-                Vec3i newLoc = VecPool.getVec3i(sX, center.y + y, sY);
+            for (int y = renderDistanceV; y >= -renderDistanceV; y--) {
+                Vec3i newLoc = VecPool.getVec3i(sX, center.y + y, sZ);
                 Chunk chunk = chunks.getChunk(newLoc);
                 if (chunk == null) {
                     chunk = world.loadOrGenerateChunk(newLoc);
