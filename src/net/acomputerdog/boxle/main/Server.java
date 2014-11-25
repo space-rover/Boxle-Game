@@ -19,6 +19,7 @@ import net.acomputerdog.boxle.world.structure.ChunkTable;
 import net.acomputerdog.core.logger.CLogger;
 
 import java.util.Collections;
+import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -84,6 +85,7 @@ public class Server {
      * Ticks this server
      */
     public void tick() {
+        decorateChunks();
         long oldTime = System.currentTimeMillis();
         numChunks = 0;
         numUnload = 0;
@@ -98,6 +100,39 @@ public class Server {
         for (World world : hostedWorlds) {
             for (Entity entity : world.getEntities()) {
                 entity.onTick();
+            }
+        }
+    }
+
+    private void decorateChunks() {
+        //there has to be a better way to check neighbors...
+        for (World world : hostedWorlds) {
+            Queue<Chunk> decorateChunks = world.getDecorateChunks();
+            for (Chunk chunk : decorateChunks) {
+                Vec3i nLoc = chunk.getLocation();
+                nLoc.x++;
+                ChunkTable chunks = world.getChunks();
+                if (chunks.getChunk(nLoc) != null) {
+                    nLoc.x -= 2;
+                    if (chunks.getChunk(nLoc) != null) {
+                        nLoc.x++;
+                        nLoc.y++;
+                        if (chunks.getChunk(nLoc) != null) {
+                            nLoc.y -= 2;
+                            if (chunks.getChunk(nLoc) != null) {
+                                nLoc.y++;
+                                nLoc.z++;
+                                if (chunks.getChunk(nLoc) != null) {
+                                    nLoc.z -= 2;
+                                    if (chunks.getChunk(nLoc) != null) {
+                                        world.getGenerator().generateDecorations(chunk);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                VecPool.free(nLoc);
             }
         }
     }

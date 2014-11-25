@@ -42,6 +42,9 @@ public class Chunk implements Comparable<Chunk> {
 
     private ChunkNode chunkNode;
 
+    private boolean isGenerated = false;
+    private boolean isDecorated = false;
+
     /**
      * Creates a new chunk.
      *
@@ -164,6 +167,22 @@ public class Chunk implements Comparable<Chunk> {
         } else {
             Boxle.instance().getRenderEngine().addUpdateChunk(this);
         }
+    }
+
+    public boolean isGenerated() {
+        return isGenerated;
+    }
+
+    public void markGenerated() {
+        this.isGenerated = true;
+    }
+
+    public boolean isDecorated() {
+        return isDecorated;
+    }
+
+    public void markDecorated() {
+        this.isDecorated = true;
     }
 
     @Override

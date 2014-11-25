@@ -9,15 +9,16 @@ import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.physics.PhysicsEngine;
 import net.acomputerdog.boxle.render.util.ChunkNode;
-import net.acomputerdog.boxle.world.gen.simple.CachingWorldGen;
-import net.acomputerdog.boxle.world.gen.simple.CellsWorldGen;
-import net.acomputerdog.boxle.world.gen.simple.SimpleWorldGen;
+import net.acomputerdog.boxle.world.gen.CellsWorldGen;
+import net.acomputerdog.boxle.world.gen.WorldGen;
 import net.acomputerdog.boxle.world.structure.ChunkTable;
 import net.acomputerdog.core.logger.CLogger;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * A world, made of blocks :)
@@ -45,7 +46,9 @@ public class World {
 
     private final CLogger logger;
 
-    private SimpleWorldGen generator;
+    private WorldGen generator;
+
+    private final Queue<Chunk> decorateChunks = new ConcurrentLinkedQueue<>();
 
     private final Map<Integer, Entity> entities = new HashMap<>();
 
@@ -67,8 +70,9 @@ public class World {
         //generator = new AngleWorldGen();
         //generator = new CachingWorldGen(new SinWorldGen());
         //generator = new CachingWorldGen(new SimplexWorldGen(1234L));
-        generator = new CachingWorldGen(new CellsWorldGen(name.hashCode()));
+        //generator = new CachingWorldGen(new CellsWorldGen(name.hashCode()));
         //generator = new CachingWorldGen(new Simplex3DWorldGen(name.hashCode()));
+        generator = new CellsWorldGen(name.hashCode());
     }
 
     /**
@@ -111,17 +115,18 @@ public class World {
         Chunk chunk = chunks.getChunk(loc);
         if (chunk == null) {
             chunk = new Chunk(this, loc);
-            generator.generateChunk(chunk);
+            generator.generateTerrain(chunk);
             chunks.addChunk(chunk);
+            decorateChunks.add(chunk);
         }
         return chunk;
     }
 
-    public SimpleWorldGen getGenerator() {
+    public WorldGen getGenerator() {
         return generator;
     }
 
-    public void setGenerator(SimpleWorldGen generator) {
+    public void setGenerator(WorldGen generator) {
         this.generator = generator;
     }
 
@@ -201,5 +206,9 @@ public class World {
 
     public Entity getEntity(int id) {
         return entities.get(id);
+    }
+
+    public Queue<Chunk> getDecorateChunks() {
+        return decorateChunks;
     }
 }
