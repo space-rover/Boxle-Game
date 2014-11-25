@@ -9,7 +9,6 @@ import net.acomputerdog.boxle.entity.types.EntityPlayer;
 import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.render.engine.RenderEngine;
 import net.acomputerdog.boxle.render.util.BoxleFlyByCamera;
-import net.acomputerdog.boxle.world.Chunk;
 import net.acomputerdog.boxle.world.structure.WorldList;
 import net.acomputerdog.core.java.ThreadUtils;
 import net.acomputerdog.core.logger.CLogger;
@@ -107,7 +106,7 @@ public class Boxle extends SimpleApplication {
     public void simpleInitApp() {
         Blocks.loadExternalSims();
 
-        float renderDistance = (Chunk.CHUNK_SIZE * Math.max(gameConfig.renderDistanceHorizontal, gameConfig.renderDistanceVertical) + 1f);
+        //float renderDistance = (Chunk.CHUNK_SIZE * Math.max(gameConfig.renderDistanceHorizontal, gameConfig.renderDistanceVertical) + 1f);
         cam.setFrustumPerspective(gameConfig.fov, (float) gameConfig.screenWidth / (float) gameConfig.screenHeight, .2f, 1000f);
         cam.update();
 

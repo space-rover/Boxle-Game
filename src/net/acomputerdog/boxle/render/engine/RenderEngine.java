@@ -63,7 +63,6 @@ public class RenderEngine {
         worldNode = boxle.getRootNode();
         terrainNode = new ChunkNode("terrain");
         worldNode.attachChild(terrainNode);
-
         input.init();
     }
 
