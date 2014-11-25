@@ -8,6 +8,7 @@ import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.renderer.Camera;
+import net.acomputerdog.boxle.block.registry.Blocks;
 import net.acomputerdog.boxle.entity.types.EntityPlayer;
 import net.acomputerdog.boxle.math.loc.CoordConverter;
 import net.acomputerdog.boxle.math.vec.Vec3i;
@@ -100,9 +101,10 @@ public class InputHandler implements ActionListener, AnalogListener {
             Vec3i pLoc = VecConverter.vec3iFromVec3f(player.getLocation());
             logger.logDebug("Player position: " + pLoc.asCoords() + " OR " + CoordConverter.globalToChunk(pLoc.duplicate()).asCoords() + "/" + CoordConverter.globalToBlock(pLoc.duplicate()));
             World world = player.getWorld();
-            //world.setBlockAt(pLoc, Blocks.acomputerdog);
-            pLoc.y -= 1;
-            //world.setBlockAt(pLoc, Blocks.seamusFD);
+            pLoc.y++;
+            world.setBlockAt(pLoc, Blocks.acomputerdog, true);
+            pLoc.y -= 2;
+            world.setBlockAt(pLoc, Blocks.seamusFD, true);
             VecPool.free(pLoc);
         } else if ("Sprint".equals(name)) {
             flyby.setMoveSpeed(isPressed ? 2f : 1f);

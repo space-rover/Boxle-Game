@@ -31,7 +31,7 @@ public class SimpleBlockStorage implements BlockStorage {
     public void clear(Block block) {
         clearBlock = (block == null) ? Blocks.air : block;
         blocks = new Block[chunkSize][chunkSize][chunkSize];
-        chunk.setChanged(true);
+        chunk.setNeedsRebuild(true);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class SimpleBlockStorage implements BlockStorage {
             block = Blocks.air;
         }
         blocks[x][y][z] = block;
-        chunk.setChanged(true);
+        chunk.setNeedsRebuild(true);
     }
 
     public Chunk getChunk() {

@@ -1,6 +1,7 @@
 package net.acomputerdog.boxle.world;
 
 import net.acomputerdog.boxle.block.block.Block;
+import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.render.util.ChunkNode;
@@ -37,7 +38,7 @@ public class Chunk implements Comparable<Chunk> {
      */
     private final BlockStorage blocks;
 
-    private boolean isChanged = true;
+    private boolean needsRebuild = true;
 
     private ChunkNode chunkNode;
 
@@ -77,8 +78,24 @@ public class Chunk implements Comparable<Chunk> {
      * @param block The block to set.  Cannot be null.
      */
     public void setBlockAt(int x, int y, int z, Block block) {
+        setBlockAt(x, y, z, block, false);
+    }
+
+    /**
+     * Sets the block at a location
+     *
+     * @param x     X-location
+     * @param y     Y-location
+     * @param z     Z-location
+     * @param block The block to set.  Cannot be null.
+     */
+    public void setBlockAt(int x, int y, int z, Block block, boolean instant) {
         blocks.setBlock(x, y, z, block);
-        setChanged(true);
+        if (!instant) {
+            setNeedsRebuild(true);
+        } else {
+            Boxle.instance().getRenderEngine().addUpdateChunk(this);
+        }
     }
 
     /**
@@ -108,12 +125,12 @@ public class Chunk implements Comparable<Chunk> {
         return blocks;
     }
 
-    public boolean isChanged() {
-        return isChanged;
+    public boolean isNeedsRebuild() {
+        return needsRebuild;
     }
 
-    public void setChanged(boolean changed) {
-        this.isChanged = changed;
+    public void setNeedsRebuild(boolean needsRebuild) {
+        this.needsRebuild = needsRebuild;
     }
 
     public ChunkNode getChunkNode() {
@@ -129,12 +146,24 @@ public class Chunk implements Comparable<Chunk> {
     }
 
     public void setBlockAt(Vec3i loc, Block block) {
-        setBlockAt(loc.x, loc.y, loc.z, block);
+        setBlockAt(loc, block, false);
+    }
+
+    public void setBlockAt(Vec3i loc, Block block, boolean instant) {
+        setBlockAt(loc.x, loc.y, loc.z, block, instant);
     }
 
     public void clear(Block block) {
+        clear(block, false);
+    }
+
+    public void clear(Block block, boolean instant) {
         blocks.clear(block);
-        setChanged(true);
+        if (!instant) {
+            setNeedsRebuild(true);
+        } else {
+            Boxle.instance().getRenderEngine().addUpdateChunk(this);
+        }
     }
 
     @Override

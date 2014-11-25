@@ -11,7 +11,7 @@ public abstract class WorldGenBase extends AbstractWorldGen {
     @Override
     public void generateChunk(Chunk chunk) {
         BlockStorage blocks = chunk.getBlocks();
-        chunk.setChanged(true);
+        chunk.setNeedsRebuild(true);
         Vec3i cLoc = chunk.getLocation();
         int chunkY = cLoc.y * chunkSize;
         int chunkX = cLoc.x * chunkSize;

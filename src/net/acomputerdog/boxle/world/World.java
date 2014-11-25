@@ -154,17 +154,25 @@ public class World {
     }
 
     public void setBlockAt(int x, int y, int z, Block block) {
-        Vec3i vec = VecPool.getVec3i(x, y, z);
-        setBlockAt(vec, block);
-        VecPool.free(vec);
+        setBlockAt(x, y, z, block, false);
     }
 
     public void setBlockAt(Vec3i loc, Block block) {
+        setBlockAt(loc, block, false);
+    }
+
+    public void setBlockAt(int x, int y, int z, Block block, boolean instant) {
+        Vec3i vec = VecPool.getVec3i(x, y, z);
+        setBlockAt(vec, block, instant);
+        VecPool.free(vec);
+    }
+
+    public void setBlockAt(Vec3i loc, Block block, boolean instant) {
         Vec3i cLoc = CoordConverter.globalToChunk(loc.duplicate());
         Chunk chunk = chunks.getChunk(cLoc);
         if (chunk != null) {
             Vec3i bLoc = CoordConverter.globalToBlock(loc.duplicate());
-            chunk.setBlockAt(bLoc, block);
+            chunk.setBlockAt(bLoc, block, instant);
             VecPool.free(bLoc);
         }
         VecPool.free(cLoc);

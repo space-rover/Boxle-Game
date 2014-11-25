@@ -4,7 +4,11 @@ import com.jme3.scene.Node;
 import net.acomputerdog.boxle.config.GameConfig;
 import net.acomputerdog.boxle.input.InputHandler;
 import net.acomputerdog.boxle.main.Boxle;
+import net.acomputerdog.boxle.math.loc.CoordConverter;
+import net.acomputerdog.boxle.math.vec.Vec3i;
+import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.render.util.ChunkNode;
+import net.acomputerdog.boxle.world.Chunk;
 import net.acomputerdog.core.logger.CLogger;
 
 import java.util.Set;
@@ -45,6 +49,8 @@ public class RenderEngine {
     private final Set<ChunkNode> addNodes = new ConcurrentSkipListSet<>();
     private final Set<ChunkNode> removeNodes = new ConcurrentSkipListSet<>();
 
+    private final Set<Chunk> updateChunks = new ConcurrentSkipListSet<>();
+
     /**
      * Creates a new instance of this RenderEngine.
      *
@@ -74,6 +80,23 @@ public class RenderEngine {
         for (ChunkNode node : addNodes) {
             addNodes.remove(node);
             terrainNode.attachChild(node);
+        }
+        for (Chunk chunk : updateChunks) {
+            updateChunks.remove(chunk);
+            ChunkNode oldNode = chunk.getChunkNode();
+            terrainNode.detachChild(oldNode);
+            removeNodes.remove(oldNode);
+            addNodes.remove(oldNode);
+
+            Vec3i cLoc = chunk.getLocation();
+            Vec3i gLoc = CoordConverter.chunkToGlobal(cLoc.duplicate());
+            ChunkNode node = new ChunkNode("chunk@" + cLoc.asCoords());
+            ChunkRenderer.buildChunkMesh(gLoc, chunk, node);
+            chunk.setChunkNode(node);
+            terrainNode.attachChild(node);
+
+            VecPool.free(gLoc);
+            VecPool.free(cLoc);
         }
     }
 
@@ -116,6 +139,14 @@ public class RenderEngine {
             return;
         }
         removeNodes.add(node);
+    }
+
+    public void addUpdateChunk(Chunk chunk) {
+        if (chunk == null) {
+            logger.logWarning("Null chunk passed to RenderEngine!");
+            return;
+        }
+        updateChunks.add(chunk);
     }
 
     public Node getTerrainNode() {

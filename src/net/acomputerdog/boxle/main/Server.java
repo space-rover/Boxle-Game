@@ -1,12 +1,6 @@
 package net.acomputerdog.boxle.main;
 
-import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
-import com.jme3.scene.shape.Quad;
-import jme3tools.optimize.GeometryBatchFactory;
-import net.acomputerdog.boxle.block.block.Block;
-import net.acomputerdog.boxle.block.util.BlockFace;
-import net.acomputerdog.boxle.block.util.BlockTex;
 import net.acomputerdog.boxle.config.GameConfig;
 import net.acomputerdog.boxle.entity.Entity;
 import net.acomputerdog.boxle.entity.types.EntityPlayer;
@@ -16,11 +10,11 @@ import net.acomputerdog.boxle.math.vec.Vec2i;
 import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.math.vec.VecConverter;
 import net.acomputerdog.boxle.math.vec.VecPool;
+import net.acomputerdog.boxle.render.engine.ChunkRenderer;
 import net.acomputerdog.boxle.render.engine.RenderEngine;
 import net.acomputerdog.boxle.render.util.ChunkNode;
 import net.acomputerdog.boxle.world.Chunk;
 import net.acomputerdog.boxle.world.World;
-import net.acomputerdog.boxle.world.structure.BlockStorage;
 import net.acomputerdog.boxle.world.structure.ChunkTable;
 import net.acomputerdog.core.logger.CLogger;
 
@@ -50,7 +44,6 @@ public class Server {
 
     private final Set<Chunk> rebuildChunks = new ConcurrentSkipListSet<>();
 
-    private int numFaces = 0;
     private int numChunks = 0;
     private int numUnload = 0;
 
@@ -92,7 +85,6 @@ public class Server {
      */
     public void tick() {
         long oldTime = System.currentTimeMillis();
-        numFaces = 0;
         numChunks = 0;
         numUnload = 0;
         rebuildNeighborChunks();
@@ -100,7 +92,7 @@ public class Server {
         unloadExtraChunks();
         if (config.outputRenderDebugInfo && numChunks > 0) {
             long newTime = System.currentTimeMillis();
-            logger.logDetail("Built " + numChunks + " chunk meshes from " + numFaces + " faces and unloaded " + numUnload + " chunks in " + ((newTime - oldTime) / 1000f) + " seconds.");
+            logger.logDetail("Built " + numChunks + " chunk meshes and unloaded " + numUnload + " chunks in " + ((newTime - oldTime) / 1000f) + " seconds.");
         }
 
         for (World world : hostedWorlds) {
@@ -170,7 +162,7 @@ public class Server {
                 if (chunk == null) {
                     chunk = world.loadOrGenerateChunk(newLoc);
                 }
-                if (chunk.isChanged()) {
+                if (chunk.isNeedsRebuild()) {
                     numChunks++;
                     rebuildChunks.remove(chunk); //make sure the chunk is not rendered twice
                     ChunkNode node = new ChunkNode("chunk@" + newLoc.asCoords());
@@ -189,9 +181,12 @@ public class Server {
 
 
     public void buildChunk(Chunk chunk, Node node, boolean notifyNeighbors) {
-        chunk.setChanged(false);
+        chunk.setNeedsRebuild(false);
+
         Vec3i cLoc = chunk.getLocation();
         Vec3i gLoc = CoordConverter.chunkToGlobal(cLoc.duplicate());
+        ChunkRenderer.buildChunkMesh(gLoc, chunk, node);
+        /*
         BlockStorage storage = chunk.getBlocks();
         for (int x = 0; x < chunkSize; x++) {
             for (int y = 0; y < chunkSize; y++) {
@@ -222,6 +217,7 @@ public class Server {
             }
         }
         GeometryBatchFactory.optimize(node); //enhance!
+        */
         if (notifyNeighbors) {
             if (config.notifyNeighborsMode >= 0) {
                 ChunkTable chunks = chunk.getWorld().getChunks();
@@ -277,72 +273,8 @@ public class Server {
         Chunk nChunk = chunks.getChunk(x + cLoc.x, y + cLoc.y, z + cLoc.z);
         if (nChunk != null && !rebuildChunks.contains(nChunk)) {
             rebuildChunks.add(nChunk);
-            nChunk.setChanged(false);
+            nChunk.setNeedsRebuild(false);
         }
-    }
-
-    private boolean isTransparent(int x, int y, int z, Chunk chunk) {
-        if (x >= chunkSize || x < 0 || y >= chunkSize || y < 0 || z >= chunkSize || z < 0) {
-            Chunk newChunk = findNeighborChunk(x, y, z, chunk);
-            if (newChunk == null) {
-                return true;
-            }
-            Vec3i blockPos = findLocInNeighbor(x, y, z);
-            Block newBlock = newChunk.getBlockAt(blockPos.x, blockPos.y, blockPos.z);
-            VecPool.free(blockPos);
-            return newBlock == null || newBlock.isTransparent();
-        }
-        Block block = chunk.getBlockAt(x, y, z);
-        return block == null || block.isTransparent();
-    }
-
-    private Chunk findNeighborChunk(int x, int y, int z, Chunk currChunk) {
-        Vec3i loc = currChunk.getLocation();
-        if (x >= chunkSize) loc.x += 1;
-        if (x < 0) loc.x -= 1;
-        if (y >= chunkSize) loc.y += 1;
-        if (y < 0) loc.y -= 1;
-        if (z >= chunkSize) loc.z += 1;
-        if (z < 0) loc.z -= 1;
-        Chunk newChunk = currChunk.getWorld().getChunks().getChunk(loc);
-        VecPool.free(loc);
-        return newChunk;
-    }
-
-    private Vec3i findLocInNeighbor(int x, int y, int z) {
-        Vec3i vec = VecPool.getVec3i();
-        if (x >= chunkSize) {
-            vec.x = 0;
-        } else if (x < 0) {
-            vec.x = chunkSize - 1;
-        } else {
-            vec.x = x;
-        }
-        if (y >= chunkSize) {
-            vec.y = 0;
-        } else if (y < 0) {
-            vec.y = chunkSize - 1;
-        } else {
-            vec.y = y;
-        }
-        if (z >= chunkSize) {
-            vec.z = 0;
-        } else if (z < 0) {
-            vec.z = chunkSize - 1;
-        } else {
-            vec.z = z;
-        }
-        return vec;
-    }
-
-    private void addFace(Node node, BlockTex tex, Vec3i cLoc, BlockFace face, int x, int y, int z) {
-        numFaces++;
-        Geometry geom = new Geometry("face", new Quad(1f, 1f));
-        geom.setMaterial(tex.getFaceMat(face));
-        geom.setLocalTranslation(cLoc.x + x + face.xPos + 1, cLoc.y + y + face.yPos, cLoc.z + z + face.zPos + 1);
-        geom.rotate(face.xRot, face.yRot, face.zRot);
-        geom.updateModelBound();
-        node.attachChild(geom);
     }
 
     /**

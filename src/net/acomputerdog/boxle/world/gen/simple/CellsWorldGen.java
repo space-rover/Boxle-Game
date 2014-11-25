@@ -22,7 +22,7 @@ public class CellsWorldGen extends AbstractWorldGen {
     @Override
     public void generateChunk(Chunk chunk) {
         BlockStorage blocks = chunk.getBlocks();
-        chunk.setChanged(true);
+        chunk.setNeedsRebuild(true);
         Vec3i cLoc = chunk.getLocation();
         int chunkY = cLoc.y * chunkSize;
         if (chunkY + chunkSize < 0) {
