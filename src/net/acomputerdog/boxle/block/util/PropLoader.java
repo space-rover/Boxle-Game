@@ -57,7 +57,6 @@ public class PropLoader {
                 throw new RuntimeException("Exception reading property file!");
             }
             propertyMap.put(name, prop);
-            Sim.LOGGER.logDetail("Loaded block from internal prop: " + name);
         }
         return prop;
     }

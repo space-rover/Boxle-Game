@@ -52,7 +52,9 @@ public class Blocks {
     }
 
     private static Block loadInternalProp(String name) {
-        return PropLoader.loadAndCreateBlock(name, Blocks.class.getResourceAsStream("/prop/block/" + name + ".prop"));
+        Block block = PropLoader.loadAndCreateBlock(name, Blocks.class.getResourceAsStream("/prop/block/" + name + ".prop"));
+        Sim.LOGGER.logDetail("Loaded block from internal prop: " + name);
+        return block;
     }
 
     private static Block loadInternalSim(String name) {
