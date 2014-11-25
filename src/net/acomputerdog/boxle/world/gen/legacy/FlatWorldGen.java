@@ -1,4 +1,4 @@
-package net.acomputerdog.boxle.world.gen.simple;
+package net.acomputerdog.boxle.world.gen.legacy;
 
 public class FlatWorldGen extends WorldGenBase {
     private final int height;

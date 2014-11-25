@@ -1,4 +1,4 @@
-package net.acomputerdog.boxle.world.gen.simple;
+package net.acomputerdog.boxle.world.gen.legacy;
 
 import net.acomputerdog.boxle.math.vec.Vec2i;
 import net.acomputerdog.boxle.math.vec.VecPool;

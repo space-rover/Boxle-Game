@@ -1,4 +1,4 @@
-package net.acomputerdog.boxle.world.gen.simple;
+package net.acomputerdog.boxle.world.gen.legacy;
 
 public class AngleWorldGen extends WorldGenBase {
 
