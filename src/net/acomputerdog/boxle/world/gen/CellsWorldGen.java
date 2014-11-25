@@ -93,6 +93,9 @@ public class CellsWorldGen implements WorldGen {
                     if (y >= chunkSize || y <= 0) {
                         continue;
                     }
+                    if (chunk.getBlockAt(x, y, z).isTransparent()) {
+                        continue;
+                    }
                     loc.x = x + gLoc.x;
                     loc.y = y + gLoc.y;
                     loc.z = z + gLoc.z;

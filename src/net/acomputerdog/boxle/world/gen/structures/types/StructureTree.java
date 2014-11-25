@@ -24,16 +24,17 @@ public class StructureTree extends Structure {
             //int initialLeafWidth = random.nextInt(4) + 1;
             //int finalLeafWidth = random.nextInt(initialLeafWidth - 1) + 1;
             //float leafLayerScale = (initialLeafWidth - finalLeafWidth) / ((trunkHeight + 1) - minLeafHeight);
+            int leafRingScale = (int) Math.ceil((trunkHeight - minLeafHeight) / 2f);
             for (int tY = 0; tY <= trunkHeight; tY++) {
                 if (world.getBlockAt(gLoc.x + x, gLoc.y + tY + y, gLoc.z + z) != Blocks.air) {
                     break;
                 }
                 world.setBlockAt(gLoc.x + x, gLoc.y + tY + y, gLoc.z + z, Blocks.wood);
                 if (tY >= minLeafHeight) {
-                    genLeafRing(world, gLoc.x + x, gLoc.y + tY + y, gLoc.z + z, 2);
+                    genLeafRing(world, gLoc.x + x, gLoc.y + tY + y, gLoc.z + z, leafRingScale, false);
                 }
                 if (tY == trunkHeight) {
-                    genLeafRing(world, gLoc.x + x, gLoc.y + tY + y + 1, gLoc.z + z, 1);
+                    genLeafRing(world, gLoc.x + x, gLoc.y + tY + y + 1, gLoc.z + z, 1, true);
                 }
                 /*
                 if (tY == minLeafHeight + y) {
@@ -50,11 +51,13 @@ public class StructureTree extends Structure {
         }
     }
 
-    private void genLeafRing(World world, int x, int y, int z, int width) {
+    private void genLeafRing(World world, int x, int y, int z, int width, boolean includeCenter) {
         for (int currX = x - width; currX <= x + width; currX++) {
             for (int currZ = z - width; currZ <= z + width; currZ++) {
-                if (!(x == currX && z == currZ)) {
-                    world.setBlockAt(currX, y, currZ, Blocks.leaves);
+                if (includeCenter || !(x == currX && z == currZ)) {
+                    if (world.getBlockAt(currX, y, currZ) == Blocks.air) {
+                        world.setBlockAt(currX, y, currZ, Blocks.leaves);
+                    }
                 }
             }
         }
