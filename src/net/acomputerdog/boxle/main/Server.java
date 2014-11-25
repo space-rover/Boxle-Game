@@ -125,6 +125,7 @@ public class Server {
                                 if (chunks.getChunk(nLoc) != null) {
                                     nLoc.z -= 2;
                                     if (chunks.getChunk(nLoc) != null) {
+                                        decorateChunks.remove(chunk);
                                         world.getGenerator().generateDecorations(chunk);
                                     }
                                 }
@@ -197,7 +198,7 @@ public class Server {
                 if (chunk == null) {
                     chunk = world.loadOrGenerateChunk(newLoc);
                 }
-                if (chunk.isNeedsRebuild()) {
+                if (chunk.needsRebuild()) {
                     numChunks++;
                     rebuildChunks.remove(chunk); //make sure the chunk is not rendered twice
                     ChunkNode node = new ChunkNode("chunk@" + newLoc.asCoords());

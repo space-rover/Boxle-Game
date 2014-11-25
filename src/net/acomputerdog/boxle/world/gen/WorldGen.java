@@ -11,4 +11,6 @@ public interface WorldGen {
     public float getRainfall(Vec3i loc);
 
     public float getTemperature(Vec3i loc);
+
+    public long getSeed();
 }

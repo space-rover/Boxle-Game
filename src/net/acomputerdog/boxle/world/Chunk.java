@@ -1,6 +1,7 @@
 package net.acomputerdog.boxle.world;
 
 import net.acomputerdog.boxle.block.block.Block;
+import net.acomputerdog.boxle.block.registry.Blocks;
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.math.vec.VecPool;
@@ -128,7 +129,7 @@ public class Chunk implements Comparable<Chunk> {
         return blocks;
     }
 
-    public boolean isNeedsRebuild() {
+    public boolean needsRebuild() {
         return needsRebuild;
     }
 
@@ -183,6 +184,34 @@ public class Chunk implements Comparable<Chunk> {
 
     public void markDecorated() {
         this.isDecorated = true;
+    }
+
+    public int getXLoc() {
+        return location.x;
+    }
+
+    public int getYLoc() {
+        return location.y;
+    }
+
+    public int getZLoc() {
+        return location.z;
+    }
+
+    public int getGroundHeight(int x, int z) {
+        if (x >= CHUNK_SIZE || z >= CHUNK_SIZE || x < 0 || z < 0) {
+            throw new IllegalArgumentException("Cannot get a ground height out of chunk bounds!");
+        }
+        for (int y = CHUNK_SIZE - 1; y >= 0; y--) {
+            if (blocks.getBlock(x, y, z) != Blocks.air) {
+                return y;
+            }
+        }
+        return -1;
+    }
+
+    public String getCoords() {
+        return location.asCoords();
     }
 
     @Override
