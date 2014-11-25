@@ -9,8 +9,8 @@ import net.acomputerdog.boxle.block.sim.program.tree.InstructionTree;
 import net.acomputerdog.boxle.block.sim.sim.Sim;
 import net.acomputerdog.boxle.block.sim.sim.SimResult;
 import net.acomputerdog.boxle.block.sim.sim.state.SimState;
-import net.acomputerdog.boxle.block.sim.util.PropLoader;
 import net.acomputerdog.boxle.block.util.IllegalSimFormat;
+import net.acomputerdog.boxle.block.util.PropLoader;
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.core.java.Patterns;
 
