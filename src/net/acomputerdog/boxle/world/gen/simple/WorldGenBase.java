@@ -1,11 +1,11 @@
-package net.acomputerdog.boxle.world.gen;
+package net.acomputerdog.boxle.world.gen.simple;
 
 import net.acomputerdog.boxle.block.registry.Blocks;
 import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.world.Chunk;
 import net.acomputerdog.boxle.world.structure.BlockStorage;
 
-public abstract class SimpleWorldGen extends AbstractWorldGen {
+public abstract class WorldGenBase extends AbstractWorldGen {
     private static final int chunkSize = Chunk.CHUNK_SIZE;
 
     @Override

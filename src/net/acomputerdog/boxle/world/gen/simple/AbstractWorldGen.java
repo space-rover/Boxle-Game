@@ -1,9 +1,9 @@
-package net.acomputerdog.boxle.world.gen;
+package net.acomputerdog.boxle.world.gen.simple;
 
 import net.acomputerdog.boxle.math.vec.Vec2i;
 import net.acomputerdog.boxle.math.vec.Vec3i;
 
-public abstract class AbstractWorldGen implements WorldGen {
+public abstract class AbstractWorldGen implements SimpleWorldGen {
     @Override
     public int getGroundHeight(Vec2i loc) {
         return getGroundHeight(loc.x, loc.y);

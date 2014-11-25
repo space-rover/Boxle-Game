@@ -9,9 +9,9 @@ import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.physics.PhysicsEngine;
 import net.acomputerdog.boxle.render.util.ChunkNode;
-import net.acomputerdog.boxle.world.gen.CachingWorldGen;
-import net.acomputerdog.boxle.world.gen.CellsWorldGen;
-import net.acomputerdog.boxle.world.gen.WorldGen;
+import net.acomputerdog.boxle.world.gen.simple.CachingWorldGen;
+import net.acomputerdog.boxle.world.gen.simple.CellsWorldGen;
+import net.acomputerdog.boxle.world.gen.simple.SimpleWorldGen;
 import net.acomputerdog.boxle.world.structure.ChunkTable;
 import net.acomputerdog.core.logger.CLogger;
 
@@ -45,7 +45,7 @@ public class World {
 
     private final CLogger logger;
 
-    private WorldGen generator;
+    private SimpleWorldGen generator;
 
     private final Map<Integer, Entity> entities = new HashMap<>();
 
@@ -117,11 +117,11 @@ public class World {
         return chunk;
     }
 
-    public WorldGen getGenerator() {
+    public SimpleWorldGen getGenerator() {
         return generator;
     }
 
-    public void setGenerator(WorldGen generator) {
+    public void setGenerator(SimpleWorldGen generator) {
         this.generator = generator;
     }
 

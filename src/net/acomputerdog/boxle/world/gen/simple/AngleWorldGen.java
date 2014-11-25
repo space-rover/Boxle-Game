@@ -1,6 +1,6 @@
-package net.acomputerdog.boxle.world.gen;
+package net.acomputerdog.boxle.world.gen.simple;
 
-public class AngleWorldGen extends SimpleWorldGen {
+public class AngleWorldGen extends WorldGenBase {
 
     @Override
     public int getGroundHeight(int x, int y) {

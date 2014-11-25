@@ -1,4 +1,4 @@
-package net.acomputerdog.boxle.world.gen;
+package net.acomputerdog.boxle.world.gen.simple;
 
 import net.acomputerdog.boxle.math.vec.Vec2i;
 import net.acomputerdog.boxle.math.vec.VecPool;
@@ -9,10 +9,10 @@ import java.util.Map;
 
 public class CachingWorldGen extends AbstractWorldGen {
 
-    private final WorldGen realGen;
+    private final SimpleWorldGen realGen;
     private final Map<Vec2i, Integer> heightCache = new HashMap<>();
 
-    public CachingWorldGen(WorldGen realGen) {
+    public CachingWorldGen(SimpleWorldGen realGen) {
         this.realGen = realGen;
     }
 
@@ -32,7 +32,7 @@ public class CachingWorldGen extends AbstractWorldGen {
         return val;
     }
 
-    public WorldGen getRealGen() {
+    public SimpleWorldGen getRealGen() {
         return realGen;
     }
 }

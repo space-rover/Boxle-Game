@@ -1,8 +1,8 @@
-package net.acomputerdog.boxle.world.gen;
+package net.acomputerdog.boxle.world.gen.simple;
 
 import net.acomputerdog.boxle.world.gen.noise.OpenSimplexNoise;
 
-public class SimplexWorldGen extends SimpleWorldGen {
+public class SimplexWorldGen extends WorldGenBase {
     private final OpenSimplexNoise simplex;
 
     public SimplexWorldGen(long seed) {
