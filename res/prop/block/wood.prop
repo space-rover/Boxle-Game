@@ -1,0 +1,7 @@
+parent=/prop/block/templates/solid.prop
+prop_name=wood
+
+id=wood
+name=Wood
+
+tex=tex/block/wood_top.png,tex/block/wood_side.png,tex/block/wood_side.png,tex/block/wood_side.png,tex/block/wood_side.png,tex/block/wood_bottom.png

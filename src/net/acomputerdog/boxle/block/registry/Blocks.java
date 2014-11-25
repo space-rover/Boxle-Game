@@ -30,6 +30,9 @@ public class Blocks {
     public static final Block grass = loadInternalProp("grass");
     public static final Block stone = loadInternalProp("stone");
 
+    public static final Block wood = loadInternalProp("wood");
+    public static final Block leaves = loadInternalProp("leaves");
+
     public static final Block acomputerdog = loadInternalProp("acomputerdog");
     public static final Block seamusFD = loadInternalProp("SeamusFD");
 

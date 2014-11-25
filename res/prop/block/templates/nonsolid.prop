@@ -1,0 +1,7 @@
+prop_name=solid.prop
+
+collidable=false
+transparent=true
+light_reduction=0
+light_output=0
+isCollidable=false

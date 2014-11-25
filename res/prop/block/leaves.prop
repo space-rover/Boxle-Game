@@ -1,0 +1,5 @@
+parent=/prop/block/templates/nonsolid.prop
+prop_name=leaves
+
+id=leaves
+name=Leaves
