@@ -20,7 +20,7 @@ public class Blocks {
     public static final Block leaves = loadInternalProp("leaves");
 
     public static final Block acomputerdog = loadInternalProp("acomputerdog");
-    public static final Block seamusFD = loadInternalProp("SeamusFD");
+    public static final Block seamusFD = loadInternalProp("seamusfd");
 
     private static Block loadInternalProp(String name) {
         Block block = PropLoader.loadAndCreateBlock(name, Blocks.class.getResourceAsStream("/prop/block/" + name + ".prop"));
