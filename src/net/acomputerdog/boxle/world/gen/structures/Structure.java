@@ -24,9 +24,7 @@ public abstract class Structure implements Identifiable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) return false;
-        if (obj == this) return true;
-        return obj instanceof Structure && getId().equals(((Structure) obj).getId());
+        return obj != null && (obj == this || obj instanceof Structure && getId().equals(((Structure) obj).getId()));
     }
 
     @Override
