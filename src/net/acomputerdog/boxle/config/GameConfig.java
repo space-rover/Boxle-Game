@@ -3,6 +3,11 @@ package net.acomputerdog.boxle.config;
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.core.logger.CLogger;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 /**
  * Game config.
  */
@@ -16,6 +21,10 @@ public class GameConfig {
      * Logger for GameConfig
      */
     private final CLogger logger = new CLogger("GameConfig", false, true);
+
+    private final File configFile = createConfigFile();
+
+    private boolean isChanged = false;
 
     /**
      * Max allowed FPS.
@@ -80,14 +89,71 @@ public class GameConfig {
      * Loads this config.
      */
     public void load() {
-        logger.logInfo("Loaded game config.");
+        if (configFile.exists()) {
+            DataTypeProperties properties = new DataTypeProperties();
+            try {
+                properties.load(new FileInputStream(configFile));
+            } catch (IOException e) {
+                logger.logError("Unable to load game config!", e);
+                return;
+            }
+            ticksPerSecond = properties.getIntProperty("max_tickrate", ticksPerSecond);
+            maxFPS = properties.getIntProperty("max_framerate", maxFPS);
+            enableVSync = properties.getBooleanProperty("enable_vsync", enableVSync);
+            screenWidth = properties.getIntProperty("screen_width", screenWidth);
+            screenHeight = properties.getIntProperty("screen_height", screenHeight);
+            fullscreen = properties.getBooleanProperty("enable_fullscreen", fullscreen);
+            fov = properties.getFloatProperty("field_of_view", fov);
+            renderDistanceHorizontal = properties.getIntProperty("horizontal_render_distance", renderDistanceHorizontal);
+            renderDistanceVertical = properties.getIntProperty("vertical_render_distance", renderDistanceVertical);
+            maxLoadedChunksPerTick = properties.getIntProperty("max_chunks_loaded_per_tick", maxLoadedChunksPerTick);
+            notifyNeighborsMode = properties.getIntProperty("notify_chunk_neighbors_mode", notifyNeighborsMode);
+            outputRenderDebugInfo = properties.getBooleanProperty("output_meshing_performance_data", outputRenderDebugInfo);
+            cacheDir = properties.getProperty("cache_directory", cacheDir);
+            logger.logInfo("Loaded game config.");
+        } else {
+            logger.logWarning("No config file found, creating new one.");
+            isChanged = true;
+            save();
+        }
     }
 
     /**
      * Saves this config.
      */
     public void save() {
-        logger.logInfo("Saved game config.");
+        if (isChanged) {
+            isChanged = false;
+            DataTypeProperties properties = new DataTypeProperties();
+            properties.setProperty("max_tickrate", String.valueOf(ticksPerSecond));
+            properties.setProperty("max_framerate", String.valueOf(maxFPS));
+            properties.setProperty("enable_vsync", String.valueOf(enableVSync));
+            properties.setProperty("screen_width", String.valueOf(screenWidth));
+            properties.setProperty("screen_height", String.valueOf(screenHeight));
+            properties.setProperty("enable_fullscreen", String.valueOf(fullscreen));
+            properties.setProperty("field_of_view", String.valueOf(fov));
+            properties.setProperty("horizontal_render_distance", String.valueOf(renderDistanceHorizontal));
+            properties.setProperty("vertical_render_distance", String.valueOf(renderDistanceVertical));
+            properties.setProperty("max_chunks_loaded_per_tick", String.valueOf(maxLoadedChunksPerTick));
+            properties.setProperty("notify_chunk_neighbors_mode", String.valueOf(notifyNeighborsMode));
+            properties.setProperty("output_meshing_performance_data", String.valueOf(outputRenderDebugInfo));
+            properties.setProperty("cache_directory", String.valueOf(cacheDir));
+            try {
+                properties.store(new FileOutputStream(configFile), "Boxle configuration file.  Make sure any changes remain in the original data type.");
+            } catch (java.io.IOException e) {
+                logger.logError("Unable to save game configuration!", e);
+                return;
+            }
+            logger.logInfo("Saved game config.");
+        }
+    }
+
+    private File createConfigFile() {
+        File dir = new File("./config/");
+        if (!(dir.isDirectory() || dir.mkdirs())) {
+            logger.logWarning("Unable to create config directory!");
+        }
+        return new File(dir, "boxle.cfg");
     }
 
     /**
@@ -97,5 +163,13 @@ public class GameConfig {
      */
     public Boxle getBoxle() {
         return boxle;
+    }
+
+    public boolean isChanged() {
+        return isChanged;
+    }
+
+    public void markChanged() {
+        this.isChanged = true;
     }
 }
