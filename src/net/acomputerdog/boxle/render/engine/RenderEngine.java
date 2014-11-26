@@ -4,6 +4,7 @@ import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Node;
 import net.acomputerdog.boxle.config.GameConfig;
 import net.acomputerdog.boxle.input.InputHandler;
@@ -77,7 +78,6 @@ public class RenderEngine {
         terrainNode = new ChunkNode("terrain");
         rootNode.attachChild(terrainNode);
 
-
         sun = new DirectionalLight();
         sun.setColor(ColorRGBA.White);
         sun.setDirection(new Vector3f(0.5f, -1f, .5f).normalizeLocal());
@@ -89,7 +89,7 @@ public class RenderEngine {
             rootNode.addLight(sun);
             rootNode.addLight(ambience);
         }
-
+        rootNode.setShadowMode(config.shadowMode > 0 ? RenderQueue.ShadowMode.CastAndReceive : RenderQueue.ShadowMode.Off);
         input.init();
     }
 

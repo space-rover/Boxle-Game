@@ -4,6 +4,7 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.math.ColorRGBA;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.ssao.SSAOFilter;
+import com.jme3.shadow.DirectionalLightShadowFilter;
 import com.jme3.system.AppSettings;
 import net.acomputerdog.boxle.block.sim.loader.SimLoader;
 import net.acomputerdog.boxle.config.GameConfig;
@@ -123,14 +124,21 @@ public class Boxle extends SimpleApplication {
 
         viewPort.setBackgroundColor(new ColorRGBA(.25f, .5f, 1f, 1f));
 
+        renderEngine.init();
+
+        FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
         if (gameConfig.lightingMode >= 2) {
-            FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
             SSAOFilter ssao = new SSAOFilter(.5f, 2f, 0.2f, 0.1f);
             fpp.addFilter(ssao);
-            viewPort.addProcessor(fpp);
         }
+        if (gameConfig.shadowMode > 0) {
+            DirectionalLightShadowFilter dlsf = new DirectionalLightShadowFilter(assetManager, gameConfig.shadowMode, 1);
+            dlsf.setLight(renderEngine.getSun());
+            dlsf.setEnabled(true);
+            fpp.addFilter(dlsf);
+        }
+        viewPort.addProcessor(fpp);
 
-        renderEngine.init();
         hasStarted = true;
     }
 
