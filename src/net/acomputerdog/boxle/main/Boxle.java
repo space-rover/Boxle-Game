@@ -2,6 +2,8 @@ package net.acomputerdog.boxle.main;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.math.ColorRGBA;
+import com.jme3.post.FilterPostProcessor;
+import com.jme3.post.ssao.SSAOFilter;
 import com.jme3.system.AppSettings;
 import net.acomputerdog.boxle.block.sim.loader.SimLoader;
 import net.acomputerdog.boxle.config.GameConfig;
@@ -119,7 +121,14 @@ public class Boxle extends SimpleApplication {
 
         super.setPauseOnLostFocus(false);
 
-        getViewPort().setBackgroundColor(new ColorRGBA(.25f, .5f, 1f, 1f));
+        viewPort.setBackgroundColor(new ColorRGBA(.25f, .5f, 1f, 1f));
+
+        if (gameConfig.lightingMode >= 2) {
+            FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
+            SSAOFilter ssao = new SSAOFilter(.5f, 2f, 0.2f, 0.1f);
+            fpp.addFilter(ssao);
+            viewPort.addProcessor(fpp);
+        }
 
         renderEngine.init();
         hasStarted = true;

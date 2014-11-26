@@ -74,6 +74,8 @@ public class GameConfig {
 
     public int ticksPerSecond = 50;
 
+    public int lightingMode = 2; //0==off, 1==lighting only, 2==lighting+SSAO
+
     public String cacheDir = "./cache/";
 
     /**
@@ -110,6 +112,7 @@ public class GameConfig {
             notifyNeighborsMode = properties.getIntProperty("notify_chunk_neighbors_mode", notifyNeighborsMode);
             outputRenderDebugInfo = properties.getBooleanProperty("output_meshing_performance_data", outputRenderDebugInfo);
             cacheDir = properties.getProperty("cache_directory", cacheDir);
+            lightingMode = properties.getIntProperty("lighting_mode", lightingMode);
             logger.logInfo("Loaded game config.");
         } else {
             logger.logWarning("No config file found, creating new one.");
@@ -138,6 +141,7 @@ public class GameConfig {
             properties.setProperty("notify_chunk_neighbors_mode", String.valueOf(notifyNeighborsMode));
             properties.setProperty("output_meshing_performance_data", String.valueOf(outputRenderDebugInfo));
             properties.setProperty("cache_directory", String.valueOf(cacheDir));
+            properties.setProperty("lighting_mode", String.valueOf(lightingMode));
             try {
                 properties.store(new FileOutputStream(configFile), "Boxle configuration file.  Make sure any changes remain in the original data type.");
             } catch (java.io.IOException e) {

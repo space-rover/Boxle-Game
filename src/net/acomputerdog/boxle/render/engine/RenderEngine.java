@@ -1,5 +1,9 @@
 package net.acomputerdog.boxle.render.engine;
 
+import com.jme3.light.AmbientLight;
+import com.jme3.light.DirectionalLight;
+import com.jme3.math.ColorRGBA;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import net.acomputerdog.boxle.config.GameConfig;
 import net.acomputerdog.boxle.input.InputHandler;
@@ -32,7 +36,7 @@ public class RenderEngine {
     /**
      * The root node for the JME render
      */
-    private Node worldNode;
+    private Node rootNode;
 
     /**
      * Base node for terrain data.
@@ -51,6 +55,9 @@ public class RenderEngine {
 
     private final Set<Chunk> updateChunks = new ConcurrentSkipListSet<>();
 
+    private AmbientLight ambience;
+    private DirectionalLight sun;
+
     /**
      * Creates a new instance of this RenderEngine.
      *
@@ -66,9 +73,23 @@ public class RenderEngine {
      * Initializes this RenderEngine
      */
     public void init() {
-        worldNode = boxle.getRootNode();
+        rootNode = boxle.getRootNode();
         terrainNode = new ChunkNode("terrain");
-        worldNode.attachChild(terrainNode);
+        rootNode.attachChild(terrainNode);
+
+
+        sun = new DirectionalLight();
+        sun.setColor(ColorRGBA.White);
+        sun.setDirection(new Vector3f(0.5f, -1f, .5f).normalizeLocal());
+        sun.setName("Sun");
+        ambience = new AmbientLight();
+        ambience.setColor(ColorRGBA.White.mult(2f));
+        ambience.setName("Ambiance");
+        if (config.lightingMode >= 1) {
+            rootNode.addLight(sun);
+            rootNode.addLight(ambience);
+        }
+
         input.init();
     }
 
@@ -117,8 +138,8 @@ public class RenderEngine {
         return boxle;
     }
 
-    public Node getWorldNode() {
-        return worldNode;
+    public Node getRootNode() {
+        return rootNode;
     }
 
     public InputHandler getInputHandler() {
@@ -151,5 +172,13 @@ public class RenderEngine {
 
     public Node getTerrainNode() {
         return terrainNode;
+    }
+
+    public AmbientLight getAmbience() {
+        return ambience;
+    }
+
+    public DirectionalLight getSun() {
+        return sun;
     }
 }

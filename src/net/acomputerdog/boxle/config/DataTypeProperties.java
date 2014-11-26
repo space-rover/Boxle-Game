@@ -31,13 +31,7 @@ public class DataTypeProperties extends Properties {
 
     public boolean getBooleanProperty(String property, boolean def) {
         String value = super.getProperty(property);
-        if ("true".equalsIgnoreCase(value)) {
-            return true;
-        }
-        if ("false".equalsIgnoreCase(value)) {
-            return false;
-        }
-        return def;
+        return "true".equalsIgnoreCase(value) || !"false".equalsIgnoreCase(value) && def;
     }
 
     public float getFloatProperty(String property) {

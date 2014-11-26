@@ -8,6 +8,9 @@ import net.acomputerdog.boxle.main.Boxle;
 public class BlockTex {
     private static final Boxle boxle = Boxle.instance();
 
+    private static String textureFieldName = Boxle.instance().getGameConfig().lightingMode >= 1 ? "DiffuseMap" : "ColorMap";
+    private static String jm3dName = Boxle.instance().getGameConfig().lightingMode >= 1 ? "Common/MatDefs/Light/Lighting.j3md" : "Common/MatDefs/Misc/Unshaded.j3md";
+
     private final Block block;
 
     private Texture frontTex;
@@ -131,42 +134,42 @@ public class BlockTex {
 
     public void setFrontTex(Texture tex) {
         frontTex = tex;
-        frontMat.setTexture("ColorMap", frontTex);
+        frontMat.setTexture(textureFieldName, frontTex);
     }
 
     public void setBackTex(Texture tex) {
         backTex = tex;
-        backMat.setTexture("ColorMap", backTex);
+        backMat.setTexture(textureFieldName, backTex);
     }
 
     public void setLeftTex(Texture tex) {
         leftTex = tex;
-        leftMat.setTexture("ColorMap", leftTex);
+        leftMat.setTexture(textureFieldName, leftTex);
     }
 
     public void setRightTex(Texture tex) {
         rightTex = tex;
-        rightMat.setTexture("ColorMap", rightTex);
+        rightMat.setTexture(textureFieldName, rightTex);
     }
 
     public void setTopTex(Texture tex) {
         topTex = tex;
-        topMat.setTexture("ColorMap", topTex);
+        topMat.setTexture(textureFieldName, topTex);
     }
 
     public void setBottomTex(Texture tex) {
         bottomTex = tex;
-        bottomMat.setTexture("ColorMap", bottomTex);
+        bottomMat.setTexture(textureFieldName, bottomTex);
     }
 
     public void setAllTex(Texture tex) {
         frontTex = backTex = leftTex = rightTex = topTex = bottomTex = tex;
-        frontMat.setTexture("ColorMap", frontTex);
-        backMat.setTexture("ColorMap", backTex);
-        leftMat.setTexture("ColorMap", leftTex);
-        rightMat.setTexture("ColorMap", rightTex);
-        topMat.setTexture("ColorMap", topTex);
-        bottomMat.setTexture("ColorMap", bottomTex);
+        frontMat.setTexture(textureFieldName, frontTex);
+        backMat.setTexture(textureFieldName, backTex);
+        leftMat.setTexture(textureFieldName, leftTex);
+        rightMat.setTexture(textureFieldName, rightTex);
+        topMat.setTexture(textureFieldName, topTex);
+        bottomMat.setTexture(textureFieldName, bottomTex);
     }
 
 
@@ -221,12 +224,20 @@ public class BlockTex {
     }
 
     private Material createMaterial(String side) {
-        Material mat = new Material(boxle.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
+        Material mat = new Material(boxle.getAssetManager(), jm3dName);
         mat.setName("block_" + block.getName() + "_" + side);
         mat.setTransparent(block.isTransparent()); //Does not actually do anything, but is used as a marker
         mat.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
         mat.getAdditionalRenderState().setAlphaTest(true);
         mat.getAdditionalRenderState().setAlphaFallOff(.9f);
         return mat;
+    }
+
+    public static void setTextureFieldName(String textureFieldName) {
+        BlockTex.textureFieldName = textureFieldName;
+    }
+
+    public static void setJm3dName(String jm3dName) {
+        BlockTex.jm3dName = jm3dName;
     }
 }
