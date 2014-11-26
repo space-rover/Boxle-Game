@@ -1,7 +1,6 @@
 package net.acomputerdog.boxle.world;
 
 import net.acomputerdog.boxle.block.block.Block;
-import net.acomputerdog.boxle.block.registry.Blocks;
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.math.vec.VecPool;
@@ -203,7 +202,7 @@ public class Chunk implements Comparable<Chunk> {
             throw new IllegalArgumentException("Cannot get a ground height out of chunk bounds!");
         }
         for (int y = CHUNK_SIZE - 1; y >= 0; y--) {
-            if (blocks.getBlock(x, y, z) != Blocks.air) {
+            if (!blocks.getBlock(x, y, z).isTransparent()) {
                 return y;
             }
         }

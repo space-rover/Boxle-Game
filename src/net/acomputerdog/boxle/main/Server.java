@@ -85,6 +85,7 @@ public class Server {
      * Ticks this server
      */
     public void tick() {
+
         decorateChunks();
         long oldTime = System.currentTimeMillis();
         numChunks = 0;
@@ -181,6 +182,7 @@ public class Server {
         Vec3i center = CoordConverter.globalToChunk(VecConverter.vec3iFromVec3f(player.getLocation(), VecPool.createVec3i()));
         if (!center.equals(lastPlayerCLoc)) {
             VecPool.free(lastPlayerCLoc);
+            //System.out.println("Moving spiral center to " + center.asCoords());
             lastPlayerCLoc = center;
             spiral = new Spiral2i(VecPool.getVec2i(center.x, center.z));
         }
@@ -190,6 +192,7 @@ public class Server {
             int sX = spiralLoc.x;
             int sZ = spiralLoc.y;
             if (Math.abs(sX - center.x) >= renderDistanceH || Math.abs(sZ - center.z) >= renderDistanceH) {
+                //System.out.println("Ending build cycle early: " + sX + "," + sZ);
                 break;
             }
             for (int y = renderDistanceV; y >= -renderDistanceV; y--) {
@@ -222,38 +225,7 @@ public class Server {
         Vec3i cLoc = chunk.getLocation();
         Vec3i gLoc = CoordConverter.chunkToGlobal(cLoc.duplicate());
         ChunkRenderer.buildChunkMesh(gLoc, chunk, node);
-        /*
-        BlockStorage storage = chunk.getBlocks();
-        for (int x = 0; x < chunkSize; x++) {
-            for (int y = 0; y < chunkSize; y++) {
-                for (int z = 0; z < chunkSize; z++) {
-                    Block block = storage.getBlock(x, y, z);
-                    if (block != null && block.isRenderable()) {
-                        BlockTex tex = block.getTextures();
-                        if (isTransparent(x + 1, y, z, chunk)) {
-                            addFace(node, tex, gLoc, BlockFace.RIGHT, x, y, z);
-                        }
-                        if (isTransparent(x - 1, y, z, chunk)) {
-                            addFace(node, tex, gLoc, BlockFace.LEFT, x, y, z);
-                        }
-                        if (isTransparent(x, y + 1, z, chunk)) {
-                            addFace(node, tex, gLoc, BlockFace.TOP, x, y, z);
-                        }
-                        if (isTransparent(x, y - 1, z, chunk)) {
-                            addFace(node, tex, gLoc, BlockFace.BOTTOM, x, y, z);
-                        }
-                        if (isTransparent(x, y, z + 1, chunk)) {
-                            addFace(node, tex, gLoc, BlockFace.FRONT, x, y, z);
-                        }
-                        if (isTransparent(x, y, z - 1, chunk)) {
-                            addFace(node, tex, gLoc, BlockFace.BACK, x, y, z);
-                        }
-                    }
-                }
-            }
-        }
-        GeometryBatchFactory.optimize(node); //enhance!
-        */
+
         if (notifyNeighbors) {
             if (config.notifyNeighborsMode >= 0) {
                 ChunkTable chunks = chunk.getWorld().getChunks();

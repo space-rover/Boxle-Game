@@ -42,7 +42,7 @@ public class Spiral2i {
                     currLoc.y++;
                 }
             } else if (direction == 2) {
-                if (currLoc.x == center.y - ring) {
+                if (currLoc.x == center.x - ring) {
                     direction = 3;
                     currLoc.y--;
                 } else {

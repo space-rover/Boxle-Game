@@ -1,6 +1,7 @@
 package net.acomputerdog.boxle.block.util;
 
 import com.jme3.material.Material;
+import com.jme3.material.RenderState;
 import com.jme3.texture.Texture;
 import net.acomputerdog.boxle.block.block.Block;
 import net.acomputerdog.boxle.main.Boxle;
@@ -223,6 +224,10 @@ public class BlockTex {
     private Material createMaterial(String side) {
         Material mat = new Material(boxle.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
         mat.setName("block_" + block.getName() + "_" + side);
+        mat.setTransparent(block.isTransparent()); //Does not actually do anything, but is used as a marker
+        mat.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
+        mat.getAdditionalRenderState().setAlphaTest(true);
+        mat.getAdditionalRenderState().setAlphaFallOff(.9f);
         return mat;
     }
 }

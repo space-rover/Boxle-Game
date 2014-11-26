@@ -16,6 +16,6 @@ public class TransparentAtom extends Atom {
     @Override
     public void execute(Sim sim, Stack stack, Block block) throws SimException {
         SimUtils.verifyStack(sim, this, stack, StackItem.TYPE_BOOLEAN);
-        block.setBreakable((Boolean) stack.pop().getObj());
+        block.setTransparent((Boolean) stack.pop().getObj());
     }
 }

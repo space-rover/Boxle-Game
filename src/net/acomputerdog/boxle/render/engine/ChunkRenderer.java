@@ -1,5 +1,7 @@
 package net.acomputerdog.boxle.render.engine;
 
+import com.jme3.material.Material;
+import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Quad;
@@ -104,7 +106,11 @@ public class ChunkRenderer {
 
     private static void addFace(Node node, BlockTex tex, Vec3i cLoc, BlockFace face, int x, int y, int z) {
         Geometry geom = new Geometry("face", new Quad(1f, 1f));
-        geom.setMaterial(tex.getFaceMat(face));
+        Material mat = tex.getFaceMat(face);
+        if (mat.isTransparent()) {
+            geom.setQueueBucket(RenderQueue.Bucket.Transparent);
+        }
+        geom.setMaterial(mat);
         geom.setLocalTranslation(cLoc.x + x + face.xPos + 1, cLoc.y + y + face.yPos, cLoc.z + z + face.zPos + 1);
         geom.rotate(face.xRot, face.yRot, face.zRot);
         geom.updateModelBound();

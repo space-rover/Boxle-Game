@@ -11,6 +11,7 @@ import net.acomputerdog.boxle.physics.PhysicsEngine;
 import net.acomputerdog.boxle.render.util.ChunkNode;
 import net.acomputerdog.boxle.world.gen.CellsWorldGen;
 import net.acomputerdog.boxle.world.gen.WorldGen;
+import net.acomputerdog.boxle.world.gen.structures.Structures;
 import net.acomputerdog.boxle.world.structure.ChunkTable;
 import net.acomputerdog.core.logger.CLogger;
 
@@ -72,7 +73,10 @@ public class World {
         //generator = new CachingWorldGen(new SimplexWorldGen(1234L));
         //generator = new CachingWorldGen(new CellsWorldGen(name.hashCode()));
         //generator = new CachingWorldGen(new Simplex3DWorldGen(name.hashCode()));
+
         generator = new CellsWorldGen(name.hashCode());
+        //generator = new SimplexWorldGen(name.hashCode());
+        generator.addDecoration(Structures.tree);
     }
 
     /**
