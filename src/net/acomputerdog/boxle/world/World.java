@@ -1,7 +1,7 @@
 package net.acomputerdog.boxle.world;
 
 import net.acomputerdog.boxle.block.block.Block;
-import net.acomputerdog.boxle.block.registry.Blocks;
+import net.acomputerdog.boxle.block.block.Blocks;
 import net.acomputerdog.boxle.entity.Entity;
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.math.loc.CoordConverter;
@@ -67,12 +67,6 @@ public class World {
         physicsEngine = new PhysicsEngine(this);
         chunks = new ChunkTable(this);
         logger = new CLogger("World_" + name, false, true);
-        //generator = new DebugWorldGen(this);
-        //generator = new AngleWorldGen();
-        //generator = new CachingWorldGen(new SinWorldGen());
-        //generator = new CachingWorldGen(new SimplexWorldGen(1234L));
-        //generator = new CachingWorldGen(new CellsWorldGen(name.hashCode()));
-        //generator = new CachingWorldGen(new Simplex3DWorldGen(name.hashCode()));
 
         generator = new CellsWorldGen(name.hashCode());
         //generator = new SimplexWorldGen(name.hashCode());

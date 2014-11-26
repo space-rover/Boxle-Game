@@ -1,8 +1,8 @@
 package net.acomputerdog.boxle.block.sim.sim;
 
 import net.acomputerdog.boxle.block.block.Block;
-import net.acomputerdog.boxle.block.sim.program.Instruction;
 import net.acomputerdog.boxle.block.sim.program.Program;
+import net.acomputerdog.boxle.block.sim.program.instruction.Instruction;
 import net.acomputerdog.boxle.block.sim.program.tree.InstructionBranch;
 import net.acomputerdog.boxle.block.sim.program.tree.InstructionTree;
 import net.acomputerdog.boxle.block.sim.sim.exec.SimException;

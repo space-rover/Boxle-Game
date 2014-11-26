@@ -1,7 +1,7 @@
 package net.acomputerdog.boxle.entity.types;
 
 import com.jme3.renderer.Camera;
-import net.acomputerdog.boxle.block.registry.Blocks;
+import net.acomputerdog.boxle.block.block.Blocks;
 import net.acomputerdog.boxle.entity.Entity;
 import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.math.vec.VecConverter;

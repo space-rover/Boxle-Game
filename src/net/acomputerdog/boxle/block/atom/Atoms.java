@@ -1,6 +1,5 @@
-package net.acomputerdog.boxle.block.registry;
+package net.acomputerdog.boxle.block.atom;
 
-import net.acomputerdog.boxle.block.atom.Atom;
 import net.acomputerdog.boxle.block.atom.types.flow.NopAtom;
 import net.acomputerdog.boxle.block.atom.types.math.DupeAtom;
 import net.acomputerdog.boxle.block.atom.types.math.MultAtom;
@@ -9,6 +8,7 @@ import net.acomputerdog.boxle.block.atom.types.util.CreateTexAtom;
 import net.acomputerdog.boxle.block.atom.types.value.PushBooleanAtom;
 import net.acomputerdog.boxle.block.atom.types.value.PushFloatAtom;
 import net.acomputerdog.boxle.block.atom.types.value.PushIntAtom;
+import net.acomputerdog.boxle.block.util.Registry;
 
 public class Atoms {
     public static final Registry<Atom> ATOMS = new Registry<>();

@@ -1,7 +1,7 @@
 package net.acomputerdog.boxle.block.sim.program.tree;
 
-import net.acomputerdog.boxle.block.sim.program.Instruction;
-import net.acomputerdog.boxle.block.sim.program.instruction.control.InstructionStart;
+import net.acomputerdog.boxle.block.sim.program.instruction.Instruction;
+import net.acomputerdog.boxle.block.sim.program.instruction.InstructionStart;
 import net.acomputerdog.core.tree.Tree;
 
 public class InstructionTree extends Tree<Instruction> {

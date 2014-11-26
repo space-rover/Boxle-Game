@@ -3,7 +3,7 @@ package net.acomputerdog.boxle.main;
 import com.jme3.app.SimpleApplication;
 import com.jme3.math.ColorRGBA;
 import com.jme3.system.AppSettings;
-import net.acomputerdog.boxle.block.registry.Blocks;
+import net.acomputerdog.boxle.block.sim.loader.SimLoader;
 import net.acomputerdog.boxle.config.GameConfig;
 import net.acomputerdog.boxle.entity.types.EntityPlayer;
 import net.acomputerdog.boxle.math.vec.VecPool;
@@ -104,9 +104,8 @@ public class Boxle extends SimpleApplication {
 
     @Override
     public void simpleInitApp() {
-        Blocks.loadExternalSims();
+        SimLoader.loadExternalSims();
 
-        //float renderDistance = (Chunk.CHUNK_SIZE * Math.max(gameConfig.renderDistanceHorizontal, gameConfig.renderDistanceVertical) + 1f);
         cam.setFrustumPerspective(gameConfig.fov, (float) gameConfig.screenWidth / (float) gameConfig.screenHeight, .2f, 1000f);
         cam.update();
 

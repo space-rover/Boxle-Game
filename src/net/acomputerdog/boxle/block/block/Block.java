@@ -1,7 +1,6 @@
 package net.acomputerdog.boxle.block.block;
 
-import net.acomputerdog.boxle.block.dynamic.Identifiable;
-import net.acomputerdog.boxle.block.util.BlockTex;
+import net.acomputerdog.boxle.block.util.Identifiable;
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.math.aabb.AABBF;
 import net.acomputerdog.boxle.math.vec.Vec3i;

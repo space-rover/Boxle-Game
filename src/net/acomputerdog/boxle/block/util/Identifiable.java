@@ -1,4 +1,4 @@
-package net.acomputerdog.boxle.block.dynamic;
+package net.acomputerdog.boxle.block.util;
 
 public interface Identifiable {
     public String getId();

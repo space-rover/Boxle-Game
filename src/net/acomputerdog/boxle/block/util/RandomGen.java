@@ -1,4 +1,4 @@
-package net.acomputerdog.boxle.block.sim.util;
+package net.acomputerdog.boxle.block.util;
 
 import java.util.Random;
 

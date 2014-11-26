@@ -1,4 +1,4 @@
-package net.acomputerdog.boxle.block.sim.program;
+package net.acomputerdog.boxle.block.sim.program.instruction;
 
 import net.acomputerdog.boxle.block.block.Block;
 import net.acomputerdog.boxle.block.sim.sim.Sim;

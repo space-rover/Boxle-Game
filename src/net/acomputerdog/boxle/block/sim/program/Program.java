@@ -1,5 +1,6 @@
 package net.acomputerdog.boxle.block.sim.program;
 
+import net.acomputerdog.boxle.block.sim.program.instruction.Instruction;
 import net.acomputerdog.boxle.block.sim.program.tree.InstructionBranch;
 import net.acomputerdog.boxle.block.sim.program.tree.InstructionTree;
 

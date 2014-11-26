@@ -1,7 +1,7 @@
 package net.acomputerdog.boxle.block.sim.program.tree;
 
-import net.acomputerdog.boxle.block.sim.program.Instruction;
-import net.acomputerdog.boxle.block.sim.util.RandomGen;
+import net.acomputerdog.boxle.block.sim.program.instruction.Instruction;
+import net.acomputerdog.boxle.block.util.RandomGen;
 import net.acomputerdog.core.tree.Branch;
 
 import java.util.ArrayList;

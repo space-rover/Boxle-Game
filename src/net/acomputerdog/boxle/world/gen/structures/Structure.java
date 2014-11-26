@@ -1,6 +1,6 @@
 package net.acomputerdog.boxle.world.gen.structures;
 
-import net.acomputerdog.boxle.block.dynamic.Identifiable;
+import net.acomputerdog.boxle.block.util.Identifiable;
 import net.acomputerdog.boxle.world.Chunk;
 import net.acomputerdog.boxle.world.gen.WorldGen;
 

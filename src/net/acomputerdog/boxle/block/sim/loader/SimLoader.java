@@ -1,6 +1,7 @@
-package net.acomputerdog.boxle.block.registry;
+package net.acomputerdog.boxle.block.sim.loader;
 
 import net.acomputerdog.boxle.block.atom.Atom;
+import net.acomputerdog.boxle.block.atom.Atoms;
 import net.acomputerdog.boxle.block.atom.types.value.PushStringAtom;
 import net.acomputerdog.boxle.block.block.Block;
 import net.acomputerdog.boxle.block.sim.program.Program;
@@ -8,9 +9,8 @@ import net.acomputerdog.boxle.block.sim.program.tree.InstructionBranch;
 import net.acomputerdog.boxle.block.sim.program.tree.InstructionTree;
 import net.acomputerdog.boxle.block.sim.sim.Sim;
 import net.acomputerdog.boxle.block.sim.sim.SimResult;
+import net.acomputerdog.boxle.block.sim.sim.exec.IllegalSimFormat;
 import net.acomputerdog.boxle.block.sim.sim.state.SimState;
-import net.acomputerdog.boxle.block.util.IllegalSimFormat;
-import net.acomputerdog.boxle.block.util.PropLoader;
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.core.java.Patterns;
 
@@ -18,48 +18,11 @@ import java.io.*;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class Blocks {
-    public static final Registry<Block> BLOCKS = new Registry<>();
-
-    public static final Block air = createAirBlock();
-
-    public static final Block steel = loadInternalProp("steel");
-    public static final Block grassySteel = loadInternalProp("grassy_steel");
-
-    public static final Block dirt = loadInternalProp("dirt");
-    public static final Block grass = loadInternalProp("grass");
-    public static final Block stone = loadInternalProp("stone");
-
-    public static final Block wood = loadInternalProp("wood");
-    public static final Block leaves = loadInternalProp("leaves");
-
-    public static final Block acomputerdog = loadInternalProp("acomputerdog");
-    public static final Block seamusFD = loadInternalProp("SeamusFD");
-
-
-    private static Block createAirBlock() {
-        Block block = new Block("air", "Air");
-        block.setBreakable(false);
-        block.setResistance(0f);
-        block.setExplosionResistance(0f);
-        block.setStrength(9999f);
-        block.setRenderable(false);
-        block.setCollidable(false);
-        block.setTransparent(true);
-        block.setLightReduction((byte) 0);
-        BLOCKS.register(block);
-        return block;
-    }
-
-    private static Block loadInternalProp(String name) {
-        Block block = PropLoader.loadAndCreateBlock(name, Blocks.class.getResourceAsStream("/prop/block/" + name + ".prop"));
-        Sim.LOGGER.logDetail("Loaded block from internal prop: " + name);
-        return block;
-    }
+public class SimLoader {
 
     private static Block loadInternalSim(String name) {
         try {
-            Block block = loadSim(Blocks.class.getResourceAsStream("/sim/block/" + name + ".sim"));
+            Block block = loadSim(SimLoader.class.getResourceAsStream("/sim/block/" + name + ".sim"));
             Sim.LOGGER.logDetail("Loaded block from internal sim: " + block.getId());
             return block;
         } catch (Throwable t) {
@@ -127,9 +90,7 @@ public class Blocks {
             if (endState != SimState.FINISHED) {
                 throw new RuntimeException("Sim finished unexpectedly with state " + endState.getState());
             }
-            Block block = result.getBlock();
-            BLOCKS.register(block);
-            return block;
+            return result.getBlock();
         } catch (Exception e) {
             try {
                 if (reader != null) {

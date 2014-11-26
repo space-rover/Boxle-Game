@@ -1,6 +1,6 @@
 package net.acomputerdog.boxle.world.gen.structures;
 
-import net.acomputerdog.boxle.block.registry.Registry;
+import net.acomputerdog.boxle.block.util.Registry;
 import net.acomputerdog.boxle.world.gen.structures.types.StructureTree;
 
 public class Structures {

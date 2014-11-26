@@ -1,6 +1,4 @@
-package net.acomputerdog.boxle.block.registry;
-
-import net.acomputerdog.boxle.block.dynamic.Identifiable;
+package net.acomputerdog.boxle.block.util;
 
 import java.util.*;
 

@@ -1,6 +1,6 @@
 package net.acomputerdog.boxle.block.sim.sim.exec;
 
-import net.acomputerdog.boxle.block.sim.program.Instruction;
+import net.acomputerdog.boxle.block.sim.program.instruction.Instruction;
 import net.acomputerdog.boxle.block.sim.sim.Sim;
 
 public class InvalidStackDataException extends SimException {

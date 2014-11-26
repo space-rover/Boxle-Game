@@ -8,7 +8,7 @@ import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.renderer.Camera;
-import net.acomputerdog.boxle.block.registry.Blocks;
+import net.acomputerdog.boxle.block.block.Blocks;
 import net.acomputerdog.boxle.entity.types.EntityPlayer;
 import net.acomputerdog.boxle.math.loc.CoordConverter;
 import net.acomputerdog.boxle.math.vec.Vec3i;

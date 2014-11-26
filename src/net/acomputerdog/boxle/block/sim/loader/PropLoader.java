@@ -1,13 +1,12 @@
-package net.acomputerdog.boxle.block.util;
+package net.acomputerdog.boxle.block.sim.loader;
 
 import net.acomputerdog.boxle.block.atom.Atom;
+import net.acomputerdog.boxle.block.atom.Atoms;
 import net.acomputerdog.boxle.block.atom.types.value.PushBooleanAtom;
 import net.acomputerdog.boxle.block.atom.types.value.PushFloatAtom;
 import net.acomputerdog.boxle.block.atom.types.value.PushIntAtom;
 import net.acomputerdog.boxle.block.atom.types.value.PushStringAtom;
 import net.acomputerdog.boxle.block.block.Block;
-import net.acomputerdog.boxle.block.registry.Atoms;
-import net.acomputerdog.boxle.block.registry.Blocks;
 import net.acomputerdog.boxle.block.sim.program.Program;
 import net.acomputerdog.boxle.block.sim.program.tree.InstructionBranch;
 import net.acomputerdog.boxle.block.sim.program.tree.InstructionTree;
@@ -83,7 +82,7 @@ public class PropLoader {
         File simFile = new File(simDir, "/" + prop.getProperty("prop_name") + ".sim");
         try {
             if (simFile.exists() && isValid(prop, simFile)) {
-                return Blocks.loadSim(new FileInputStream(simFile));
+                return SimLoader.loadSim(new FileInputStream(simFile));
             }
         } catch (Exception e) {
             Sim.LOGGER.logWarning("Unable to load cached sim for block " + program.getId());

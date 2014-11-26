@@ -1,6 +1,6 @@
 package net.acomputerdog.boxle.world.gen.structures.types;
 
-import net.acomputerdog.boxle.block.registry.Blocks;
+import net.acomputerdog.boxle.block.block.Blocks;
 import net.acomputerdog.boxle.math.loc.CoordConverter;
 import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.math.vec.VecPool;

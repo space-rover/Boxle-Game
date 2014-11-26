@@ -1,4 +1,4 @@
-package net.acomputerdog.boxle.block.util;
+package net.acomputerdog.boxle.block.block;
 
 import com.jme3.math.FastMath;
 
