@@ -1,5 +1,6 @@
 package net.acomputerdog.boxle.world;
 
+import com.jme3.scene.Node;
 import net.acomputerdog.boxle.block.block.Block;
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.math.vec.Vec3i;
@@ -47,6 +48,8 @@ public class Chunk implements Comparable<Chunk> {
 
     private boolean isModifiedFromLoad = false;
 
+    private Node collisionNode;
+
     /**
      * Creates a new chunk.
      *
@@ -60,6 +63,8 @@ public class Chunk implements Comparable<Chunk> {
         this.location = VecPool.createVec3i(location); //new one needed for hashing stuff
         blocks = new SimpleBlockStorage(this);
         chunkNode = new ChunkNode("chunk@" + location.asCoords());
+        collisionNode = new Node("chunkC@" + location.asCoords());
+        world.getWorldCollisionNode().attachChild(collisionNode);
     }
 
     /**
@@ -101,6 +106,10 @@ public class Chunk implements Comparable<Chunk> {
         } else {
             Boxle.instance().getRenderEngine().addUpdateChunk(this);
         }
+        chunkNode.detachChildNamed("blockC@" + x + "_" + y + "_" + z);
+        if (block.isCollidable()) {
+            chunkNode.attachChild(new Node("blockC@" + x + "_" + y + "_" + z));
+        }
         setModifiedFromLoad(true);
     }
 
@@ -120,15 +129,6 @@ public class Chunk implements Comparable<Chunk> {
      */
     public Vec3i getLocation() {
         return location.duplicate();
-    }
-
-    /**
-     * Gets the BlockStorage for this Chunk
-     *
-     * @return Return the BlockStorage for this Chunk
-     */
-    public BlockStorage getBlocks() {
-        return blocks;
     }
 
     public boolean needsRebuild() {
@@ -164,13 +164,26 @@ public class Chunk implements Comparable<Chunk> {
     }
 
     public void clear(Block block, boolean instant) {
+        chunkNode.detachAllChildren();
+        for (int x = 0; x < CHUNK_SIZE; x++) {
+            for (int y = 0; y < CHUNK_SIZE; y++) {
+                for (int z = 0; z < CHUNK_SIZE; z++) {
+                    setBlockAt(x, y, z, block, instant);
+                }
+            }
+        }
+        /*
         blocks.clear(block);
         if (!instant) {
             setNeedsRebuild(true);
         } else {
             Boxle.instance().getRenderEngine().addUpdateChunk(this);
         }
+        if (block.isCollidable()) {
+            chunkNode.attachChild(new Node("blockC@" + x + "_" + y + "_" + z));
+        }
         setModifiedFromLoad(true);
+        */
     }
 
     public boolean isGenerated() {
@@ -224,6 +237,10 @@ public class Chunk implements Comparable<Chunk> {
 
     public void setModifiedFromLoad(boolean isModifiedFromLoad) {
         this.isModifiedFromLoad = isModifiedFromLoad;
+    }
+
+    public Node getCollisionNode() {
+        return collisionNode;
     }
 
     @Override

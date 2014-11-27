@@ -3,7 +3,6 @@ package net.acomputerdog.boxle.world.util;
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.world.Chunk;
 import net.acomputerdog.boxle.world.World;
-import net.acomputerdog.boxle.world.structure.block.SquaresBlockStorage;
 import net.acomputerdog.core.java.ThreadUtils;
 
 /**
@@ -28,7 +27,7 @@ public class BlockCompressionThread extends Thread {
         while (boxle.canRun()) {
             for (World world : boxle.getWorlds().getWorlds()) {
                 for (Chunk chunk : world.getChunks().getAllChunks()) {
-                    ((SquaresBlockStorage) chunk.getBlocks()).compressArrays();
+                    //((SquaresBlockStorage) chunk.getBlocks()).compressArrays();
                 }
             }
             ThreadUtils.sleep(10); //limit to 100 TPS, to lower CPU usage

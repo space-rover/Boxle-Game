@@ -12,17 +12,15 @@ import net.acomputerdog.boxle.block.block.BlockTex;
 import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.world.Chunk;
-import net.acomputerdog.boxle.world.structure.BlockStorage;
 
 public class ChunkRenderer {
     private static final int chunkSize = Chunk.CHUNK_SIZE;
 
     public static void buildChunkMesh(Vec3i gLoc, Chunk chunk, Node node) {
-        BlockStorage storage = chunk.getBlocks();
         for (int x = 0; x < chunkSize; x++) {
             for (int y = 0; y < chunkSize; y++) {
                 for (int z = 0; z < chunkSize; z++) {
-                    Block block = storage.getBlock(x, y, z);
+                    Block block = chunk.getBlockAt(x, y, z);
                     if (block != null && block.isRenderable()) {
                         BlockTex tex = block.getTextures();
                         if (isTransparent(x + 1, y, z, chunk)) {
@@ -105,7 +103,7 @@ public class ChunkRenderer {
     }
 
     private static void addFace(Node node, BlockTex tex, Vec3i cLoc, BlockFace face, int x, int y, int z) {
-        Geometry geom = new Geometry("face", new Quad(1f, 1f));
+        Geometry geom = new Geometry("face@" + x + "_" + y + "_" + z, new Quad(1f, 1f));
         Material mat = tex.getFaceMat(face);
         if (mat.isTransparent()) {
             geom.setQueueBucket(RenderQueue.Bucket.Transparent);

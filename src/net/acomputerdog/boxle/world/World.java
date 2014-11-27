@@ -1,5 +1,6 @@
 package net.acomputerdog.boxle.world;
 
+import com.jme3.scene.Node;
 import net.acomputerdog.boxle.block.block.Block;
 import net.acomputerdog.boxle.block.block.Blocks;
 import net.acomputerdog.boxle.entity.Entity;
@@ -55,6 +56,7 @@ public class World {
 
     private final Map<Integer, Entity> entities = new HashMap<>();
 
+    private final Node worldCollisionNode;
     /**
      * Creates a new instance of this World.
      *
@@ -69,6 +71,7 @@ public class World {
         physicsEngine = new PhysicsEngine(this);
         chunks = new ChunkTable(this);
         logger = new CLogger("World_" + name, false, true);
+        worldCollisionNode = new Node("WorldC_" + name);
 
         generator = new CellsWorldGen(name.hashCode());
         //generator = new SimplexWorldGen(name.hashCode());
@@ -140,6 +143,7 @@ public class World {
     }
 
     public void unloadChunk(Chunk chunk) {
+        worldCollisionNode.detachChild(chunk.getChunkNode());
         chunks.removeChunk(chunk);
         ChunkNode oldNode = chunk.getChunkNode();
         if (oldNode.getParent() != null) {
@@ -224,5 +228,9 @@ public class World {
 
     public Queue<Chunk> getDecorateChunks() {
         return decorateChunks;
+    }
+
+    public Node getWorldCollisionNode() {
+        return worldCollisionNode;
     }
 }

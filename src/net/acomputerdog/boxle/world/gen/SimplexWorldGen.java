@@ -4,7 +4,6 @@ import net.acomputerdog.boxle.block.block.Blocks;
 import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.world.Chunk;
 import net.acomputerdog.boxle.world.gen.noise.OpenSimplexNoise;
-import net.acomputerdog.boxle.world.structure.BlockStorage;
 
 public class SimplexWorldGen extends AbstractWorldGen {
     private static final double COORD_SCALE = 50d;
@@ -25,7 +24,6 @@ public class SimplexWorldGen extends AbstractWorldGen {
         if (chunk.isGenerated()) {
             chunk.getWorld().getLogger().logWarning("Attempted to generate a chunk twice at " + chunk.getCoords());
         } else {
-            BlockStorage blocks = chunk.getBlocks();
             Vec3i cLoc = chunk.getLocation();
             int chunkY = cLoc.y * chunkSize;
             int chunkX = cLoc.x * chunkSize;
@@ -38,15 +36,15 @@ public class SimplexWorldGen extends AbstractWorldGen {
                         int currZ = z + chunkZ;
                         double val = getSimplex(currX, currY, currZ);
                         if (val < TERRAIN_PERCENTAGE) {
-                            blocks.setBlock(x, y, z, Blocks.air);
+                            chunk.setBlockAt(x, y, z, Blocks.air);
                         } else if (val < TERRAIN_PERCENTAGE + DIRT_THICKNESS) {
                             if (getSimplex(currX, currY + 1, currZ) < TERRAIN_PERCENTAGE) {
-                                blocks.setBlock(x, y, z, Blocks.grass);
+                                chunk.setBlockAt(x, y, z, Blocks.grass);
                             } else {
-                                blocks.setBlock(x, y, z, Blocks.dirt);
+                                chunk.setBlockAt(x, y, z, Blocks.dirt);
                             }
                         } else {
-                            blocks.setBlock(x, y, z, Blocks.stone);
+                            chunk.setBlockAt(x, y, z, Blocks.stone);
                         }
                     }
                 }

@@ -2,14 +2,22 @@ package net.acomputerdog.boxle.input;
 
 import com.jme3.app.FlyCamAppState;
 import com.jme3.app.state.AppStateManager;
+import com.jme3.collision.CollisionResult;
+import com.jme3.collision.CollisionResults;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
+import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
+import com.jme3.input.controls.MouseButtonTrigger;
+import com.jme3.math.Ray;
 import com.jme3.renderer.Camera;
+import com.jme3.scene.Node;
+import net.acomputerdog.boxle.block.block.Block;
 import net.acomputerdog.boxle.block.block.Blocks;
 import net.acomputerdog.boxle.entity.types.EntityPlayer;
+import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.math.loc.CoordConverter;
 import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.math.vec.VecConverter;
@@ -17,12 +25,15 @@ import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.render.engine.RenderEngine;
 import net.acomputerdog.boxle.render.util.BoxleFlyByCamera;
 import net.acomputerdog.boxle.world.World;
+import net.acomputerdog.core.java.Patterns;
 import net.acomputerdog.core.logger.CLogger;
 
 /**
  * Handles input for the game client.
  */
 public class InputHandler implements ActionListener, AnalogListener {
+
+    private static final String UNDERSCORE = Patterns.quote("_");
     /**
      * Logger for InputHandler
      */
@@ -67,11 +78,13 @@ public class InputHandler implements ActionListener, AnalogListener {
         inputManager.addMapping("Exit", new KeyTrigger(KeyInput.KEY_ESCAPE));
         inputManager.addMapping("Pause", new KeyTrigger(KeyInput.KEY_P));
         inputManager.addMapping("Sprint", new KeyTrigger(KeyInput.KEY_R));
+        inputManager.addMapping("Break Block", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
+        inputManager.addMapping("Place Block", new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
 
         inputManager.addMapping("Debug", new KeyTrigger(KeyInput.KEY_B));
         inputManager.addListener(this, "Debug");
 
-        inputManager.addListener(this, "Move Left", "Move Right", "Move Forward", "Move Back", "Move Up", "Move Down", "Exit", "Pause", "Sprint");
+        inputManager.addListener(this, "Move Left", "Move Right", "Move Forward", "Move Back", "Move Up", "Move Down", "Exit", "Pause", "Sprint", "Break Block", "Place Block");
 
         AppStateManager stateManager = engine.getBoxle().getStateManager();
         stateManager.detach(stateManager.getState(FlyCamAppState.class));
@@ -108,6 +121,22 @@ public class InputHandler implements ActionListener, AnalogListener {
             VecPool.free(pLoc);
         } else if ("Sprint".equals(name)) {
             flyby.setMoveSpeed(isPressed ? 2f : 1f);
+        } else if ("Break Block".equals(name) && isPressed) {
+            Vec3i loc = findClickedLoc(true);
+            if (loc != null) {
+                World world = Boxle.instance().getClient().getPlayer().getWorld();
+                Block block = world.getBlockAt(loc);
+                if (block != null && block.isBreakable()) {
+                    world.setBlockAt(loc, Blocks.air, true);
+                }
+                VecPool.free(loc);
+            }
+        } else if ("Place Block".equals(name) && isPressed) {
+            Vec3i loc = findClickedLoc(false);
+            if (loc != null) {
+                Boxle.instance().getClient().getPlayer().getWorld().setBlockAt(loc, Blocks.steel, true);
+                VecPool.free(loc);
+            }
         }
     }
 
@@ -135,4 +164,66 @@ public class InputHandler implements ActionListener, AnalogListener {
             default:
         }
     }
+
+    private Vec3i findClickedLoc(boolean inside) {
+        CollisionResults results = new CollisionResults();
+        Camera cam = Boxle.instance().getCamera();
+        Ray ray = new Ray(cam.getLocation(), cam.getDirection());
+        Node collision = Boxle.instance().getClient().getPlayer().getWorld().getWorldCollisionNode();
+        collision.collideWith(ray, results);
+        CollisionResult result = results.getClosestCollision();
+        Vec3i loc;
+        if (result == null) {
+            loc = null;
+        } else if (inside) {
+            loc = VecConverter.vec3iFromVec3f(VecConverter.vector3fToVec3f(result.getGeometry().getWorldTranslation()));
+        } else {
+            loc = VecConverter.vec3iFromVec3f(VecConverter.vector3fToVec3f(result.getContactPoint()));
+        }
+        return loc;
+    }
+
+    /*
+    private Vec3i findClickedLoc(boolean inside) {
+        CollisionResults results = new CollisionResults();
+        Camera cam = Boxle.instance().getCamera();
+        Ray ray = new Ray(cam.getLocation(), cam.getDirection());
+        Node terrain = Boxle.instance().getRenderEngine().getTerrainNode();
+        terrain.collideWith(ray, results);
+        CollisionResult result = results.getClosestCollision();
+        if (inside) {
+            Vector3f contactPoint = result.getContactPoint();
+            Ray insideRay = new Ray(contactPoint, cam.getDirection());
+            insideRay.setLimit(1f);
+            CollisionResults rewResults = new CollisionResults();
+            terrain.collideWith(ray, rewResults);
+            CollisionResult newResult = rewResults.getFarthestCollision();
+            return VecConverter.vec3iFromVec3f(VecConverter.vector3fToVec3f(newResult.getContactPoint()));
+        } else {
+            return VecConverter.vec3iFromVec3f(VecConverter.vector3fToVec3f(result.getContactPoint()));
+        }
+        /*
+        String geomName = result.getGeometry().getName();
+        if (true || result.getDistance() <= 5f) {
+            if (geomName.startsWith("face@")) {
+                String[] parts = geomName.substring(5).split(UNDERSCORE);
+                if (parts.length == 3) {
+                    try {
+                        return VecPool.getVec3i(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
+                    } catch (NumberFormatException e) {
+                        logger.logWarning("Collided with invalidly named face: " + geomName);
+                    }
+                } else {
+                    logger.logWarning("Collided with face with not enough coords: " + geomName);
+                }
+            } else {
+                logger.logWarning("Collided with non-block face: " + geomName);
+            }
+        } else {
+            logger.logWarning("Collided with too far face: " + geomName);
+        }
+        return null;
+
+    }*/
+
 }

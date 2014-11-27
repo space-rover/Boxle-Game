@@ -4,7 +4,6 @@ import net.acomputerdog.boxle.block.block.Blocks;
 import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.world.Chunk;
 import net.acomputerdog.boxle.world.gen.noise.OpenSimplexNoise;
-import net.acomputerdog.boxle.world.structure.BlockStorage;
 
 public class CellsWorldGen extends AbstractWorldGen {
     private static final int SPLIT_HEIGHT = 0;
@@ -31,7 +30,6 @@ public class CellsWorldGen extends AbstractWorldGen {
         if (chunk.isGenerated()) {
             chunk.getWorld().getLogger().logWarning("Attempted to generate a chunk twice at " + chunk.getCoords());
         } else {
-            BlockStorage blocks = chunk.getBlocks();
             Vec3i cLoc = chunk.getLocation();
             int chunkY = cLoc.y * chunkSize;
             if (chunkY + chunkSize < 0) {
@@ -46,11 +44,11 @@ public class CellsWorldGen extends AbstractWorldGen {
                     for (int y = 0; y < chunkSize; y++) {
                         int currY = y + chunkY;
                         if (currY > height) {
-                            blocks.setBlock(x, y, z, Blocks.air);
+                            chunk.setBlockAt(x, y, z, Blocks.air);
                         } else if (currY == height) {
-                            blocks.setBlock(x, y, z, Blocks.grassySteel);
+                            chunk.setBlockAt(x, y, z, Blocks.grassySteel);
                         } else {
-                            blocks.setBlock(x, y, z, Blocks.steel);
+                            chunk.setBlockAt(x, y, z, Blocks.steel);
                         }
                     }
                 }
