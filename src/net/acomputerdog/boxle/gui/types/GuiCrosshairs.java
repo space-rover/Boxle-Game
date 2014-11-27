@@ -6,11 +6,11 @@ import net.acomputerdog.boxle.config.GameConfig;
 import net.acomputerdog.boxle.gui.Gui;
 import net.acomputerdog.boxle.main.Boxle;
 
-public class GuiCrossHair extends Gui {
+public class GuiCrosshairs extends Gui {
 
     private final Picture crossHairs;
 
-    public GuiCrossHair() {
+    public GuiCrosshairs() {
         Boxle boxle = Boxle.instance();
         GameConfig config = boxle.getGameConfig();
         crossHairs = new Picture("CrossHairs");
