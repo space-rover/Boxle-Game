@@ -45,6 +45,8 @@ public class Chunk implements Comparable<Chunk> {
     private boolean isGenerated = false;
     private boolean isDecorated = false;
 
+    private boolean isModifiedFromLoad = false;
+
     /**
      * Creates a new chunk.
      *
@@ -99,6 +101,7 @@ public class Chunk implements Comparable<Chunk> {
         } else {
             Boxle.instance().getRenderEngine().addUpdateChunk(this);
         }
+        setModifiedFromLoad(true);
     }
 
     /**
@@ -167,6 +170,7 @@ public class Chunk implements Comparable<Chunk> {
         } else {
             Boxle.instance().getRenderEngine().addUpdateChunk(this);
         }
+        setModifiedFromLoad(true);
     }
 
     public boolean isGenerated() {
@@ -211,6 +215,15 @@ public class Chunk implements Comparable<Chunk> {
 
     public String getCoords() {
         return location.asCoords();
+    }
+
+
+    public boolean isModifiedFromLoad() {
+        return isModifiedFromLoad;
+    }
+
+    public void setModifiedFromLoad(boolean isModifiedFromLoad) {
+        this.isModifiedFromLoad = isModifiedFromLoad;
     }
 
     @Override

@@ -58,6 +58,7 @@ public class CellsWorldGen extends AbstractWorldGen {
         }
         chunk.markGenerated();
         chunk.setNeedsRebuild(true);
+        chunk.setModifiedFromLoad(true);
     }
 
     public int getGroundHeight(int x, int y) {

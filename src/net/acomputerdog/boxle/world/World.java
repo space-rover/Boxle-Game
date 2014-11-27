@@ -9,12 +9,14 @@ import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.physics.PhysicsEngine;
 import net.acomputerdog.boxle.render.util.ChunkNode;
+import net.acomputerdog.boxle.save.SaveManager;
 import net.acomputerdog.boxle.world.gen.CellsWorldGen;
 import net.acomputerdog.boxle.world.gen.WorldGen;
 import net.acomputerdog.boxle.world.gen.structures.Structures;
 import net.acomputerdog.boxle.world.structure.ChunkTable;
 import net.acomputerdog.core.logger.CLogger;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -112,10 +114,19 @@ public class World {
     public Chunk loadOrGenerateChunk(Vec3i loc) {
         Chunk chunk = chunks.getChunk(loc);
         if (chunk == null) {
-            chunk = new Chunk(this, loc);
-            generator.generateTerrain(chunk);
+            if (SaveManager.hasChunk(this, loc.x, loc.y, loc.z)) {
+                try {
+                    chunk = SaveManager.loadChunk(this, loc);
+                    chunk.setModifiedFromLoad(false);
+                } catch (IOException e) {
+                    throw new RuntimeException("Unable to load chunk at " + loc.asCoords() + "!", e);
+                }
+            } else {
+                chunk = new Chunk(this, loc);
+                generator.generateTerrain(chunk);
+                decorateChunks.add(chunk);
+            }
             chunks.addChunk(chunk);
-            decorateChunks.add(chunk);
         }
         return chunk;
     }
@@ -133,6 +144,11 @@ public class World {
         ChunkNode oldNode = chunk.getChunkNode();
         if (oldNode.getParent() != null) {
             boxle.getRenderEngine().removeNode(oldNode);
+        }
+        try {
+            SaveManager.saveChunk(chunk);
+        } catch (IOException e) {
+            logger.logError("Unable to save chunk at " + chunk.getCoords() + "!", e);
         }
     }
 

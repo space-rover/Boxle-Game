@@ -34,6 +34,7 @@ public abstract class AbstractWorldGen implements WorldGen {
         }
         chunk.markDecorated();
         chunk.setNeedsRebuild(true);
+        chunk.setModifiedFromLoad(true);
     }
 
     @Override

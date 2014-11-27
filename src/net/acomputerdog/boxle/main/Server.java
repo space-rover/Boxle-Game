@@ -13,11 +13,13 @@ import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.render.engine.ChunkRenderer;
 import net.acomputerdog.boxle.render.engine.RenderEngine;
 import net.acomputerdog.boxle.render.util.ChunkNode;
+import net.acomputerdog.boxle.save.SaveManager;
 import net.acomputerdog.boxle.world.Chunk;
 import net.acomputerdog.boxle.world.World;
 import net.acomputerdog.boxle.world.structure.ChunkTable;
 import net.acomputerdog.core.logger.CLogger;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Queue;
 import java.util.Set;
@@ -76,7 +78,16 @@ public class Server {
      * Initializes this server
      */
     public void init() {
-        defaultWorld = new World(boxle, "server_default");
+        if (SaveManager.worldExists(config.worldName)) {
+            try {
+                defaultWorld = SaveManager.loadWorld(config.worldName);
+            } catch (IOException e) {
+                throw new RuntimeException("Unable to load world!", e);
+            }
+        } else {
+            defaultWorld = new World(boxle, config.worldName);
+            SaveManager.createWorld(config.worldName);
+        }
         boxle.getWorlds().addWorld(defaultWorld);
         hostedWorlds.add(defaultWorld);
     }
@@ -289,7 +300,13 @@ public class Server {
      * Shuts down this server
      */
     public void shutdown() {
-
+        for (World world : hostedWorlds) {
+            try {
+                SaveManager.saveWorld(world);
+            } catch (IOException e) {
+                logger.logError("Unable to save world \"" + world.getName() + "\"", e);
+            }
+        }
     }
 
     /**

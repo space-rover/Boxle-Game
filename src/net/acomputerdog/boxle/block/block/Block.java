@@ -56,7 +56,7 @@ public class Block implements Identifiable {
 
     @Override
     public String getDefinition() {
-        return name;
+        return id;
     }
 
     /**

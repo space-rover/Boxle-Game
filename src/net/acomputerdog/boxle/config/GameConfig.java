@@ -80,6 +80,8 @@ public class GameConfig {
 
     public String cacheDir = "./cache/";
 
+    public String worldName = "World";
+
     /**
      * Creates a new config for the given boxle instance.
      *
@@ -116,6 +118,7 @@ public class GameConfig {
             cacheDir = properties.getProperty("cache_directory", cacheDir);
             lightingMode = properties.getIntProperty("lighting_mode", lightingMode);
             shadowMode = properties.getIntProperty("shadow_mode", shadowMode);
+            worldName = properties.getProperty("world_name", worldName);
             logger.logInfo("Loaded game config.");
         } else {
             logger.logWarning("No config file found, creating new one.");
@@ -146,6 +149,7 @@ public class GameConfig {
             properties.setProperty("cache_directory", String.valueOf(cacheDir));
             properties.setProperty("lighting_mode", String.valueOf(lightingMode));
             properties.setProperty("shadow_mode", String.valueOf(shadowMode));
+            properties.setProperty("world_name", String.valueOf(worldName));
             try {
                 properties.store(new FileOutputStream(configFile), "Boxle configuration file.  Make sure any changes remain in the original data type.");
             } catch (java.io.IOException e) {
