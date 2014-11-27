@@ -3,7 +3,6 @@ package net.acomputerdog.boxle.main;
 import com.jme3.app.SimpleApplication;
 import com.jme3.math.ColorRGBA;
 import com.jme3.post.FilterPostProcessor;
-import com.jme3.post.ssao.SSAOFilter;
 import com.jme3.shadow.DirectionalLightShadowFilter;
 import com.jme3.system.AppSettings;
 import net.acomputerdog.boxle.block.sim.loader.SimLoader;
@@ -11,7 +10,9 @@ import net.acomputerdog.boxle.config.GameConfig;
 import net.acomputerdog.boxle.entity.types.EntityPlayer;
 import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.render.engine.RenderEngine;
+import net.acomputerdog.boxle.render.util.BasicSSAO;
 import net.acomputerdog.boxle.render.util.BoxleFlyByCamera;
+import net.acomputerdog.boxle.world.Chunk;
 import net.acomputerdog.boxle.world.structure.WorldList;
 import net.acomputerdog.core.java.ThreadUtils;
 import net.acomputerdog.core.logger.CLogger;
@@ -128,7 +129,11 @@ public class Boxle extends SimpleApplication {
 
         FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
         if (gameConfig.lightingMode >= 2) {
-            SSAOFilter ssao = new SSAOFilter(.5f, 2f, 0.2f, 0.1f);
+            //SSAOFilter ssao = new SSAOFilter(.75f, 2f, 0.2f, .1f);
+            BasicSSAO ssao = new BasicSSAO();
+            ssao.setFalloffStartDistance(Chunk.CHUNK_SIZE * 3f);
+            ssao.setUseDistanceFalloff(true);
+            ssao.scaleSettings(0.25f);
             fpp.addFilter(ssao);
         }
         if (gameConfig.shadowMode > 0) {
