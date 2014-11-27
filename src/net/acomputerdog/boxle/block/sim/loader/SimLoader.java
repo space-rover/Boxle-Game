@@ -32,11 +32,11 @@ public class SimLoader {
     }
 
     public static void loadExternalSims() {
-        File userDir = new File("./user/sims/");
+        File userDir = new File("./sims/user/");
         if (!(userDir.isDirectory() || userDir.mkdirs())) {
             Sim.LOGGER.logWarning("Unable to create user sims directory!");
         }
-        File saveDir = new File("./save/sims/");
+        File saveDir = new File("./sims/save/");
         if (!(saveDir.isDirectory() || saveDir.mkdirs())) {
             Sim.LOGGER.logWarning("Unable to create save sims directory!");
         }
