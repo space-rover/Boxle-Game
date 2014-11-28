@@ -22,8 +22,6 @@ import java.util.ArrayList;
 
 public class BasicSSAO extends Filter {
     private Pass normalPass;
-    private Vector3f frustumCorner;
-    private Vector2f frustumNearFar;
     private Vector3f[] samples = {
             new Vector3f(1.0f, 0.0f, 1.0f),
             new Vector3f(-1.0f, 0.0f, 1.0f),
@@ -60,9 +58,7 @@ public class BasicSSAO extends Filter {
     private boolean useOnlyAo = false;
     private boolean useAo = true;
     private Material ssaoMat;
-    private Pass ssaoPass;
 
-    private float downSampleFactor = 1f;
     RenderManager renderManager;
     ViewPort viewPort;
 
@@ -115,18 +111,17 @@ public class BasicSSAO extends Filter {
         this.renderManager = renderManager;
         this.viewPort = vp;
 
-        int screenWidth = w;
-        int screenHeight = h;
-        postRenderPasses = new ArrayList<Pass>();
+        postRenderPasses = new ArrayList<>();
 
         normalPass = new Pass();
-        normalPass.init(renderManager.getRenderer(), (int) (screenWidth / downSampleFactor), (int) (screenHeight / downSampleFactor), Format.RGBA8, Format.Depth);
+        float downSampleFactor = 1f;
+        normalPass.init(renderManager.getRenderer(), (int) (w / downSampleFactor), (int) (h / downSampleFactor), Format.RGBA8, Format.Depth);
 
-        frustumNearFar = new Vector2f();
+        Vector2f frustumNearFar = new Vector2f();
 
         float farY = (vp.getCamera().getFrustumTop() / vp.getCamera().getFrustumNear()) * vp.getCamera().getFrustumFar();
-        float farX = farY * ((float) screenWidth / (float) screenHeight);
-        frustumCorner = new Vector3f(farX, farY, vp.getCamera().getFrustumFar());
+        float farX = farY * ((float) w / (float) h);
+        Vector3f frustumCorner = new Vector3f(farX, farY, vp.getCamera().getFrustumFar());
         frustumNearFar.x = vp.getCamera().getFrustumNear();
         frustumNearFar.y = vp.getCamera().getFrustumFar();
 
@@ -134,13 +129,13 @@ public class BasicSSAO extends Filter {
         ssaoMat = new Material(manager, "MatDefs/BasicSSAO.j3md");
         ssaoMat.setTexture("Normals", normalPass.getRenderedTexture());
 
-        ssaoPass = new Pass() {
+        Pass ssaoPass = new Pass() {
             @Override
             public boolean requiresDepthAsTexture() {
                 return true;
             }
         };
-        ssaoPass.init(renderManager.getRenderer(), (int) (screenWidth / downSampleFactor), (int) (screenHeight / downSampleFactor), Format.RGBA8, Format.Depth, 1, ssaoMat);
+        ssaoPass.init(renderManager.getRenderer(), (int) (w / downSampleFactor), (int) (h / downSampleFactor), Format.RGBA8, Format.Depth, 1, ssaoMat);
         ssaoPass.getRenderedTexture().setMinFilter(Texture.MinFilter.Trilinear);
         ssaoPass.getRenderedTexture().setMagFilter(Texture.MagFilter.Bilinear);
         postRenderPasses.add(ssaoPass);
@@ -525,7 +520,7 @@ public class BasicSSAO extends Filter {
         } else if (useOnlyAo && useAo) { // BasicSSAO Map Only
             useOnlyAo = false;
             useAo = true;
-        } else if (!useOnlyAo && !useAo) { // BasicSSAO Blended
+        } else if (!useOnlyAo) { // BasicSSAO Blended
             useOnlyAo = true;
             useAo = true;
         }
@@ -543,10 +538,10 @@ public class BasicSSAO extends Filter {
             useSmoothing = false;
             smoothMore = false;
 
-        } else if (useSmoothing && !smoothMore) { // 2 pass Smoothing
+        } else if (useSmoothing) { // 2 pass Smoothing
             useSmoothing = true;
             smoothMore = true;
-        } else if (!useSmoothing && !smoothMore) { // 1 pass Smoothing
+        } else if (!smoothMore) { // 1 pass Smoothing
             useSmoothing = true;
             smoothMore = false;
         }
