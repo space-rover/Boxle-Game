@@ -5,7 +5,7 @@ import net.acomputerdog.boxle.block.sim.program.instruction.InstructionStart;
 import net.acomputerdog.core.tree.Tree;
 
 public class InstructionTree extends Tree<Instruction> {
-    private final InstructionBranch root = new InstructionBranch(this, null, "root", new InstructionStart());
+    private final InstructionBranch root = new InstructionBranch(this, null, new InstructionStart());
 
     @Override
     public InstructionBranch root() {

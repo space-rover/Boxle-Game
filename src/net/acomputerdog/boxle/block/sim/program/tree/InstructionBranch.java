@@ -1,7 +1,6 @@
 package net.acomputerdog.boxle.block.sim.program.tree;
 
 import net.acomputerdog.boxle.block.sim.program.instruction.Instruction;
-import net.acomputerdog.boxle.block.util.RandomGen;
 import net.acomputerdog.core.tree.Branch;
 
 import java.util.ArrayList;
@@ -13,8 +12,8 @@ public class InstructionBranch extends Branch<Instruction> {
     private final Instruction instruction;
     private final InstructionTree tree;
 
-    public InstructionBranch(InstructionTree tree, InstructionBranch parent, String name, Instruction instruction) {
-        super(tree, parent, name);
+    public InstructionBranch(InstructionTree tree, InstructionBranch parent, Instruction instruction) {
+        super(tree, parent);
         this.instruction = instruction;
         this.tree = tree;
     }
@@ -39,11 +38,7 @@ public class InstructionBranch extends Branch<Instruction> {
     }
 
     public InstructionBranch addOutput(Instruction ins) {
-        return addOutput(ins.getId() + RandomGen.nextString(), ins);
-    }
-
-    public InstructionBranch addOutput(String name, Instruction ins) {
-        return addOutput(new InstructionBranch(tree, this, name, ins));
+        return addOutput(new InstructionBranch(tree, this, ins));
     }
 
     public InstructionBranch addOutput(InstructionBranch ins) {

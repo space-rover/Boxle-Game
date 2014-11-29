@@ -1,10 +1,10 @@
 package net.acomputerdog.boxle.block.block;
 
-import net.acomputerdog.boxle.block.util.Identifiable;
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.math.aabb.AABBF;
 import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.world.World;
+import net.acomputerdog.core.identity.Identifiable;
 import net.acomputerdog.core.logger.CLogger;
 
 /**

@@ -2,7 +2,7 @@ package net.acomputerdog.boxle.block.block;
 
 import net.acomputerdog.boxle.block.sim.loader.PropLoader;
 import net.acomputerdog.boxle.block.sim.sim.Sim;
-import net.acomputerdog.boxle.block.util.Registry;
+import net.acomputerdog.core.storage.Registry;
 
 public class Blocks {
     public static final Registry<Block> BLOCKS = new Registry<>();

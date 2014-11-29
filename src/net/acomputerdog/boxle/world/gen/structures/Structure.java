@@ -1,8 +1,8 @@
 package net.acomputerdog.boxle.world.gen.structures;
 
-import net.acomputerdog.boxle.block.util.Identifiable;
 import net.acomputerdog.boxle.world.Chunk;
 import net.acomputerdog.boxle.world.gen.WorldGen;
+import net.acomputerdog.core.identity.Identifiable;
 
 public abstract class Structure implements Identifiable {
     protected static final int CHUNK_SIZE = Chunk.CHUNK_SIZE;

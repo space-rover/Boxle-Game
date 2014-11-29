@@ -1,4 +1,4 @@
-package net.acomputerdog.boxle.block.util;
+package net.acomputerdog.boxle.block.sim;
 
 
 import net.acomputerdog.boxle.block.atom.Atom;

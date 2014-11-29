@@ -8,7 +8,7 @@ import net.acomputerdog.boxle.block.atom.types.util.CreateTexAtom;
 import net.acomputerdog.boxle.block.atom.types.value.PushBooleanAtom;
 import net.acomputerdog.boxle.block.atom.types.value.PushFloatAtom;
 import net.acomputerdog.boxle.block.atom.types.value.PushIntAtom;
-import net.acomputerdog.boxle.block.util.Registry;
+import net.acomputerdog.core.storage.Registry;
 
 public class Atoms {
     public static final Registry<Atom> ATOMS = new Registry<>();
