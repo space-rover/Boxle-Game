@@ -1,6 +1,7 @@
 package net.acomputerdog.boxle.config;
 
-import net.acomputerdog.core.java.MathUtils;
+
+import net.acomputerdog.core.util.MathUtils;
 
 import java.util.Properties;
 

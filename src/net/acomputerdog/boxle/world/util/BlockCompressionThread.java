@@ -3,7 +3,7 @@ package net.acomputerdog.boxle.world.util;
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.world.Chunk;
 import net.acomputerdog.boxle.world.World;
-import net.acomputerdog.core.java.ThreadUtils;
+import net.acomputerdog.core.java.Sleep;
 
 /**
  * Thread that scans and compresses block and data arrays within chunks.
@@ -30,7 +30,7 @@ public class BlockCompressionThread extends Thread {
                     //((SquaresBlockStorage) chunk.getBlocks()).compressArrays();
                 }
             }
-            ThreadUtils.sleep(10); //limit to 100 TPS, to lower CPU usage
+            Sleep.sleep(10); //limit to 100 TPS, to lower CPU usage
         }
     }
 }

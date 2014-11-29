@@ -13,7 +13,7 @@ import net.acomputerdog.boxle.render.engine.RenderEngine;
 import net.acomputerdog.boxle.render.util.BasicSSAO;
 import net.acomputerdog.boxle.render.util.BoxleFlyByCamera;
 import net.acomputerdog.boxle.world.structure.WorldList;
-import net.acomputerdog.core.java.ThreadUtils;
+import net.acomputerdog.core.java.Sleep;
 import net.acomputerdog.core.logger.CLogger;
 
 import java.io.File;
@@ -188,7 +188,7 @@ public class Boxle extends SimpleApplication {
                 server.tick(); //todo separate thread
                 client.tick(); //todo separate thread
             }
-            ThreadUtils.sync(time, 1000 / gameConfig.ticksPerSecond);
+            Sleep.sync(time, 1000 / gameConfig.ticksPerSecond);
         }
         System.out.println("Stopping.");
         cleanup();
