@@ -14,4 +14,9 @@
 hs_err_pid*
 
 # Temporary working directory
+/WorkingDir/
 /WorkingDir/*
+/WorkingDir/**
+WorkingDir/
+WorkingDir/*
+WorkingDir/**
