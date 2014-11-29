@@ -74,9 +74,9 @@ public class GameConfig {
 
     public int ticksPerSecond = 50;
 
-    public int lightingMode = 2; //0==off, 1==lighting only, 2==lighting+SSAO
+    public int lightingMode = 1; //0==off, 1==lighting only, 2==lighting+SSAO
 
-    public int shadowMode = 2048; //0==off, anything else is shadowmap size
+    public int shadowMode = 0; //0==off, anything else is shadowmap size
 
     public String cacheDir = "./cache/";
 
