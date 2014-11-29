@@ -14,6 +14,7 @@ import com.jme3.scene.Node;
 import net.acomputerdog.boxle.block.block.Block;
 import net.acomputerdog.boxle.block.block.Blocks;
 import net.acomputerdog.boxle.entity.types.EntityPlayer;
+import net.acomputerdog.boxle.gui.types.GuiCurrentBlock;
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.math.loc.CoordConverter;
 import net.acomputerdog.boxle.math.vec.Vec3f;
@@ -115,7 +116,7 @@ public class InputHandler implements ActionListener, AnalogListener {
 
     @Override
     public void onAction(String name, boolean isPressed, float tpf) {
-        if ("Exit".equals(name)) {
+        if (isPressed && "Exit".equals(name)) {
             engine.getBoxle().stop();
         } else if (!isPressed && "Pause".equals(name)) {
             flyby.toggleMouseGrabbed();
@@ -247,6 +248,10 @@ public class InputHandler implements ActionListener, AnalogListener {
         if (currBlock == Blocks.air) {
             findNextBlock();
         }
+        GuiCurrentBlock gui = Boxle.instance().getRenderEngine().getCurrentBlock();
+        if (gui != null) {
+            gui.setBlock(currBlock);
+        }
     }
 
     private void findPrevBlock() {
@@ -260,6 +265,16 @@ public class InputHandler implements ActionListener, AnalogListener {
         if (currBlock == Blocks.air) {
             findPrevBlock();
         }
+        GuiCurrentBlock gui = Boxle.instance().getRenderEngine().getCurrentBlock();
+        if (gui != null) {
+            gui.setBlock(currBlock);
+        }
     }
 
+    public Block getCurrentBlock() {
+        if (currBlock == null) {
+            findNextBlock();
+        }
+        return currBlock;
+    }
 }

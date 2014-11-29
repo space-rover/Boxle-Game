@@ -120,6 +120,8 @@ public class Boxle extends SimpleApplication {
         boxleFlyCam.setPlayer(player);
         player.setFlyby(boxleFlyCam);
 
+        super.setDisplayStatView(false);
+
         super.setPauseOnLostFocus(false);
 
         viewPort.setBackgroundColor(new ColorRGBA(.25f, .5f, 1f, 1f));
@@ -190,7 +192,6 @@ public class Boxle extends SimpleApplication {
             }
             Sleep.sync(time, 1000 / gameConfig.ticksPerSecond);
         }
-        System.out.println("Stopping.");
         cleanup();
         end(0);
     }
@@ -224,6 +225,7 @@ public class Boxle extends SimpleApplication {
      * Requests the game to stop.
      */
     public void stop() {
+        LOGGER_MAIN.logInfo("Stopping.");
         canRun = false;
     }
 

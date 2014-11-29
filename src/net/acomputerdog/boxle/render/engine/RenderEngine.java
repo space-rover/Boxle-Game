@@ -8,6 +8,7 @@ import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Node;
 import net.acomputerdog.boxle.config.GameConfig;
 import net.acomputerdog.boxle.gui.types.GuiCrossHairs;
+import net.acomputerdog.boxle.gui.types.GuiCurrentBlock;
 import net.acomputerdog.boxle.input.InputHandler;
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.math.loc.CoordConverter;
@@ -63,6 +64,7 @@ public class RenderEngine {
     private DirectionalLight sun;
 
     private GuiCrossHairs crossHairs;
+    private GuiCurrentBlock currentBlock;
 
     /**
      * Creates a new instance of this RenderEngine.
@@ -86,6 +88,8 @@ public class RenderEngine {
         guiNode = boxle.getGuiNode();
         crossHairs = new GuiCrossHairs();
         crossHairs.render(guiNode);
+        currentBlock = new GuiCurrentBlock();
+        currentBlock.render(guiNode);
 
         sun = new DirectionalLight();
         sun.setColor(ColorRGBA.White);
@@ -189,5 +193,9 @@ public class RenderEngine {
 
     public DirectionalLight getSun() {
         return sun;
+    }
+
+    public GuiCurrentBlock getCurrentBlock() {
+        return currentBlock;
     }
 }
