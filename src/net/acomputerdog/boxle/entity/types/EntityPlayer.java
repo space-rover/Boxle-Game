@@ -33,7 +33,7 @@ public class EntityPlayer extends Entity {
 
     @Override
     public void onSpawn() {
-        Vec3i pLoc = VecConverter.vec3iFromVec3f(location);
+        Vec3i pLoc = VecConverter.floorVec3iFromVec3f(location);
         int origY = pLoc.y;
         while (world.getBlockAt(pLoc) != Blocks.air && pLoc.y - origY <= 100) {
             pLoc.y++;

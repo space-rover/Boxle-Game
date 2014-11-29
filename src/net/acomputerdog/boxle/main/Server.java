@@ -152,7 +152,7 @@ public class Server {
 
     private void unloadExtraChunks() {
         for (World world : hostedWorlds) {
-            Vec3i center = CoordConverter.globalToChunk(VecConverter.vec3iFromVec3f(boxle.getClient().getPlayer().getLocation(), VecPool.createVec3i()));
+            Vec3i center = CoordConverter.globalToChunk(VecConverter.floorVec3iFromVec3f(boxle.getClient().getPlayer().getLocation(), VecPool.createVec3i()));
             ChunkTable chunks = world.getChunks();
             for (Chunk chunk : chunks.getAllChunks()) {
                 Vec3i cLoc = chunk.getLocation();
@@ -190,7 +190,7 @@ public class Server {
         EntityPlayer player = boxle.getClient().getPlayer();
         World world = player.getWorld();
         ChunkTable chunks = world.getChunks();
-        Vec3i center = CoordConverter.globalToChunk(VecConverter.vec3iFromVec3f(player.getLocation(), VecPool.createVec3i()));
+        Vec3i center = CoordConverter.globalToChunk(VecConverter.floorVec3iFromVec3f(player.getLocation(), VecPool.createVec3i()));
         if (!center.equals(lastPlayerCLoc)) {
             VecPool.free(lastPlayerCLoc);
             //System.out.println("Moving spiral center to " + center.asCoords());

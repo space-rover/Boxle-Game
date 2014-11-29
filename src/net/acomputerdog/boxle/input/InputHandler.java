@@ -19,6 +19,7 @@ import net.acomputerdog.boxle.block.block.Blocks;
 import net.acomputerdog.boxle.entity.types.EntityPlayer;
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.math.loc.CoordConverter;
+import net.acomputerdog.boxle.math.vec.Vec3f;
 import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.math.vec.VecConverter;
 import net.acomputerdog.boxle.math.vec.VecPool;
@@ -34,6 +35,7 @@ import net.acomputerdog.core.logger.CLogger;
 public class InputHandler implements ActionListener, AnalogListener {
 
     private static final String UNDERSCORE = Patterns.quote("_");
+    private static final float COLLISION_TOLERANCE = 1f / 1024f;
     /**
      * Logger for InputHandler
      */
@@ -107,11 +109,11 @@ public class InputHandler implements ActionListener, AnalogListener {
     public void onAction(String name, boolean isPressed, float tpf) {
         if ("Exit".equals(name)) {
             engine.getBoxle().stop();
-        } else if ("Pause".equals(name) && !isPressed) {
+        } else if (!isPressed && "Pause".equals(name)) {
             flyby.toggleMouseGrabbed();
-        } else if ("Debug".equals(name) && !isPressed) {
+        } else if (!isPressed && "Debug".equals(name)) {
             EntityPlayer player = engine.getBoxle().getClient().getPlayer();
-            Vec3i pLoc = VecConverter.vec3iFromVec3f(player.getLocation());
+            Vec3i pLoc = VecConverter.floorVec3iFromVec3f(player.getLocation());
             logger.logDebug("Player position: " + pLoc.asCoords() + " OR " + CoordConverter.globalToChunk(pLoc.duplicate()).asCoords() + "/" + CoordConverter.globalToBlock(pLoc.duplicate()));
             World world = player.getWorld();
             pLoc.y++;
@@ -121,7 +123,7 @@ public class InputHandler implements ActionListener, AnalogListener {
             VecPool.free(pLoc);
         } else if ("Sprint".equals(name)) {
             flyby.setMoveSpeed(isPressed ? 2f : 1f);
-        } else if ("Break Block".equals(name) && isPressed) {
+        } else if (isPressed && "Break Block".equals(name)) {
             Vec3i loc = findClickedLoc(true);
             if (loc != null) {
                 World world = Boxle.instance().getClient().getPlayer().getWorld();
@@ -131,7 +133,7 @@ public class InputHandler implements ActionListener, AnalogListener {
                 }
                 VecPool.free(loc);
             }
-        } else if ("Place Block".equals(name) && isPressed) {
+        } else if (isPressed && "Place Block".equals(name)) {
             Vec3i loc = findClickedLoc(false);
             if (loc != null) {
                 Boxle.instance().getClient().getPlayer().getWorld().setBlockAt(loc, Blocks.steel, true);
@@ -169,61 +171,49 @@ public class InputHandler implements ActionListener, AnalogListener {
         CollisionResults results = new CollisionResults();
         Camera cam = Boxle.instance().getCamera();
         Ray ray = new Ray(cam.getLocation(), cam.getDirection());
-        Node collision = Boxle.instance().getClient().getPlayer().getWorld().getWorldCollisionNode();
+        Node collision = Boxle.instance().getRenderEngine().getTerrainNode();
         collision.collideWith(ray, results);
         CollisionResult result = results.getClosestCollision();
-        Vec3i loc;
         if (result == null) {
-            loc = null;
-        } else if (inside) {
-            loc = VecConverter.vec3iFromVec3f(VecConverter.vector3fToVec3f(result.getGeometry().getWorldTranslation()));
-        } else {
-            loc = VecConverter.vec3iFromVec3f(VecConverter.vector3fToVec3f(result.getContactPoint()));
+            return null;
         }
-        return loc;
+        Vec3f loc = VecConverter.vector3fToVec3f(result.getContactPoint());
+        Vec3i locI = VecConverter.floorVec3iFromVec3f(loc);
+        World world = Boxle.instance().getClient().getPlayer().getWorld();
+        float distanceX = Math.abs(loc.x - Math.round(loc.x));
+        float distanceY = Math.abs(loc.y - Math.round(loc.y));
+        float distanceZ = Math.abs(loc.z - Math.round(loc.z));
+        if (distanceX <= COLLISION_TOLERANCE) {
+            if (distanceX <= distanceY && distanceX <= distanceZ) {
+                if (checkBlock(Math.round(loc.x), locI.y, locI.z, locI, world, inside) != null) return locI;
+                if (checkBlock(Math.round(loc.x - 1), locI.y, locI.z, locI, world, inside) != null) return locI;
+            }
+        }
+        if (distanceY <= COLLISION_TOLERANCE) {
+            if (distanceY <= distanceX && distanceY <= distanceZ) {
+                if (checkBlock(locI.x, Math.round(loc.y), locI.z, locI, world, inside) != null) return locI;
+                if (checkBlock(locI.x, Math.round(loc.y - 1), locI.z, locI, world, inside) != null) return locI;
+            }
+        }
+        if (distanceZ <= COLLISION_TOLERANCE) {
+            if (distanceZ <= distanceX && distanceZ <= distanceY) {
+                if (checkBlock(locI.x, locI.y, Math.round(loc.z), locI, world, inside) != null) return locI;
+                if (checkBlock(locI.x, locI.y, Math.round(loc.z - 1), locI, world, inside) != null) return locI;
+            }
+        }
+        VecPool.free(loc);
+        VecPool.free(locI);
+        return null;
     }
 
-    /*
-    private Vec3i findClickedLoc(boolean inside) {
-        CollisionResults results = new CollisionResults();
-        Camera cam = Boxle.instance().getCamera();
-        Ray ray = new Ray(cam.getLocation(), cam.getDirection());
-        Node terrain = Boxle.instance().getRenderEngine().getTerrainNode();
-        terrain.collideWith(ray, results);
-        CollisionResult result = results.getClosestCollision();
-        if (inside) {
-            Vector3f contactPoint = result.getContactPoint();
-            Ray insideRay = new Ray(contactPoint, cam.getDirection());
-            insideRay.setLimit(1f);
-            CollisionResults rewResults = new CollisionResults();
-            terrain.collideWith(ray, rewResults);
-            CollisionResult newResult = rewResults.getFarthestCollision();
-            return VecConverter.vec3iFromVec3f(VecConverter.vector3fToVec3f(newResult.getContactPoint()));
-        } else {
-            return VecConverter.vec3iFromVec3f(VecConverter.vector3fToVec3f(result.getContactPoint()));
-        }
-        /*
-        String geomName = result.getGeometry().getName();
-        if (true || result.getDistance() <= 5f) {
-            if (geomName.startsWith("face@")) {
-                String[] parts = geomName.substring(5).split(UNDERSCORE);
-                if (parts.length == 3) {
-                    try {
-                        return VecPool.getVec3i(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
-                    } catch (NumberFormatException e) {
-                        logger.logWarning("Collided with invalidly named face: " + geomName);
-                    }
-                } else {
-                    logger.logWarning("Collided with face with not enough coords: " + geomName);
-                }
-            } else {
-                logger.logWarning("Collided with non-block face: " + geomName);
-            }
-        } else {
-            logger.logWarning("Collided with too far face: " + geomName);
+    private static Vec3i checkBlock(int x, int y, int z, Vec3i out, World world, boolean inside) {
+        if (world.getBlockAt(x, y, z).isCollidable() == inside) {
+            out.x = x;
+            out.y = y;
+            out.z = z;
+            return out;
         }
         return null;
-
-    }*/
+    }
 
 }

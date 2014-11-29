@@ -20,7 +20,7 @@ public class VecConverter {
         return VecPool.getVec3f(quat.getX(), quat.getY(), quat.getZ());
     }
 
-    public static Vec3i vec3iFromVec3f(Vec3f vec) {
+    public static Vec3i floorVec3iFromVec3f(Vec3f vec) {
         Vec3i vecI = VecPool.getVec3i();
         vecI.x = (int) Math.floor(vec.x);
         vecI.y = (int) Math.floor(vec.y);
@@ -28,10 +28,25 @@ public class VecConverter {
         return vecI;
     }
 
-    public static Vec3i vec3iFromVec3f(Vec3f vec, Vec3i vec3i) {
+    public static Vec3i floorVec3iFromVec3f(Vec3f vec, Vec3i vec3i) {
         vec3i.x = (int) Math.floor(vec.x);
         vec3i.y = (int) Math.floor(vec.y);
         vec3i.z = (int) Math.floor(vec.z);
+        return vec3i;
+    }
+
+    public static Vec3i roundVec3iFromVec3f(Vec3f vec) {
+        Vec3i vecI = VecPool.getVec3i();
+        vecI.x = Math.round(vec.x);
+        vecI.y = Math.round(vec.y);
+        vecI.z = Math.round(vec.z);
+        return vecI;
+    }
+
+    public static Vec3i roundVec3iFromVec3f(Vec3f vec, Vec3i vec3i) {
+        vec3i.x = Math.round(vec.x);
+        vec3i.y = Math.round(vec.y);
+        vec3i.z = Math.round(vec.z);
         return vec3i;
     }
 }
