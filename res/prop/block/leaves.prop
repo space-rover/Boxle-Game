@@ -3,3 +3,5 @@ prop_name=leaves
 
 id=leaves
 name=Leaves
+
+collidable=true

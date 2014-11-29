@@ -6,4 +6,3 @@ collidable=true
 transparent=false
 light_reduction=255
 light_output=0
-isCollidable=true

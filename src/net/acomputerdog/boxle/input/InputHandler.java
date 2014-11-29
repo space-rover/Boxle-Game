@@ -237,7 +237,7 @@ public class InputHandler implements ActionListener, AnalogListener {
     }
 
     private void findNextBlock() {
-        if (blockArr == null || blockIndex >= blockArr.length) {
+        if (blockArr == null || blockIndex >= blockArr.length || blockIndex < 0) {
             Collection<Block> blockCollection = Blocks.BLOCKS.getItems();
             blockArr = blockCollection.toArray(new Block[blockCollection.size()]);
             blockIndex = 0;
@@ -250,7 +250,7 @@ public class InputHandler implements ActionListener, AnalogListener {
     }
 
     private void findPrevBlock() {
-        if (blockArr == null || blockIndex < 0) {
+        if (blockArr == null || blockIndex < 0 || blockIndex >= blockArr.length) {
             Collection<Block> blockCollection = Blocks.BLOCKS.getItems();
             blockArr = blockCollection.toArray(new Block[blockCollection.size()]);
             blockIndex = blockArr.length - 1;
