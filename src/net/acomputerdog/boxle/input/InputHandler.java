@@ -7,10 +7,7 @@ import com.jme3.collision.CollisionResults;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
-import com.jme3.input.controls.ActionListener;
-import com.jme3.input.controls.AnalogListener;
-import com.jme3.input.controls.KeyTrigger;
-import com.jme3.input.controls.MouseButtonTrigger;
+import com.jme3.input.controls.*;
 import com.jme3.math.Ray;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
@@ -28,6 +25,8 @@ import net.acomputerdog.boxle.render.util.BoxleFlyByCamera;
 import net.acomputerdog.boxle.world.World;
 import net.acomputerdog.core.java.Patterns;
 import net.acomputerdog.core.logger.CLogger;
+
+import java.util.Collection;
 
 /**
  * Handles input for the game client.
@@ -50,6 +49,11 @@ public class InputHandler implements ActionListener, AnalogListener {
     private Camera camera;
     private BoxleFlyByCamera flyby;
     private InputManager inputManager;
+
+
+    private Block[] blockArr;
+    private int blockIndex;
+    private Block currBlock;
     /**
      * Create a new InputHandler instance.
      *
@@ -84,10 +88,13 @@ public class InputHandler implements ActionListener, AnalogListener {
         inputManager.addMapping("Break Block", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
         inputManager.addMapping("Place Block", new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
 
+        inputManager.addMapping("Select Next Block", new MouseAxisTrigger(MouseInput.AXIS_WHEEL, false));
+        inputManager.addMapping("Select Prev Block", new MouseAxisTrigger(MouseInput.AXIS_WHEEL, true));
+
         inputManager.addMapping("Debug", new KeyTrigger(KeyInput.KEY_B));
         inputManager.addListener(this, "Debug");
 
-        inputManager.addListener(this, "Move Left", "Move Right", "Move Forward", "Move Back", "Move Up", "Move Down", "Exit", "Pause", "Sprint", "Break Block", "Place Block");
+        inputManager.addListener(this, "Move Left", "Move Right", "Move Forward", "Move Back", "Move Up", "Move Down", "Exit", "Pause", "Sprint", "Break Block", "Place Block", "Select Next Block", "Select Prev Block");
 
         AppStateManager stateManager = engine.getBoxle().getStateManager();
         stateManager.detach(stateManager.getState(FlyCamAppState.class));
@@ -137,7 +144,10 @@ public class InputHandler implements ActionListener, AnalogListener {
         } else if (isPressed && "Place Block".equals(name)) {
             Vec3i loc = findClickedLoc(false);
             if (loc != null) {
-                Boxle.instance().getClient().getPlayer().getWorld().setBlockAt(loc, Blocks.steel, true);
+                if (currBlock == null) {
+                    findNextBlock();
+                }
+                Boxle.instance().getClient().getPlayer().getWorld().setBlockAt(loc, currBlock, true);
                 VecPool.free(loc);
             }
         }
@@ -163,6 +173,12 @@ public class InputHandler implements ActionListener, AnalogListener {
                 break;
             case "Move Back":
                 flyby.moveCameraStraight(-.1f);
+                break;
+            case "Select Next Block":
+                findNextBlock();
+                break;
+            case "Select Prev Block":
+                findPrevBlock();
                 break;
             default:
         }
@@ -210,7 +226,7 @@ public class InputHandler implements ActionListener, AnalogListener {
         return null;
     }
 
-    private static Vec3i checkBlock(int x, int y, int z, Vec3i out, World world, boolean inside) {
+    private Vec3i checkBlock(int x, int y, int z, Vec3i out, World world, boolean inside) {
         if (world.getBlockAt(x, y, z).isCollidable() == inside) {
             out.x = x;
             out.y = y;
@@ -218,6 +234,32 @@ public class InputHandler implements ActionListener, AnalogListener {
             return out;
         }
         return null;
+    }
+
+    private void findNextBlock() {
+        if (blockArr == null || blockIndex >= blockArr.length) {
+            Collection<Block> blockCollection = Blocks.BLOCKS.getItems();
+            blockArr = blockCollection.toArray(new Block[blockCollection.size()]);
+            blockIndex = 0;
+        }
+        currBlock = blockArr[blockIndex];
+        blockIndex++;
+        if (currBlock == Blocks.air) {
+            findNextBlock();
+        }
+    }
+
+    private void findPrevBlock() {
+        if (blockArr == null || blockIndex < 0) {
+            Collection<Block> blockCollection = Blocks.BLOCKS.getItems();
+            blockArr = blockCollection.toArray(new Block[blockCollection.size()]);
+            blockIndex = blockArr.length - 1;
+        }
+        currBlock = blockArr[blockIndex];
+        blockIndex--;
+        if (currBlock == Blocks.air) {
+            findPrevBlock();
+        }
     }
 
 }
