@@ -81,6 +81,8 @@ public class RenderEngine {
      * Initializes this RenderEngine
      */
     public void init() {
+        input.init();
+
         rootNode = boxle.getRootNode();
         terrainNode = new ChunkNode("terrain");
         rootNode.attachChild(terrainNode);
@@ -103,7 +105,6 @@ public class RenderEngine {
             rootNode.addLight(ambience);
         }
         rootNode.setShadowMode(config.shadowMode > 0 ? RenderQueue.ShadowMode.CastAndReceive : RenderQueue.ShadowMode.Off);
-        input.init();
     }
 
     public void render() {

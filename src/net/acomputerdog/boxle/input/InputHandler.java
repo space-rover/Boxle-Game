@@ -146,7 +146,7 @@ public class InputHandler implements ActionListener, AnalogListener {
             Vec3i loc = findClickedLoc(false);
             if (loc != null) {
                 if (currBlock == null) {
-                    findNextBlock();
+                    findNextBlock(true);
                 }
                 Boxle.instance().getClient().getPlayer().getWorld().setBlockAt(loc, currBlock, true);
                 VecPool.free(loc);
@@ -176,10 +176,10 @@ public class InputHandler implements ActionListener, AnalogListener {
                 flyby.moveCameraStraight(-.1f);
                 break;
             case "Select Next Block":
-                findNextBlock();
+                findNextBlock(true);
                 break;
             case "Select Prev Block":
-                findPrevBlock();
+                findNextBlock(false);
                 break;
             default:
         }
@@ -237,33 +237,16 @@ public class InputHandler implements ActionListener, AnalogListener {
         return null;
     }
 
-    private void findNextBlock() {
+    private void findNextBlock(boolean dir) {
+        blockIndex += dir ? 1 : -1;
         if (blockArr == null || blockIndex >= blockArr.length || blockIndex < 0) {
             Collection<Block> blockCollection = Blocks.BLOCKS.getItems();
             blockArr = blockCollection.toArray(new Block[blockCollection.size()]);
-            blockIndex = 0;
+            blockIndex = dir ? 0 : blockArr.length - 1;
         }
         currBlock = blockArr[blockIndex];
-        blockIndex++;
         if (currBlock == Blocks.air) {
-            findNextBlock();
-        }
-        GuiCurrentBlock gui = Boxle.instance().getRenderEngine().getCurrentBlock();
-        if (gui != null) {
-            gui.setBlock(currBlock);
-        }
-    }
-
-    private void findPrevBlock() {
-        if (blockArr == null || blockIndex < 0 || blockIndex >= blockArr.length) {
-            Collection<Block> blockCollection = Blocks.BLOCKS.getItems();
-            blockArr = blockCollection.toArray(new Block[blockCollection.size()]);
-            blockIndex = blockArr.length - 1;
-        }
-        currBlock = blockArr[blockIndex];
-        blockIndex--;
-        if (currBlock == Blocks.air) {
-            findPrevBlock();
+            findNextBlock(dir);
         }
         GuiCurrentBlock gui = Boxle.instance().getRenderEngine().getCurrentBlock();
         if (gui != null) {
@@ -273,7 +256,7 @@ public class InputHandler implements ActionListener, AnalogListener {
 
     public Block getCurrentBlock() {
         if (currBlock == null) {
-            findNextBlock();
+            findNextBlock(true);
         }
         return currBlock;
     }
