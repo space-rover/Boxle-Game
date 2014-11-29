@@ -1,6 +1,7 @@
 package net.acomputerdog.boxle.main;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.font.BitmapFont;
 import com.jme3.math.ColorRGBA;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.shadow.DirectionalLightShadowFilter;
@@ -321,5 +322,9 @@ public class Boxle extends SimpleApplication {
     public void loseFocus() {
         super.loseFocus();
         boxleFlyCam.setEnabled(false);
+    }
+
+    public BitmapFont getFont() {
+        return guiFont;
     }
 }
