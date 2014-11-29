@@ -20,16 +20,16 @@ public class SimUtils {
         }
         List<StackItem> stacks = new ArrayList<>();
         boolean result = true;
-        for (String str : types) {
+        for (String type : types) {
             StackItem item = stack.pop();
             stacks.add(item);
-            if (item != null && str != null) {
-                if (!str.equals(item.getType())) {
+            if (item != null && type != null) {
+                if (!type.equals(item.getType())) {
                     result = false;
                     break;
                 }
             }
-            if ((item == null) != (str == null)) {
+            if ((item == null) != (type == null)) {
                 result = false;
                 break;
             }

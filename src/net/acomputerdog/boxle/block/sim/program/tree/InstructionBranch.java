@@ -4,7 +4,6 @@ import net.acomputerdog.boxle.block.sim.program.instruction.Instruction;
 import net.acomputerdog.core.tree.Branch;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -22,7 +21,7 @@ public class InstructionBranch extends Branch<Instruction> {
         return instruction;
     }
 
-    public Collection<InstructionBranch> getOutputs() {
+    public List<InstructionBranch> getOutputs() {
         List<InstructionBranch> branches = new ArrayList<InstructionBranch>();
         for (Branch<Instruction> branch : super.getBranches()) {
             branches.add((InstructionBranch) branch);

@@ -36,6 +36,7 @@ public class InputHandler implements ActionListener, AnalogListener {
 
     private static final String UNDERSCORE = Patterns.quote("_");
     private static final float COLLISION_TOLERANCE = 1f / 1024f;
+    private static final float MAX_REACH_DISTANCE = 10f;
     /**
      * Logger for InputHandler
      */
@@ -175,6 +176,9 @@ public class InputHandler implements ActionListener, AnalogListener {
         collision.collideWith(ray, results);
         CollisionResult result = results.getClosestCollision();
         if (result == null) {
+            return null;
+        }
+        if (result.getDistance() > MAX_REACH_DISTANCE) {
             return null;
         }
         Vec3f loc = VecConverter.vector3fToVec3f(result.getContactPoint());
