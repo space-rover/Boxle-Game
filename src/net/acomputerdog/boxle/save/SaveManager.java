@@ -43,6 +43,10 @@ public class SaveManager {
         return new File(worldsDir, "/" + world.getName() + "/chunks/" + x + "_" + y + "_" + z + ".chunk").isFile();
     }
 
+    public static void saveChunkDelayed(Chunk chunk) {
+        IOThread.getThread(chunk.getWorld()).addSave(chunk);
+    }
+
     public static void saveChunk(Chunk chunk) throws IOException {
         if (chunk.isModifiedFromLoad()) {
             chunk.setModifiedFromLoad(false);
@@ -102,6 +106,10 @@ public class SaveManager {
             throw new FileNotFoundException("World is missing chunks directory!");
         }
         return world;
+    }
+
+    public static void loadChunkDelayed(World world, Vec3i loc) {
+        IOThread.getThread(world).addLoad(loc);
     }
 
     public static Chunk loadChunk(World world, Vec3i loc) throws IOException {
@@ -171,7 +179,7 @@ public class SaveManager {
     private static File getChunkFile(Chunk chunk) {
         File dir = new File(getWorldDir(chunk.getWorld().getName()), "/chunks/");
         if (!(dir.isDirectory() || dir.mkdirs())) {
-            LOGGER.logWarning("Unable to create world directory for chunk at " + chunk.getCoords());
+            LOGGER.logWarning("Unable to create world directory for chunk at " + chunk.asCoords());
         }
         return new File(dir, "/" + chunk.getXLoc() + "_" + chunk.getYLoc() + "_" + chunk.getZLoc() + ".chunk");
     }

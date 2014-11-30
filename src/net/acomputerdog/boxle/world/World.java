@@ -16,7 +16,6 @@ import net.acomputerdog.boxle.world.gen.structures.Structures;
 import net.acomputerdog.boxle.world.structure.ChunkTable;
 import net.acomputerdog.core.logger.CLogger;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -114,18 +113,13 @@ public class World {
         Chunk chunk = chunks.getChunk(loc);
         if (chunk == null) {
             if (SaveManager.hasChunk(this, loc.x, loc.y, loc.z)) {
-                try {
-                    chunk = SaveManager.loadChunk(this, loc);
-                    chunk.setModifiedFromLoad(false);
-                } catch (IOException e) {
-                    throw new RuntimeException("Unable to load chunk at " + loc.asCoords() + "!", e);
-                }
+                SaveManager.loadChunkDelayed(this, loc);
             } else {
                 chunk = new Chunk(this, loc);
                 generator.generateTerrain(chunk);
                 decorateChunks.add(chunk);
+                chunks.addChunk(chunk);
             }
-            chunks.addChunk(chunk);
         }
         return chunk;
     }
@@ -144,11 +138,7 @@ public class World {
         if (oldNode.getParent() != null) {
             boxle.getRenderEngine().removeNode(oldNode);
         }
-        try {
-            SaveManager.saveChunk(chunk);
-        } catch (IOException e) {
-            logger.logError("Unable to save chunk at " + chunk.getCoords() + "!", e);
-        }
+        SaveManager.saveChunkDelayed(chunk);
     }
 
     public Block getBlockAt(int x, int y, int z) {
@@ -223,5 +213,28 @@ public class World {
 
     public Queue<Chunk> getDecorateChunks() {
         return decorateChunks;
+    }
+
+    public void addNewChunk(Chunk chunk) {
+        chunk.setModifiedFromLoad(false);
+        chunk.setNeedsRebuild(true);
+        chunks.addChunk(chunk);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof World)) return false;
+
+        World world = (World) o;
+
+        if (!name.equals(world.name)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
     }
 }

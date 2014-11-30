@@ -5,7 +5,7 @@ import net.acomputerdog.core.hash.Hash;
 /**
  * A class containing a vector of 3 ints
  */
-public class Vec3i {
+public class Vec3i implements Comparable<Vec3i> {
     public int x;
     public int y;
     public int z;
@@ -117,5 +117,10 @@ public class Vec3i {
                 ", y=" + y +
                 ", z=" + z +
                 '}';
+    }
+
+    @Override
+    public int compareTo(Vec3i o) {
+        return hashCode() - o.hashCode();
     }
 }

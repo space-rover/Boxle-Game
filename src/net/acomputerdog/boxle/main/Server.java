@@ -203,6 +203,11 @@ public class Server {
             int sX = spiralLoc.x;
             int sZ = spiralLoc.y;
             if (Math.abs(sX - center.x) >= renderDistanceH || Math.abs(sZ - center.z) >= renderDistanceH) {
+                if (Math.abs(sX - center.x) >= renderDistanceH && Math.abs(sZ - center.z) >= renderDistanceH) {
+                    spiral = new Spiral2i(VecPool.getVec2i(center.x, center.z));
+                    VecPool.free(lastPlayerCLoc);
+                    lastPlayerCLoc = center;
+                }
                 //System.out.println("Ending build cycle early: " + sX + "," + sZ);
                 break;
             }
@@ -212,7 +217,7 @@ public class Server {
                 if (chunk == null) {
                     chunk = world.loadOrGenerateChunk(newLoc);
                 }
-                if (chunk.needsRebuild()) {
+                if (chunk != null && chunk.needsRebuild()) { //if null chunk has not been loaded yet
                     numChunks++;
                     rebuildChunks.remove(chunk); //make sure the chunk is not rendered twice
                     ChunkNode node = new ChunkNode("chunk@" + newLoc.asCoords());
@@ -223,8 +228,8 @@ public class Server {
                     }
                     chunk.setChunkNode(node);
                     engine.addNode(node);
+                    VecPool.free(newLoc);
                 }
-                VecPool.free(newLoc);
             }
         }
     }

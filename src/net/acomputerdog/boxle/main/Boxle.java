@@ -13,6 +13,7 @@ import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.render.engine.RenderEngine;
 import net.acomputerdog.boxle.render.util.BasicSSAO;
 import net.acomputerdog.boxle.render.util.BoxleFlyByCamera;
+import net.acomputerdog.boxle.save.IOThread;
 import net.acomputerdog.boxle.world.structure.WorldList;
 import net.acomputerdog.core.java.Sleep;
 import net.acomputerdog.core.logger.CLogger;
@@ -24,17 +25,9 @@ import java.io.File;
  */
 public class Boxle extends SimpleApplication {
     /**
-     * Logger that logs without date or time.  Useful for high-output debug messages.
-     */
-    public static final CLogger LOGGER_FAST = new CLogger("Boxle", false, false);
-    /**
      * Normal logger that just logs time.
      */
-    public static final CLogger LOGGER_MAIN = new CLogger("Boxle", false, true);
-    /**
-     * Full logger that outputs date and time.  Useful for crash messages.
-     */
-    public static final CLogger LOGGER_FULL = new CLogger("Boxle", true, true);
+    public static final CLogger LOGGER = new CLogger("Boxle", false, true);
 
     /**
      * Central render engine
@@ -88,20 +81,20 @@ public class Boxle extends SimpleApplication {
         try {
             init();
         } catch (Throwable t) {
-            LOGGER_MAIN.logFatal("Caught exception during init phase!", t);
+            LOGGER.logFatal("Caught exception during init phase!", t);
             end(-1);
         }
         try {
             run();
         } catch (Throwable t) {
-            LOGGER_MAIN.logFatal("Caught exception during run phase!", t);
+            LOGGER.logFatal("Caught exception during run phase!", t);
             end(-2);
         }
         try {
-            LOGGER_MAIN.logError("Reached invalid area of code!  Shutting down!");
+            LOGGER.logError("Reached invalid area of code!  Shutting down!");
             cleanup();
         } catch (Throwable t) {
-            LOGGER_MAIN.logFatal("Caught excpetion in invalid area of code!", t);
+            LOGGER.logFatal("Caught excpetion in invalid area of code!", t);
         }
         end(-3);
     }
@@ -151,13 +144,13 @@ public class Boxle extends SimpleApplication {
      * Initializes boxle to start.
      */
     private void init() {
-        LOGGER_MAIN.logInfo("Boxle is initializing.");
+        LOGGER.logInfo("Boxle is initializing.");
         gameConfig.load();
 
         File tempDir = new File(gameConfig.cacheDir);
         if (!(tempDir.isDirectory() || tempDir.mkdirs())) {
-            LOGGER_MAIN.logError("Could not create temporary directory!");
-            LOGGER_MAIN.logError("Make sure boxle has write access to the current directory, or run boxle from a directory with write access!");
+            LOGGER.logError("Could not create temporary directory!");
+            LOGGER.logError("Make sure boxle has write access to the current directory, or run boxle from a directory with write access!");
         }
 
         VecPool.init();
@@ -184,7 +177,7 @@ public class Boxle extends SimpleApplication {
      * Performs actual game loop.
      */
     private void run() {
-        LOGGER_MAIN.logInfo("Boxle is starting.");
+        LOGGER.logInfo("Boxle is starting.");
         while (canRun) {
             long time = System.currentTimeMillis();
             if (hasStarted) {
@@ -206,6 +199,7 @@ public class Boxle extends SimpleApplication {
         server.shutdown();
         gameConfig.save();
         renderEngine.cleanup();
+        IOThread.waitForEnd();
     }
 
     /**
@@ -215,9 +209,9 @@ public class Boxle extends SimpleApplication {
      */
     private void end(int code) {
         if (code == 0) {
-            LOGGER_MAIN.logInfo("Boxle shutting down normally.");
+            LOGGER.logInfo("Boxle shutting down normally.");
         } else {
-            LOGGER_MAIN.logWarning("Boxle shutting down abnormally: error code " + code + ".");
+            LOGGER.logWarning("Boxle shutting down abnormally: error code " + code + ".");
         }
         System.exit(code);
     }
@@ -226,7 +220,7 @@ public class Boxle extends SimpleApplication {
      * Requests the game to stop.
      */
     public void stop() {
-        LOGGER_MAIN.logInfo("Stopping.");
+        LOGGER.logInfo("Stopping.");
         canRun = false;
     }
 

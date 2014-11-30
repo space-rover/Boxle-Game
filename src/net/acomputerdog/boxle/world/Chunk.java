@@ -209,7 +209,7 @@ public class Chunk implements Comparable<Chunk> {
         return -1;
     }
 
-    public String getCoords() {
+    public String asCoords() {
         return location.asCoords();
     }
 
