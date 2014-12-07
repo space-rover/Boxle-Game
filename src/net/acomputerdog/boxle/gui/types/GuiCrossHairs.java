@@ -14,7 +14,7 @@ public class GuiCrossHairs extends Gui {
         Boxle boxle = Boxle.instance();
         GameConfig config = boxle.getGameConfig();
         crossHairs = new Picture("CrossHairs");
-        crossHairs.setImage(boxle.getAssetManager(), "/tex/ui/crosshairs.png", true);
+        crossHairs.setImage(boxle.getAssetManager(), "tex/ui/crosshairs.png", true);
         crossHairs.setWidth(10);
         crossHairs.setHeight(10);
         crossHairs.setPosition(config.screenWidth / 2, config.screenHeight / 2);
