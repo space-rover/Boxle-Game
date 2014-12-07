@@ -6,4 +6,4 @@ prop_name=grassy_steel
 id=grassy_steel
 name=Grassy Steel
 
-tex=tex/block/grass_top.png,tex/block/grassy_steel.png,tex/block/grassy_steel.png,tex/block/grassy_steel.png,tex/block/grassy_steel.png,tex/block/steel.png
+tex=/tex/block/grass_top.png,/tex/block/grassy_steel.png,/tex/block/grassy_steel.png,/tex/block/grassy_steel.png,/tex/block/grassy_steel.png,/tex/block/steel.png

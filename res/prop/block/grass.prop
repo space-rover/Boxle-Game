@@ -6,4 +6,4 @@ prop_name=grass
 id=grass
 name=Grass
 
-tex=tex/block/grass_top.png,tex/block/grass_side.png,tex/block/grass_side.png,tex/block/grass_side.png,tex/block/grass_side.png,tex/block/dirt.png
+tex=/tex/block/grass_top.png,/tex/block/grass_side.png,/tex/block/grass_side.png,/tex/block/grass_side.png,/tex/block/grass_side.png,/tex/block/dirt.png

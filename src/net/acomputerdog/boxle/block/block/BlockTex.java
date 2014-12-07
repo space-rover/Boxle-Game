@@ -220,7 +220,7 @@ public class BlockTex {
     }
 
     public String getDefaultTexPath() {
-        return "tex/block/".concat(block.getId()).concat(".png");
+        return "/tex/block/".concat(block.getId()).concat(".png");
     }
 
     private Material createMaterial(String side) {
