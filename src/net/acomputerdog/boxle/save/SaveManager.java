@@ -1,16 +1,17 @@
 package net.acomputerdog.boxle.save;
 
 import net.acomputerdog.boxle.block.block.Block;
-import net.acomputerdog.boxle.block.block.Blocks;
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.math.vec.VecPool;
+import net.acomputerdog.boxle.save.world.WorldSave;
 import net.acomputerdog.boxle.world.Chunk;
 import net.acomputerdog.boxle.world.World;
 import net.acomputerdog.core.java.Patterns;
 import net.acomputerdog.core.logger.CLogger;
 
 import java.io.*;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -28,15 +29,19 @@ public class SaveManager {
         return new File(worldsDir, name).isDirectory();
     }
 
-    public static void createWorld(String name) {
-        File worldDir = getWorldDir(name);
-        new File(worldDir, "/chunks/").mkdirs();
+    private static final Map<String, WorldSave> saveMap = new HashMap<>();
+
+    public static WorldSave createWorld(String name) {
+        WorldSave save = saveMap.get(name);
+        if (save == null) {
+            save = new WorldSave(name);
+            save.createWorld();
+        }
+        return save;
     }
 
     public static void saveWorld(World world) throws IOException {
-        for (Chunk chunk : world.getChunks().getAllChunks()) {
-            saveChunk(chunk);
-        }
+        saveMap.get(world.getName()).save();
     }
 
     public static boolean hasChunk(World world, int x, int y, int z) {
@@ -105,6 +110,11 @@ public class SaveManager {
         if (!chunksDir.isDirectory()) {
             throw new FileNotFoundException("World is missing chunks directory!");
         }
+        File metaFile = new File(worldDir, "meta.dat");
+        if (!metaFile.isFile()) {
+            throw new FileNotFoundException("Word is missing meta.dat file!");
+        }
+
         return world;
     }
 
@@ -131,16 +141,7 @@ public class SaveManager {
         DataInputStream in = null;
         try {
             in = new DataInputStream(new GZIPInputStream(new FileInputStream(file)));
-            Map<Short, Block> blockMap = readBlockMap(in);
-            for (int y = 0; y < Chunk.CHUNK_SIZE; y++) {
-                for (int x = 0; x < Chunk.CHUNK_SIZE; x++) {
-                    for (int z = 0; z < Chunk.CHUNK_SIZE; z++) {
-                        short val = in.readShort();
-                        chunk.setBlockAt(x, y, z, blockMap.get(val));
-                    }
-                }
-            }
-            chunk.setModifiedFromLoad(false);
+            readChunk(chunk, in);
             return chunk;
         } finally {
             if (in != null) {
@@ -151,13 +152,26 @@ public class SaveManager {
         }
     }
 
-    private static Map<Short, Block> readBlockMap(DataInput in) throws IOException {
-        Map<Short, Block> blockMap = new LinkedHashMap<>();
-        short numIds = in.readShort();
-        for (short id = 0; id < numIds; id++) {
-            blockMap.put(id, Blocks.BLOCKS.getFromDef(in.readUTF()));
+    public static void readChunk(Chunk chunk, DataInput in) throws IOException {
+        /*Map<Short, Block> blockMap = readBlockMap(in);
+        for (int y = 0; y < Chunk.CHUNK_SIZE; y++) {
+            for (int x = 0; x < Chunk.CHUNK_SIZE; x++) {
+                for (int z = 0; z < Chunk.CHUNK_SIZE; z++) {
+                    short val = in.readShort();
+                    chunk.setBlockAt(x, y, z, blockMap.get(val));
+                }
+            }
         }
-        return blockMap;
+        chunk.setModifiedFromLoad(false);
+        */
+    }
+
+    public static File getRegionFile(String world, int x, int y, int z) {
+        File dir = new File(getWorldDir(world), "/regions/");
+        if (!(dir.isDirectory() || dir.mkdirs())) {
+            LOGGER.logWarning("Unable to create regions directory for world " + world);
+        }
+        return new File(dir, "/" + x + "_" + y + "_" + z + ".region");
     }
 
     private static File createWorldsDir() {
@@ -168,7 +182,7 @@ public class SaveManager {
         return worlds;
     }
 
-    private static File getWorldDir(String name) {
+    public static File getWorldDir(String name) {
         File dir = new File(worldsDir, "/" + name + "/");
         if (!(dir.isDirectory() || dir.mkdirs())) {
             LOGGER.logWarning("Unable to create world directory for world " + name);
