@@ -35,6 +35,7 @@ public class Sim {
         InstructionTree tree = program.getInstructions();
         Block block = new Block(program.getId(), program.getName());
         try {
+            //System.out.println(tree.getStartInstruction().toString());
             simBranch(tree.getStartInstruction(), stack, block);
             programState = SimState.FINISHED;
         } catch (SimException e) {

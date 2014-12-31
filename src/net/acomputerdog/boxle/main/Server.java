@@ -4,6 +4,7 @@ import com.jme3.scene.Node;
 import net.acomputerdog.boxle.config.GameConfig;
 import net.acomputerdog.boxle.entity.Entity;
 import net.acomputerdog.boxle.entity.types.EntityPlayer;
+import net.acomputerdog.boxle.math.aabb.AABBI;
 import net.acomputerdog.boxle.math.loc.CoordConverter;
 import net.acomputerdog.boxle.math.spiral.Spiral2i;
 import net.acomputerdog.boxle.math.vec.Vec2i;
@@ -13,6 +14,9 @@ import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.render.engine.ChunkRenderer;
 import net.acomputerdog.boxle.render.engine.RenderEngine;
 import net.acomputerdog.boxle.render.util.ChunkNode;
+import net.acomputerdog.boxle.save.IOThread;
+import net.acomputerdog.boxle.save.Region;
+import net.acomputerdog.boxle.save.Regions;
 import net.acomputerdog.boxle.save.SaveManager;
 import net.acomputerdog.boxle.world.Chunk;
 import net.acomputerdog.boxle.world.World;
@@ -31,6 +35,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 public class Server {
     private static final int chunkSize = Chunk.CHUNK_SIZE;
+    private static final int regionSize = Region.REGION_SIZE;
     /**
      * The owning Boxle instance;
      */
@@ -78,16 +83,25 @@ public class Server {
      * Initializes this server
      */
     public void init() {
+        /*
         if (SaveManager.worldExists(config.worldName)) {
             try {
-                defaultWorld = SaveManager.loadWorld(config.worldName);
+                defaultWorld = SaveManager.initializeWorld(config.worldName);
             } catch (IOException e) {
                 throw new RuntimeException("Unable to load world!", e);
             }
         } else {
-            defaultWorld = new World(boxle, config.worldName);
-            SaveManager.createWorld(config.worldName);
+        */
+        // new World(boxle, config.worldName);
+        try {
+            defaultWorld = SaveManager.loadOrCreateWorld(config.worldName).createWorld();
+        } catch (IOException e) {
+            logger.logWarning("Exception loading world!", e);
+            defaultWorld = SaveManager.createWorld(config.worldName).createWorld(); //not the same as above, this forces it to create a new world where the above tries to load the old
         }
+        IOThread.getThread(defaultWorld);
+        //SaveManager.createWorld(config.worldName);
+        //}
         boxle.getWorlds().addWorld(defaultWorld);
         hostedWorlds.add(defaultWorld);
     }
@@ -101,9 +115,11 @@ public class Server {
         long oldTime = System.currentTimeMillis();
         numChunks = 0;
         numUnload = 0;
+        //todo iterate through worlds and add parameter to methods
         rebuildNeighborChunks();
         rebuildChangedChunks();
         unloadExtraChunks();
+        unloadExtraRegions();
         if (config.outputRenderDebugInfo && numChunks > 0) {
             long newTime = System.currentTimeMillis();
             logger.logDetail("Built " + numChunks + " chunk meshes and unloaded " + numUnload + " chunks in " + ((newTime - oldTime) / 1000f) + " seconds.");
@@ -114,6 +130,43 @@ public class Server {
                 entity.onTick();
             }
         }
+    }
+
+    private void unloadExtraRegions() {
+        Vec3i endLoc = VecPool.getVec3i();
+        Vec3i renderAreaStart = VecPool.getVec3i();
+        Vec3i renderAreaEnd = VecPool.getVec3i();
+        Vec3i center = VecPool.createVec3i();
+        AABBI renderArea = new AABBI();
+        AABBI regionArea = new AABBI();
+        for (World world : hostedWorlds) {
+            for (Region region : Regions.getRegionsForWorld(world)) {
+                Vec3i startLoc = region.getLoc();
+                startLoc.x *= regionSize;
+                startLoc.y *= regionSize;
+                startLoc.z *= regionSize;
+                endLoc.x = startLoc.x + regionSize;
+                endLoc.x = startLoc.x + regionSize;
+                endLoc.x = startLoc.x + regionSize;
+                CoordConverter.globalToChunk(VecConverter.floorVec3iFromVec3f(boxle.getClient().getPlayer().getLocation(), center));
+                renderAreaStart.x = center.x + config.renderDistanceHorizontal;
+                renderAreaStart.y = center.y + config.renderDistanceVertical;
+                renderAreaStart.z = center.z + config.renderDistanceHorizontal;
+                renderAreaEnd.x = center.x - config.renderDistanceHorizontal;
+                renderAreaEnd.y = center.y - config.renderDistanceVertical;
+                renderAreaEnd.z = center.z - config.renderDistanceHorizontal;
+                renderArea.setCorners(renderAreaStart, renderAreaEnd);
+                regionArea.setCorners(startLoc, endLoc);
+                if (!regionArea.collidesWith(renderArea)) {
+                    SaveManager.unloadRegion(region);
+                }
+                VecPool.free(startLoc);
+            }
+        }
+        VecPool.free(center);
+        VecPool.free(renderAreaEnd);
+        VecPool.free(renderAreaStart);
+        VecPool.free(endLoc);
     }
 
     private void decorateChunks() {

@@ -73,6 +73,7 @@ public class PropLoader {
     }
 
     public static Block createBlock(Properties prop) {
+        //todo split into sub-methods
         getParent(prop);
         Program program = new Program();
         program.setId(prop.getProperty("id"));

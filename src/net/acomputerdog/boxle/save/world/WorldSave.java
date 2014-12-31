@@ -2,9 +2,11 @@ package net.acomputerdog.boxle.save.world;
 
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.math.vec.VecPool;
+import net.acomputerdog.boxle.save.IOThread;
 import net.acomputerdog.boxle.save.Region;
 import net.acomputerdog.boxle.save.SaveManager;
 import net.acomputerdog.boxle.save.WorldMetaFile;
+import net.acomputerdog.boxle.world.Chunk;
 import net.acomputerdog.boxle.world.World;
 
 import java.io.File;
@@ -27,22 +29,28 @@ public class WorldSave {
         createWorld();
         getWorldMeta();
         if (SaveManager.worldExists(worldName)) {
-            worldMeta.load();
+            getWorldMeta().load();
         } else {
-            worldMeta.create();
+            getWorldMeta().create();
         }
     }
 
     public void save() throws IOException {
+        IOThread thread = IOThread.getThread(world);
+        for (Chunk chunk : world.getChunks().getAllChunks()) {
+            thread.addSave(chunk);
+            //SaveManager.saveChunkDelayed(chunk);
+        }
         for (Region region : openRegions) {
-            try {
-                region.save();
-            } catch (IOException e) {
-                SaveManager.LOGGER.logError("Could not save region at: " + region.getLoc().asCoords(), e);
-            }
+            //SaveManager.unloadRegion(region);
+            thread.addRegion(region);
+            //try {
+            //} catch (IOException e) {
+            //    SaveManager.LOGGER.logError("Could not save region at: " + region.getLoc().asCoords(), e);
+            //}
         }
         openRegions.clear();
-        worldMeta.save();
+        getWorldMeta().save();
     }
 
     public World createWorld() {
@@ -54,8 +62,9 @@ public class WorldSave {
     }
 
     public Region getRegion(int x, int y, int z) {
+        //System.out.println("Getting region.");
         File regFile = SaveManager.getRegionFile(worldName, x, y, z);
-        Region region = new Region(worldMeta, regFile, VecPool.getVec3i(x, y, z));
+        Region region = new Region(getWorldMeta(), regFile, VecPool.getVec3i(x, y, z));
         region.open();
         openRegions.add(region);
         return region;

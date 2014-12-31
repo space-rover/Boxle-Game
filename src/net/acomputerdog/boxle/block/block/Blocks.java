@@ -22,6 +22,12 @@ public class Blocks {
     public static final Block acomputerdog = loadInternalProp("acomputerdog");
     public static final Block seamusFD = loadInternalProp("seamusfd");
 
+    public static void initBlockTextures() {
+        for (Block block : BLOCKS.getItems()) {
+            block.getTextures(); //initialize textures
+        }
+    }
+
     private static Block loadInternalProp(String name) {
         Block block = PropLoader.loadAndCreateBlock(name, Blocks.class.getResourceAsStream("/prop/block/" + name + ".prop"));
         BLOCKS.register(block);

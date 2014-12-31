@@ -15,8 +15,9 @@ import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.core.java.Patterns;
 
 import java.io.*;
+import java.util.Deque;
 import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
 
 public class SimLoader {
 
@@ -73,15 +74,17 @@ public class SimLoader {
             Program program = new Program();
             reader = new BufferedReader(new InputStreamReader(in));
             InstructionTree tree = program.getInstructions();
-            Queue<InstructionBranch> branches = new LinkedBlockingQueue<>();
+            Deque<InstructionBranch> branches = new LinkedBlockingDeque<>();
             branches.add(tree.getStartInstruction());
             while (reader.ready()) {
                 String line = reader.readLine();
                 parseLine(program, line, branches);
             }
+            //System.out.println(program.toString());
             reader.close();
             String blockId = program.getVariable("$id");
             String blockName = program.getVariable("$name");
+            //System.out.println(blockId + " / " + blockName);
             if (blockId != null) program.setId(blockId);
             if (blockName != null) program.setName(blockName);
             Sim sim = new Sim(program);
@@ -101,8 +104,9 @@ public class SimLoader {
         }
     }
 
-    private static void parseLine(Program program, String line, Queue<InstructionBranch> branches) throws IllegalSimFormat {
+    private static void parseLine(Program program, String line, Deque<InstructionBranch> branches) throws IllegalSimFormat {
         if (line == null) return;
+        //System.out.println("Parsing line: " + line);
         String origLine = line;
         line = line.trim(); //get rid of whitespace
         if (line.isEmpty() || line.startsWith("#")) return;
@@ -117,7 +121,7 @@ public class SimLoader {
             int semiLoc = line.indexOf(';');
             String atomName = line.substring(0, semiLoc);
             int numSemis = line.substring(semiLoc).length();
-            branches.add(addAtom(atomName, branches, origLine));
+            branches.addFirst(addAtom(atomName, branches, origLine));
             if (numSemis > branches.size()) {
                 throw new IllegalSimFormat("Too many semicolons!", Boxle.instance(), origLine);
             }
@@ -125,7 +129,7 @@ public class SimLoader {
                 branches.remove();
             }
         } else if (line.endsWith(":")) {
-            branches.add(addAtom(line.substring(0, line.indexOf(':')), branches, origLine));
+            branches.addFirst(addAtom(line.substring(0, line.indexOf(':')), branches, origLine));
         } else {
             throw new IllegalSimFormat("Incorrectly formatted line!", Boxle.instance(), origLine);
         }

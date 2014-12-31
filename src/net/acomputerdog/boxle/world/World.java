@@ -9,6 +9,8 @@ import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.physics.PhysicsEngine;
 import net.acomputerdog.boxle.render.util.ChunkNode;
+import net.acomputerdog.boxle.save.Region;
+import net.acomputerdog.boxle.save.Regions;
 import net.acomputerdog.boxle.save.SaveManager;
 import net.acomputerdog.boxle.world.gen.CellsWorldGen;
 import net.acomputerdog.boxle.world.gen.WorldGen;
@@ -71,6 +73,7 @@ public class World {
         generator = new CellsWorldGen(name.hashCode());
         //generator = new SimplexWorldGen(name.hashCode());
         generator.addDecoration(Structures.tree);
+        System.out.println("Creating world: " + name);
     }
 
     /**
@@ -112,7 +115,8 @@ public class World {
     public Chunk loadOrGenerateChunk(Vec3i loc) {
         Chunk chunk = chunks.getChunk(loc);
         if (chunk == null) {
-            if (SaveManager.hasChunk(this, loc.x, loc.y, loc.z)) {
+            Region region = Regions.getOrLoadRegionChunkLoc(this, loc.x, loc.y, loc.z);
+            if (region.hasChunk(loc)) {
                 SaveManager.loadChunkDelayed(this, loc);
             } else {
                 chunk = new Chunk(this, loc);
@@ -228,13 +232,19 @@ public class World {
 
         World world = (World) o;
 
-        if (!name.equals(world.name)) return false;
+        return name.equals(world.name);
 
-        return true;
     }
 
     @Override
     public int hashCode() {
         return name.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "World{" +
+                "name='" + name + '\'' +
+                '}';
     }
 }

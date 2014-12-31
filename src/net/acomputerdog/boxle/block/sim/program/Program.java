@@ -79,7 +79,7 @@ public class Program {
                 writer.write("\n");
             }
             writer.write("\n");
-            writeBranch(writer, instructions.root(), 0, 0);
+            writeBranch(writer, instructions.getRoot(), 0, 0);
             writer.close();
         } catch (IOException e) {
             if (writer != null) {
@@ -104,5 +104,15 @@ public class Program {
                 writeBranch(out, currBranch, initialDepth, currDepth + 1);
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Program{" +
+                "variables=" + variables +
+                ", name='" + name + '\'' +
+                ", id='" + id + '\'' +
+                ", instructions=" + instructions +
+                '}';
     }
 }

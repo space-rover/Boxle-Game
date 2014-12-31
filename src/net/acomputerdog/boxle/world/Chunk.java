@@ -1,6 +1,5 @@
 package net.acomputerdog.boxle.world;
 
-import com.jme3.scene.Node;
 import net.acomputerdog.boxle.block.block.Block;
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.math.vec.Vec3i;
@@ -38,6 +37,8 @@ public class Chunk implements Comparable<Chunk> {
      * Blocks and data for this Chunk
      */
     private final BlockStorage blocks;
+
+    //private final Map<Vec3i, Boolean> nodeUpdates = new HashMap<>();
 
     private boolean needsRebuild = true;
 
@@ -102,12 +103,27 @@ public class Chunk implements Comparable<Chunk> {
         } else {
             Boxle.instance().getRenderEngine().addUpdateChunk(this);
         }
+        /*
         chunkNode.detachChildNamed("blockC@" + x + "_" + y + "_" + z);
         if (block.isCollidable()) {
             chunkNode.attachChild(new Node("blockC@" + x + "_" + y + "_" + z));
         }
+        */
+        //nodeUpdates.put(VecPool.getVec3i(x, y, z), block.isCollidable());
         setModifiedFromLoad(true);
     }
+
+    /*
+    public void updateMesh() {
+        for (Vec3i loc : nodeUpdates.keySet()) {
+            String nodeName = "blockC@" + loc.x + "_" + loc.y + "_" + loc.z;
+            chunkNode.detachChildNamed(nodeName);
+            if (nodeUpdates.get(loc)) {
+                chunkNode.attachChild(new Node(nodeName));
+            }
+        }
+    }
+    */
 
     /**
      * Gets the world that contains this chunk.
@@ -242,4 +258,5 @@ public class Chunk implements Comparable<Chunk> {
     public int compareTo(Chunk o) {
         return this.hashCode() - o.hashCode();
     }
+
 }

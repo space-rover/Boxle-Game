@@ -1,22 +1,17 @@
 package net.acomputerdog.boxle.save;
 
-import net.acomputerdog.boxle.block.block.Block;
-import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.math.vec.Vec3i;
-import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.save.world.WorldSave;
 import net.acomputerdog.boxle.world.Chunk;
 import net.acomputerdog.boxle.world.World;
 import net.acomputerdog.core.java.Patterns;
 import net.acomputerdog.core.logger.CLogger;
 
-import java.io.*;
+import java.io.DataInput;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
 public class SaveManager {
     public static final CLogger LOGGER = new CLogger("World_Saves", false, true);
@@ -31,17 +26,41 @@ public class SaveManager {
 
     private static final Map<String, WorldSave> saveMap = new HashMap<>();
 
-    public static WorldSave createWorld(String name) {
+    public static WorldSave loadOrCreateWorld(String name) throws IOException {
+        if (worldExists(name)) {
+            return loadWorld(name);
+        } else {
+            return createWorld(name);
+        }
+    }
+
+    public static WorldSave getLoadedWorld(String name) {
+        return saveMap.get(name);
+    }
+
+    private static WorldSave loadWorld(String name) throws IOException {
         WorldSave save = saveMap.get(name);
         if (save == null) {
             save = new WorldSave(name);
+            save.open();
+            saveMap.put(name, save);
+        }
+        return save;
+    }
+
+    public static WorldSave createWorld(String name) {
+        WorldSave save = saveMap.get(name);
+        if (save == null) {
+            initializeWorldDirectories(name);
+            save = new WorldSave(name);
             save.createWorld();
+            saveMap.put(name, save);
         }
         return save;
     }
 
     public static void saveWorld(World world) throws IOException {
-        saveMap.get(world.getName()).save();
+        getLoadedWorld(world.getName()).save();
     }
 
     public static boolean hasChunk(World world, int x, int y, int z) {
@@ -49,9 +68,15 @@ public class SaveManager {
     }
 
     public static void saveChunkDelayed(Chunk chunk) {
+        //System.out.println("Saving chunk.");
         IOThread.getThread(chunk.getWorld()).addSave(chunk);
     }
 
+    public static void unloadRegion(Region region) {
+        IOThread.getThread(region.getWorld()).addRegion(region);
+    }
+
+    /*
     public static void saveChunk(Chunk chunk) throws IOException {
         if (chunk.isModifiedFromLoad()) {
             chunk.setModifiedFromLoad(false);
@@ -99,29 +124,19 @@ public class SaveManager {
         }
         return blockMap;
     }
+    */
 
-    public static World loadWorld(String name) throws IOException {
-        World world = new World(Boxle.instance(), name);
+    public static void initializeWorldDirectories(String name) {
+        //World world = new World(Boxle.instance(), name);
         File worldDir = getWorldDir(name);
-        if (!worldDir.isDirectory()) {
-            throw new FileNotFoundException("World \"" + name + "\" does not exist!");
-        }
-        File chunksDir = new File(worldDir, "/chunks/");
-        if (!chunksDir.isDirectory()) {
-            throw new FileNotFoundException("World is missing chunks directory!");
-        }
-        File metaFile = new File(worldDir, "meta.dat");
-        if (!metaFile.isFile()) {
-            throw new FileNotFoundException("Word is missing meta.dat file!");
-        }
-
-        return world;
+        new File(worldDir, "/regions/").mkdirs();
     }
 
     public static void loadChunkDelayed(World world, Vec3i loc) {
         IOThread.getThread(world).addLoad(loc);
     }
 
+    /*
     public static Chunk loadChunk(World world, Vec3i loc) throws IOException {
         return loadChunk(world, new File(getWorldDir(world.getName()), "/chunks/" + loc.x + "_" + loc.y + "_" + loc.z + ".chunk"));
     }
@@ -151,6 +166,7 @@ public class SaveManager {
             }
         }
     }
+*/
 
     public static void readChunk(Chunk chunk, DataInput in) throws IOException {
         /*Map<Short, Block> blockMap = readBlockMap(in);

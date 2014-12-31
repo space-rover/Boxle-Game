@@ -6,6 +6,7 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.shadow.DirectionalLightShadowFilter;
 import com.jme3.system.AppSettings;
+import net.acomputerdog.boxle.block.block.Blocks;
 import net.acomputerdog.boxle.block.sim.loader.SimLoader;
 import net.acomputerdog.boxle.config.GameConfig;
 import net.acomputerdog.boxle.entity.types.EntityPlayer;
@@ -59,11 +60,14 @@ public class Boxle extends SimpleApplication {
      */
     private boolean canRun = true;
 
+    private boolean canRunIO = true;
+
     private static Boxle instance;
 
     private BoxleFlyByCamera boxleFlyCam;
 
     private boolean hasStarted = false;
+
 
     /**
      * Creates a new Boxle instance
@@ -94,7 +98,7 @@ public class Boxle extends SimpleApplication {
             LOGGER.logError("Reached invalid area of code!  Shutting down!");
             cleanup();
         } catch (Throwable t) {
-            LOGGER.logFatal("Caught excpetion in invalid area of code!", t);
+            LOGGER.logFatal("Caught exception in invalid area of code!", t);
         }
         end(-3);
     }
@@ -102,6 +106,7 @@ public class Boxle extends SimpleApplication {
     @Override
     public void simpleInitApp() {
         SimLoader.loadExternalSims();
+        Blocks.initBlockTextures();
 
         cam.setFrustumPerspective(gameConfig.fov, (float) gameConfig.screenWidth / (float) gameConfig.screenHeight, .2f, 1000f);
         cam.update();
@@ -197,8 +202,9 @@ public class Boxle extends SimpleApplication {
         //must be in order client -> server -> render
         client.shutdown();
         server.shutdown();
-        gameConfig.save();
         renderEngine.cleanup();
+        gameConfig.save();
+        canRunIO = false;
         IOThread.waitForEnd();
     }
 
@@ -231,6 +237,10 @@ public class Boxle extends SimpleApplication {
      */
     public boolean canRun() {
         return canRun;
+    }
+
+    public boolean canRunIO() {
+        return canRunIO;
     }
 
     /**

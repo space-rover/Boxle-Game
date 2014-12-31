@@ -117,6 +117,7 @@ public class RenderEngine {
             terrainNode.attachChild(node);
         }
         for (Chunk chunk : updateChunks) {
+            //TODO update neighbors (if applicable)
             updateChunks.remove(chunk);
             ChunkNode oldNode = chunk.getChunkNode();
             terrainNode.detachChild(oldNode);
@@ -150,10 +151,6 @@ public class RenderEngine {
      */
     public Boxle getBoxle() {
         return boxle;
-    }
-
-    public Node getRootNode() {
-        return rootNode;
     }
 
     public InputHandler getInputHandler() {

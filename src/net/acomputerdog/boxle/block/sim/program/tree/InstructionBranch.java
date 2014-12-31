@@ -17,6 +17,12 @@ public class InstructionBranch extends Branch<Instruction> {
         this.tree = tree;
     }
 
+    protected InstructionBranch(InstructionTree tree, Instruction instruction) {
+        super(tree);
+        this.instruction = instruction;
+        this.tree = tree;
+    }
+
     public Instruction getInstruction() {
         return instruction;
     }
@@ -41,6 +47,7 @@ public class InstructionBranch extends Branch<Instruction> {
     }
 
     public InstructionBranch addOutput(InstructionBranch ins) {
+        //System.out.println("Adding " + ins.getInstruction().getId() + " to " + instruction.getId());
         addBranch(ins);
         return ins;
     }

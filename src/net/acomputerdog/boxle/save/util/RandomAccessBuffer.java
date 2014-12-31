@@ -13,6 +13,9 @@ public class RandomAccessBuffer {
     private static final int DEFAULT_CAPACITY = 1;
     private static final int BUFFER_SECTION_SIZE = 256;
 
+    //private static long totalUsage = 0;
+    //private static long bufferUsage = 0;
+
     private final List<ByteBuffer> buffers = new ArrayList<>();
 
     private ByteBuffer activeBuffer;
@@ -70,6 +73,16 @@ public class RandomAccessBuffer {
 
     public long position() {
         return (bufferIndex * BUFFER_SECTION_SIZE) + bufferPosition;
+    }
+
+    public void reset() {
+        //totalUsage -= capacity;
+        //System.out.println("Resetting RAB" + hashCode() +". Total usage is now " + totalUsage + "b.");
+        bufferIndex = 0;
+        bufferPosition = 0;
+        capacity = 0;
+        activeBuffer = null;
+        buffers.clear();
     }
 
     //--------------------------Read Methods---------------------------
@@ -470,30 +483,43 @@ public class RandomAccessBuffer {
     }
 
     private void expand(long size) {
-        long numBuffers = (long) Math.ceil((double) size / BUFFER_SECTION_SIZE);
-        int index = 0;
-        while (index < numBuffers) {
-            buffers.add(newByteBuf());
-            index++;
+        if (size > capacity) {
+            long neededSpace = size - capacity;
+            //System.out.println("expanding RAB" + hashCode() + " by " + neededSpace + "b. Total usage is now " + totalUsage + "b.  Buffer usage is now " + bufferUsage + "b.");
+            long numBuffers = (long) Math.ceil((double) neededSpace / (double) BUFFER_SECTION_SIZE);
+            int index = 0;
+            while (index < numBuffers) {
+                buffers.add(newByteBuf());
+                index++;
+            }
+            capacity = size;
         }
-        capacity = size;
     }
 
     private static ByteBuffer newByteBuf() {
+        //bufferUsage += BUFFER_SECTION_SIZE;
         return ByteBuffer.allocateDirect(BUFFER_SECTION_SIZE);
     }
 
     public static void main(String[] args) {
-        byte[] nums = new byte[600];
+        byte[] nums = new byte[10000];
         new Random().nextBytes(nums);
         RandomAccessBuffer buf = new RandomAccessBuffer(300);
+        buf.writeInt(Integer.MAX_VALUE);
         buf.writeBytes(nums);
+        buf.writeString("Test!");
         buf.seek(0);
+        if (buf.readInt() != Integer.MAX_VALUE) {
+            System.err.println("Invalid value!");
+        }
         for (int index = 0; index < nums.length; index++) {
             byte byt = buf.readByte();
             if (nums[index] != byt) {
-                System.out.println("Byte at index " + index + " was incorrect!  (Expected " + nums[index] + ", got " + byt + ")");
+                System.err.println("Byte at index " + index + " was incorrect!  (Expected " + nums[index] + ", got " + byt + ")");
             }
+        }
+        if (!buf.readString().equals("Test!")) {
+            System.err.println("Invalid value!");
         }
     }
 }
