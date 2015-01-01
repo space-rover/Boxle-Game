@@ -269,7 +269,7 @@ public class Block implements Identifiable {
     public String toString() {
         return "Block{" +
                 "name='" + name +
-                '}';
+                "\'}";
     }
 
     public Boxle getBoxle() {

@@ -30,6 +30,7 @@ public class WorldMetaFile {
             playerRot = VecPool.getVec3f(in.readFloat(), in.readFloat(), in.readFloat());
 
             blockMap.load(in);
+            System.out.println("Loading block map: " + blockMap.toString());
 
             in.close();
         } finally {
@@ -61,6 +62,7 @@ public class WorldMetaFile {
             out.writeFloat(playerRot.y);
             out.writeFloat(playerRot.z);
             blockMap.save(out);
+            System.out.println("Saving block map: " + blockMap.toString());
 
             out.close();
         } finally {

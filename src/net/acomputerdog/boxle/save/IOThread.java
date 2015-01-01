@@ -16,8 +16,9 @@ import java.util.concurrent.ConcurrentSkipListSet;
 public class IOThread extends Thread {
     private static final Map<World, IOThread> threadMap = new HashMap<>();
 
-    private final CLogger logger;
+    private static final CLogger LOGGER_GLOBAL = new CLogger("IO", false, true);
 
+    private final CLogger logger;
     private final World world;
 
     private final Queue<Vec3i> loadQueue = new ConcurrentLinkedQueue<>();
@@ -30,7 +31,7 @@ public class IOThread extends Thread {
     private IOThread(World world) {
         super();
         this.world = world;
-        super.setName("IOThread_" + world.getName());
+        super.setName("IO_" + world.getName());
         super.setDaemon(false);
         logger = new CLogger("IOThread_" + world.getName(), false, true);
     }
@@ -53,7 +54,8 @@ public class IOThread extends Thread {
                         try {
                             //world.addNewChunk(SaveManager.loadChunk(world, loc));
                             //world.addNewChunk(SaveManager.getRegionFile(world.getName(), loc.x, loc.y, loc.z);
-                            world.addNewChunk(Regions.getOrLoadRegionChunkLoc(world, loc.x, loc.y, loc.z).readChunk(loc.x % Region.REGION_SIZE, loc.y % Region.REGION_SIZE, loc.z % Region.REGION_SIZE));
+                            //world.addNewChunk(Regions.getOrLoadRegionChunkLoc(world, loc.x, loc.y, loc.z).readChunk(Math.abs(loc.x) % Region.REGION_SIZE, Math.abs(loc.y) % Region.REGION_SIZE, Math.abs(loc.z) % Region.REGION_SIZE));
+                            world.addNewChunk(Regions.getOrLoadRegionChunkLoc(world, loc.x, loc.y, loc.z).readChunk(loc));
                         } catch (IOException e) {
                             logger.logWarning("Unable to load chunk at " + loc.asCoords(), e);
                         }
@@ -86,10 +88,11 @@ public class IOThread extends Thread {
                 if (!performedAction) {
                     Sleep.sleep(50);
                     canRun = shouldRun;
-                } else {
+                } else if (shouldRun) {
                     Sleep.sync(startTime, 10);
                 }
             }
+            SaveManager.getLoadedWorld(world.getName()).getWorldMeta().save();
             logger.logInfo("Stopping.");
         } catch (Throwable t) {
             logger.logFatal("Unhandled Exception in IOThread!", t);
@@ -102,7 +105,7 @@ public class IOThread extends Thread {
     }
 
     public void addLoad(Vec3i loc) {
-        System.out.println("Adding load.");
+        //System.out.println("Adding load.");
         if (loc != null && !loadSet.contains(loc)) {
             //System.out.println("Adding load at " + loc.asCoords());
             loadSet.add(loc);
@@ -136,7 +139,7 @@ public class IOThread extends Thread {
     }
 
     public static void waitForEnd() {
-        Boxle.LOGGER.logInfo("Saving chunks...");
+        LOGGER_GLOBAL.logInfo("Saving chunks...");
         Collection<IOThread> threads = threadMap.values();
         boolean waiting = true;
         while (waiting) {
@@ -148,6 +151,6 @@ public class IOThread extends Thread {
             }
             Sleep.sleep(10);
         }
-        Boxle.LOGGER.logInfo("Done.");
+        LOGGER_GLOBAL.logInfo("Done.");
     }
 }

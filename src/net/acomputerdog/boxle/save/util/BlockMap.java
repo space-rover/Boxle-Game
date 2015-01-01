@@ -8,7 +8,6 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class BlockMap {
     private final Map<Integer, Block> readBlockMap;
@@ -49,11 +48,15 @@ public class BlockMap {
     }
 
     public void save(DataOutput out) throws IOException {
-        Set<Block> blocks = writeBlockMap.keySet();
-        out.writeInt(blocks.size());
-        for (Block block : blocks) {
-            out.writeUTF(block.getDefinition());
+        //Set<Block> blocks = writeBlockMap.keySet();
+        int numIds = readBlockMap.size();
+        out.writeInt(numIds);
+        for (int id = 0; id < numIds; id++) {
+            out.writeUTF(readBlockMap.get(id).getDefinition());
         }
+        //for (Block block : blocks) {
+        //    out.writeUTF(block.getDefinition());
+        //}
     }
 
     @Override

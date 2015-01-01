@@ -1,5 +1,6 @@
 package net.acomputerdog.boxle.save;
 
+import net.acomputerdog.boxle.math.loc.CoordConverter;
 import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.save.world.WorldSave;
@@ -54,11 +55,11 @@ public class Regions {
     }
 
     public static Region getOrLoadRegionChunkLoc(World world, int x, int y, int z) {
-        return getOrLoadRegion(world, (int) Math.floor((float) x / (float) Region.REGION_SIZE), (int) Math.floor((float) y / (float) Region.REGION_SIZE), (int) Math.floor((float) z / (float) Region.REGION_SIZE));
+        return getOrLoadRegion(world, CoordConverter.regionLocOfChunk(x), CoordConverter.regionLocOfChunk(y), CoordConverter.regionLocOfChunk(z));
     }
 
     public static Region getRegionChunkLoc(World world, int x, int y, int z) {
-        return getRegion(world, (int) Math.floor((float) x / (float) Region.REGION_SIZE), (int) Math.floor((float) y / (float) Region.REGION_SIZE), (int) Math.floor((float) z / (float) Region.REGION_SIZE));
+        return getRegion(world, CoordConverter.regionLocOfChunk(x), CoordConverter.regionLocOfChunk(y), CoordConverter.regionLocOfChunk(z));
 
     }
 

@@ -1,16 +1,13 @@
 package net.acomputerdog.boxle.save.util;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 public class RandomAccessBuffer {
-    private static final int DEFAULT_CAPACITY = 1;
+    private static final int DEFAULT_CAPACITY = 0;
     private static final int BUFFER_SECTION_SIZE = 256;
 
     //private static long totalUsage = 0;
@@ -46,6 +43,7 @@ public class RandomAccessBuffer {
         }
         expand(bytes.size());
         writeBytes(bytes);
+        seek(0);
     }
 
     //--------------------------Control Methods-----------------------------
@@ -312,7 +310,7 @@ public class RandomAccessBuffer {
 
     public String readString() {
         int length = readInt();
-        return new String(readBytes(length));
+        return new String(readChars(length));
     }
 
     //-------------Write Values-------------------
@@ -332,6 +330,10 @@ public class RandomAccessBuffer {
     public void writeByte(byte b) {
         activeBuffer.put(bufferPosition, b);
         incrementBufferPos();
+    }
+
+    public void writeByte(int b) {
+        writeByte((byte) (b % 255));
     }
 
     public void writeInts(List<Integer> ints) {
@@ -468,9 +470,9 @@ public class RandomAccessBuffer {
     }
 
     public void writeString(String str) {
-        byte[] bytes = str.getBytes();
-        writeInt(bytes.length);
-        writeBytes(bytes);
+        char[] chars = str.toCharArray();
+        writeInt(chars.length);
+        writeChars(chars);
     }
 
     //---------------Internal Methods------------------------------
@@ -501,7 +503,9 @@ public class RandomAccessBuffer {
         return ByteBuffer.allocateDirect(BUFFER_SECTION_SIZE);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+        RandomAccessBuffer buf = new RandomAccessBuffer();
+        /*
         byte[] nums = new byte[10000];
         new Random().nextBytes(nums);
         RandomAccessBuffer buf = new RandomAccessBuffer(300);
@@ -521,5 +525,27 @@ public class RandomAccessBuffer {
         if (!buf.readString().equals("Test!")) {
             System.err.println("Invalid value!");
         }
+        */
+        buf.writeByte(0);
+        buf.writeString("Blah Blah Blah");
+        buf.writeByte(1);
+        buf.writeString("Foo Bar");
+        buf.writeByte(2);
+        buf.writeString("Fizz Buzz");
+        buf.writeByte(3);
+        OutputStream out = new FileOutputStream("./test.dat");
+        buf.save(out);
+        out.close();
+        InputStream in = new FileInputStream("./test.dat");
+        RandomAccessBuffer buf2 = new RandomAccessBuffer(in);
+        in.close();
+        //buf2.seek(0);
+        System.out.println(buf2.readByte());
+        System.out.println(buf2.readString());
+        System.out.println(buf2.readByte());
+        System.out.println(buf2.readString());
+        System.out.println(buf2.readByte());
+        System.out.println(buf2.readString());
+        System.out.println(buf2.readByte());
     }
 }

@@ -105,8 +105,14 @@ public class Boxle extends SimpleApplication {
 
     @Override
     public void simpleInitApp() {
+        VecPool.init();
+
         SimLoader.loadExternalSims();
         Blocks.initBlockTextures();
+
+        //must be in order render -> server -> client
+        server.init();
+        client.init();
 
         cam.setFrustumPerspective(gameConfig.fov, (float) gameConfig.screenWidth / (float) gameConfig.screenHeight, .2f, 1000f);
         cam.update();
@@ -157,11 +163,6 @@ public class Boxle extends SimpleApplication {
             LOGGER.logError("Could not create temporary directory!");
             LOGGER.logError("Make sure boxle has write access to the current directory, or run boxle from a directory with write access!");
         }
-
-        VecPool.init();
-        //must be in order render -> server -> client
-        server.init();
-        client.init();
 
         super.showSettings = false;
 

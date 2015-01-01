@@ -73,7 +73,7 @@ public class World {
         generator = new CellsWorldGen(name.hashCode());
         //generator = new SimplexWorldGen(name.hashCode());
         generator.addDecoration(Structures.tree);
-        System.out.println("Creating world: " + name);
+        //System.out.println("Creating world: " + name);
     }
 
     /**
@@ -116,7 +116,7 @@ public class World {
         Chunk chunk = chunks.getChunk(loc);
         if (chunk == null) {
             Region region = Regions.getOrLoadRegionChunkLoc(this, loc.x, loc.y, loc.z);
-            if (region.hasChunk(loc)) {
+            if (region.hasChunkGlobal(loc)) {
                 SaveManager.loadChunkDelayed(this, loc);
             } else {
                 chunk = new Chunk(this, loc);

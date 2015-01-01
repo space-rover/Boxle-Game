@@ -38,7 +38,9 @@ public class WorldSave {
     public void save() throws IOException {
         IOThread thread = IOThread.getThread(world);
         for (Chunk chunk : world.getChunks().getAllChunks()) {
-            thread.addSave(chunk);
+            if (chunk.isModifiedFromLoad()) {
+                thread.addSave(chunk);
+            }
             //SaveManager.saveChunkDelayed(chunk);
         }
         for (Region region : openRegions) {
@@ -50,7 +52,6 @@ public class WorldSave {
             //}
         }
         openRegions.clear();
-        getWorldMeta().save();
     }
 
     public World createWorld() {
