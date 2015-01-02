@@ -31,14 +31,6 @@ public class RandomAccessBuffer {
         seek(0);
     }
 
-    public RandomAccessBuffer(InputStream in) throws IOException {
-        this(in.available());
-        while (in.available() > 0) {
-            writeByte(in.read());
-        }
-        seek(0);
-    }
-
     //--------------------------Control Methods-----------ss------------------
 
     public void save(OutputStream out) throws IOException {
@@ -47,6 +39,14 @@ public class RandomAccessBuffer {
                 out.write(buffer.get(index));
             }
         }
+    }
+
+    public void load(InputStream in) throws IOException {
+        clear();
+        while (in.available() > 0) {
+            writeByte(in.read());
+        }
+        seek(0);
     }
 
     public void seek(long location) {
@@ -72,6 +72,8 @@ public class RandomAccessBuffer {
         capacity = 0;
         activeBuffer = null;
         buffers.clear();
+        expand(1);
+        seek(0);
     }
 
     //--------------------------Read Methods---------------------------
@@ -523,7 +525,8 @@ public class RandomAccessBuffer {
         buf.save(out);
         out.close();
         InputStream in = new FileInputStream("./test.dat");
-        RandomAccessBuffer buf2 = new RandomAccessBuffer(in);
+        RandomAccessBuffer buf2 = new RandomAccessBuffer();
+        buf2.load(in);
         in.close();
         //buf2.seek(0);
         System.out.println(buf2.readByte());

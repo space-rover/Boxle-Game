@@ -36,21 +36,18 @@ public class Region implements Comparable<Region> {
     private final World world;
     private final File file;
     private final Vec3i loc;
-
-    private RandomAccessBuffer rab;
+    private final RandomAccessBuffer rab;
 
     public Region(WorldMetaFile metaFile, File file, Vec3i loc) {
         this.metaFile = metaFile;
         this.world = metaFile.getWorld();
         this.file = file;
         this.loc = loc;
-    }
-
-    public void open() {
+        rab = new RandomAccessBuffer();
         if (file.isFile()) {
             InputStream in = null;
             try {
-                rab = new RandomAccessBuffer(in = new InflaterInputStream(new FileInputStream(file), new Inflater()));
+                rab.load(in = new InflaterInputStream(new FileInputStream(file), new Inflater()));
                 in.close();
             } catch (IOException e) {
                 if (in != null) {
@@ -58,11 +55,8 @@ public class Region implements Comparable<Region> {
                         in.close();
                     } catch (IOException ignored) {}
                 }
-                logger.logError("Region at " + world.getName() + "/" + loc.asCoords() + " could not be opened!  The chunks within may be lost!");
-                rab = new RandomAccessBuffer();
+                logger.logError("Region at " + world.getName() + "/" + loc.asCoords() + " could not be fully opened!  The chunks within may be lost!");
             }
-        } else {
-            rab = new RandomAccessBuffer();
         }
     }
 
