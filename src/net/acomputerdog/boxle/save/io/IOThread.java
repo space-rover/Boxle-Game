@@ -17,8 +17,8 @@ import java.util.concurrent.ConcurrentSkipListSet;
 
 //TODO keep instance with world
 public class IOThread extends Thread {
-    private static final Map<World, IOThread> threadMap = new HashMap<>();
 
+    private static final Map<World, IOThread> threadMap = new HashMap<>();
     private static final CLogger LOGGER_GLOBAL = new CLogger("IO", false, true);
 
     private final CLogger logger;
@@ -45,7 +45,7 @@ public class IOThread extends Thread {
             logger.logInfo("Starting.");
             boolean canRun = true;
             while (canRun) {
-                canRun = performTick(canRun);
+                canRun = performTick();
             }
             SaveManager.getLoadedWorld(world.getName()).getWorldMeta().save();
             logger.logInfo("Stopping.");
@@ -55,7 +55,7 @@ public class IOThread extends Thread {
         }
     }
 
-    private boolean performTick(boolean canRun) {
+    private boolean performTick() {
         boolean canLoadChunks = Boxle.instance().canRunIO();
         boolean performedAction = false;
         if (canLoadChunks) {
@@ -103,11 +103,7 @@ public class IOThread extends Thread {
             Sleep.sleep(1);
             return canLoadChunks;
         }
-        return canRun;
-    }
-
-    public World getWorld() {
-        return world;
+        return true;
     }
 
     public void addLoad(Vec3i loc) {
@@ -131,6 +127,8 @@ public class IOThread extends Thread {
             regionQueue.add(region);
         }
     }
+
+    //--------Static Methods--------------
 
     public static IOThread getThread(World world) {
         IOThread thread = threadMap.get(world);
