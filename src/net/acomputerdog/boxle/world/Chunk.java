@@ -1,6 +1,5 @@
 package net.acomputerdog.boxle.world;
 
-import com.jme3.scene.Node;
 import net.acomputerdog.boxle.block.block.Block;
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.math.vec.Vec3i;
@@ -101,10 +100,6 @@ public class Chunk implements Comparable<Chunk> {
             setNeedsRebuild(true);
         } else {
             Boxle.instance().getRenderEngine().addUpdateChunk(this);
-        }
-        chunkNode.detachChildNamed("blockC@" + x + "_" + y + "_" + z);
-        if (block.isCollidable()) {
-            chunkNode.attachChild(new Node("blockC@" + x + "_" + y + "_" + z));
         }
         setModifiedFromLoad(true);
     }
@@ -209,7 +204,7 @@ public class Chunk implements Comparable<Chunk> {
         return -1;
     }
 
-    public String getCoords() {
+    public String asCoords() {
         return location.asCoords();
     }
 
@@ -242,4 +237,5 @@ public class Chunk implements Comparable<Chunk> {
     public int compareTo(Chunk o) {
         return this.hashCode() - o.hashCode();
     }
+
 }

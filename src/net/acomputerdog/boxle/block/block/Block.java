@@ -189,11 +189,17 @@ public class Block implements Identifiable {
     }
 
     public BlockTex getTextures() {
-        if (tex == null && isRenderable()) {
+        if (tex == null) {
+            createDefaultTextures();
+        }
+        return tex;
+    }
+
+    public void createDefaultTextures() {
+        if (isRenderable()) {
             tex = new BlockTex(this);
             tex.loadAllDefault();
         }
-        return tex;
     }
 
     public void setBreakable(boolean isBreakable) {
@@ -263,7 +269,7 @@ public class Block implements Identifiable {
     public String toString() {
         return "Block{" +
                 "name='" + name +
-                '}';
+                "\'}";
     }
 
     public Boxle getBoxle() {

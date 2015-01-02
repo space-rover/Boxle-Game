@@ -2,8 +2,8 @@ package net.acomputerdog.boxle.world.structure;
 
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.world.World;
-import net.acomputerdog.core.storage.CollectionUtils;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -114,7 +114,7 @@ public class WorldList {
      * @return Return a set of all worlds.
      */
     public Set<World> getWorlds() {
-        return CollectionUtils.unmodifiableSet(instanceSet);
+        return Collections.unmodifiableSet(instanceSet);
     }
 
     /**
@@ -123,7 +123,7 @@ public class WorldList {
      * @return Return a set of all world names.
      */
     public Set<String> getWorldNames() {
-        return CollectionUtils.unmodifiableSet(nameSet);
+        return Collections.unmodifiableSet(nameSet);
     }
 
     /**

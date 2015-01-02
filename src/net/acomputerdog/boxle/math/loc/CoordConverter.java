@@ -1,8 +1,10 @@
 package net.acomputerdog.boxle.math.loc;
 
 import net.acomputerdog.boxle.math.vec.Vec3i;
+import net.acomputerdog.boxle.save.Region;
 import net.acomputerdog.boxle.world.Chunk;
 
+//todo move to another package
 public class CoordConverter {
     private static final int chunkSize = Chunk.CHUNK_SIZE;
 
@@ -34,6 +36,14 @@ public class CoordConverter {
         chunk.y *= chunkSize;
         chunk.z *= chunkSize;
         return chunk;
+    }
+
+    public static int chunkLocInRegion(int loc) {
+        return Math.abs(loc) % Region.REGION_SIZE;
+    }
+
+    public static int regionLocOfChunk(int loc) {
+        return (int) Math.floor((float) loc / (float) Region.REGION_SIZE);
     }
 
     public static void main(String[] args) {

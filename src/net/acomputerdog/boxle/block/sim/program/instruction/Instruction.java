@@ -17,4 +17,11 @@ public abstract class Instruction {
     }
 
     public abstract void execute(Sim sim, Stack stack, Block block) throws SimException; //Block horribly backported
+
+    @Override
+    public String toString() {
+        return "Instruction{" +
+                "id='" + id + '\'' +
+                '}';
+    }
 }

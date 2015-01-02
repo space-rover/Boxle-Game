@@ -9,6 +9,8 @@ import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.physics.PhysicsEngine;
 import net.acomputerdog.boxle.render.util.ChunkNode;
+import net.acomputerdog.boxle.save.Region;
+import net.acomputerdog.boxle.save.Regions;
 import net.acomputerdog.boxle.save.SaveManager;
 import net.acomputerdog.boxle.world.gen.CellsWorldGen;
 import net.acomputerdog.boxle.world.gen.WorldGen;
@@ -16,7 +18,6 @@ import net.acomputerdog.boxle.world.gen.structures.Structures;
 import net.acomputerdog.boxle.world.structure.ChunkTable;
 import net.acomputerdog.core.logger.CLogger;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -113,20 +114,22 @@ public class World {
     public Chunk loadOrGenerateChunk(Vec3i loc) {
         Chunk chunk = chunks.getChunk(loc);
         if (chunk == null) {
-            if (SaveManager.hasChunk(this, loc.x, loc.y, loc.z)) {
-                try {
-                    chunk = SaveManager.loadChunk(this, loc);
-                    chunk.setModifiedFromLoad(false);
-                } catch (IOException e) {
-                    throw new RuntimeException("Unable to load chunk at " + loc.asCoords() + "!", e);
-                }
+            Region region = Regions.getRegion(this, loc.x, loc.y, loc.z);
+            if (region == null || region.hasChunkGlobal(loc)) {
+                SaveManager.loadChunkDelayed(this, loc);
             } else {
-                chunk = new Chunk(this, loc);
-                generator.generateTerrain(chunk);
-                decorateChunks.add(chunk);
+                return createNewChunk(loc);
             }
-            chunks.addChunk(chunk);
         }
+        return chunk;
+    }
+
+    //todo make into a threaded queue
+    public Chunk createNewChunk(Vec3i loc) {
+        Chunk chunk = new Chunk(this, loc);
+        generator.generateTerrain(chunk);
+        decorateChunks.add(chunk);
+        chunks.addChunk(chunk);
         return chunk;
     }
 
@@ -144,11 +147,7 @@ public class World {
         if (oldNode.getParent() != null) {
             boxle.getRenderEngine().removeNode(oldNode);
         }
-        try {
-            SaveManager.saveChunk(chunk);
-        } catch (IOException e) {
-            logger.logError("Unable to save chunk at " + chunk.getCoords() + "!", e);
-        }
+        SaveManager.saveChunkDelayed(chunk);
     }
 
     public Block getBlockAt(int x, int y, int z) {
@@ -223,5 +222,34 @@ public class World {
 
     public Queue<Chunk> getDecorateChunks() {
         return decorateChunks;
+    }
+
+    public void addNewChunk(Chunk chunk) {
+        chunk.setModifiedFromLoad(false);
+        chunk.setNeedsRebuild(true);
+        chunks.addChunk(chunk);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof World)) return false;
+
+        World world = (World) o;
+
+        return name.equals(world.name);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "World{" +
+                "name='" + name + '\'' +
+                '}';
     }
 }

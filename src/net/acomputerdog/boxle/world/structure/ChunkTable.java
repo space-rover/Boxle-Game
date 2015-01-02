@@ -5,12 +5,11 @@ import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.world.Chunk;
 import net.acomputerdog.boxle.world.World;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * Holds chunks for a world.  Thread-safe.
@@ -23,7 +22,7 @@ public class ChunkTable {
     /**
      * List of all loaded chunks
      */
-    private final Queue<Chunk> allChunks;
+    private final Set<Chunk> allChunks;
 
     /**
      * World that these chunks belong to
@@ -39,7 +38,7 @@ public class ChunkTable {
         if (world == null) throw new IllegalArgumentException("World cannot be null!");
         this.world = world;
         chunkLocMap = new ConcurrentHashMap<>(); //concurrent HashMap for thread safety
-        allChunks = new ConcurrentLinkedQueue<>(); //thread-safe list implementation
+        allChunks = new ConcurrentSkipListSet<>(); //thread-safe list implementation
     }
 
     /**
@@ -121,8 +120,8 @@ public class ChunkTable {
      *
      * @return Return a set of all loaded chunks
      */
-    public Collection<Chunk> getAllChunks() {
-        return Collections.unmodifiableCollection(allChunks);
+    public Set<Chunk> getAllChunks() {
+        return Collections.unmodifiableSet(allChunks);
     }
 
     /**

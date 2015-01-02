@@ -22,7 +22,7 @@ public class SimplexWorldGen extends AbstractWorldGen {
     @Override
     public void generateTerrain(Chunk chunk) {
         if (chunk.isGenerated()) {
-            chunk.getWorld().getLogger().logWarning("Attempted to generate a chunk twice at " + chunk.getCoords());
+            chunk.getWorld().getLogger().logWarning("Attempted to generate a chunk twice at " + chunk.asCoords());
         } else {
             Vec3i cLoc = chunk.getLocation();
             int chunkY = cLoc.y * chunkSize;
