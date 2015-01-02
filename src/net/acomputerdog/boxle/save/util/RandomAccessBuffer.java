@@ -11,13 +11,13 @@ public class RandomAccessBuffer {
 
     private final List<ByteBuffer> buffers = new ArrayList<>();
 
+    private final ByteBuffer intConvertBuf = ByteBuffer.allocate(4);
+    private final ByteBuffer longConvertBuf = ByteBuffer.allocate(8);
+
     private ByteBuffer activeBuffer;
     private int bufferIndex = 0;
     private int bufferPosition = 0;
     private long capacity = 0;
-
-    private ByteBuffer intConvertBuf = ByteBuffer.allocate(4);
-    private ByteBuffer longConvertBuf = ByteBuffer.allocate(8);
 
     public RandomAccessBuffer() {
         this(DEFAULT_CAPACITY);
@@ -475,7 +475,6 @@ public class RandomAccessBuffer {
     private void expand(long size) {
         if (size > capacity) {
             long neededSpace = size - capacity;
-            //System.out.println("expanding RAB" + hashCode() + " by " + neededSpace + "b. Total usage is now " + totalUsage + "b.  Buffer usage is now " + bufferUsage + "b.");
             long numBuffers = (long) Math.ceil((double) neededSpace / (double) BUFFER_SECTION_SIZE);
             int index = 0;
             while (index < numBuffers) {
@@ -487,7 +486,6 @@ public class RandomAccessBuffer {
     }
 
     private static ByteBuffer newByteBuf() {
-        //bufferUsage += BUFFER_SECTION_SIZE;
         return ByteBuffer.allocateDirect(BUFFER_SECTION_SIZE);
     }
 
