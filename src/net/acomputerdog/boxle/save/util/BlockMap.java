@@ -10,14 +10,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class BlockMap {
-    private final Map<Integer, Block> readBlockMap;
-    private final Map<Block, Integer> writeBlockMap;
+    private final Map<Integer, Block> readBlockMap = new HashMap<>();
+    private final Map<Block, Integer> writeBlockMap = new HashMap<>();
 
     private int nextId = 0;
 
     public BlockMap() {
-        readBlockMap = new HashMap<>();
-        writeBlockMap = new HashMap<>();
+
     }
 
     public int getIdForBlock(Block block) {
