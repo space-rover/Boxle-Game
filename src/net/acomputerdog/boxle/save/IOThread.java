@@ -53,27 +53,19 @@ public class IOThread extends Thread {
     }
 
     private boolean performTick(boolean canRun) {
-        //System.out.println("IO Tick.");
         boolean canLoadChunks = Boxle.instance().canRunIO();
         boolean performedAction = false;
-        long startTime = System.currentTimeMillis();
         if (canLoadChunks) {
             Vec3i loc = loadQueue.poll();
             if (loc != null) {
-                //System.out.println("Loading chunk.");
                 loadSet.remove(loc);
                 performedAction = true;
                 try {
-                    //world.addNewChunk(SaveManager.loadChunk(world, loc));
-                    //world.addNewChunk(SaveManager.getRegionFile(world.getName(), loc.x, loc.y, loc.z);
-                    //world.addNewChunk(Regions.getOrLoadRegionChunkLoc(world, loc.x, loc.y, loc.z).readChunk(Math.abs(loc.x) % Region.REGION_SIZE, Math.abs(loc.y) % Region.REGION_SIZE, Math.abs(loc.z) % Region.REGION_SIZE));
                     Region region = Regions.getOrLoadRegionChunkLoc(world, loc.x, loc.y, loc.z);
                     if (region.hasChunkGlobal(loc)) {
-                        //System.out.println("Found region at " + loc.asCoords());
                         world.addNewChunk(region.readChunk(loc));
                     } else {
-                        world.createNewChunk(loc);
-                        //System.err.println("Region " + region.getLoc().asCoords() + " is missing chunk at " + loc.asCoords() + ".");
+                        world.createNewChunk(loc); //tell world it can find it's own chunk
                     }
                 } catch (IOException e) {
                     logger.logWarning("Unable to load chunk at " + loc.asCoords(), e);
@@ -83,11 +75,9 @@ public class IOThread extends Thread {
         Chunk chunk = saveQueue.poll();
         if (chunk != null) {
             saveSet.remove(chunk);
-            //chunk.setModifiedFromLoad(false);
             performedAction = true;
             try {
                 Regions.getOrLoadRegionChunkLoc(world, chunk.getXLoc(), chunk.getYLoc(), chunk.getZLoc()).writeChunk(chunk);
-                //SaveManager.saveChunk(chunk);
             } catch (Exception e) {
                 logger.logWarning("Unable to save chunk at " + chunk.asCoords(), e);
             }
@@ -105,15 +95,11 @@ public class IOThread extends Thread {
                 }
             }
         }
-        Sleep.sync(startTime, 50);
 
         if (!performedAction) {
-            Sleep.sync(startTime, 50);
+            Sleep.sleep(1);
             return canLoadChunks;
         }
-        // else if (canLoadChunks) {
-        //    Sleep.sync(startTime, 20);
-        //}
         return canRun;
     }
 
@@ -122,16 +108,13 @@ public class IOThread extends Thread {
     }
 
     public void addLoad(Vec3i loc) {
-        //System.out.println("Adding load.");
         if (loc != null && !loadSet.contains(loc)) {
-            //System.out.println("Adding load at " + loc.asCoords());
             loadSet.add(loc);
             loadQueue.add(loc);
         }
     }
 
     public void addSave(Chunk chunk) {
-        //System.out.println("Adding save.");
         if (chunk != null && chunk.isModifiedFromLoad() && !saveSet.contains(chunk)) {
             chunk.setModifiedFromLoad(false);
             saveSet.add(chunk);
@@ -140,7 +123,6 @@ public class IOThread extends Thread {
     }
 
     public void addRegion(Region region) {
-        //System.out.println("Adding region.");
         if (region != null && !regionSet.contains(region)) {
             regionSet.add(region);
             regionQueue.add(region);
@@ -169,6 +151,6 @@ public class IOThread extends Thread {
             }
             Sleep.sleep(10);
         }
-        LOGGER_GLOBAL.logInfo("Saving chunks complete.");
+        LOGGER_GLOBAL.logInfo("Chunks saved.");
     }
 }

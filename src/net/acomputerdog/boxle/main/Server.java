@@ -83,25 +83,13 @@ public class Server {
      * Initializes this server
      */
     public void init() {
-        /*
-        if (SaveManager.worldExists(config.worldName)) {
-            try {
-                defaultWorld = SaveManager.initializeWorld(config.worldName);
-            } catch (IOException e) {
-                throw new RuntimeException("Unable to load world!", e);
-            }
-        } else {
-        */
-        // new World(boxle, config.worldName);
         try {
             defaultWorld = SaveManager.loadOrCreateWorld(config.worldName).createWorld();
         } catch (IOException e) {
             logger.logWarning("Exception loading world!  A new one will be created!", e);
             defaultWorld = SaveManager.createWorld(config.worldName).createWorld(); //not the same as above, this forces it to create a new world where the above tries to load the old
         }
-        IOThread.getThread(defaultWorld);
-        //SaveManager.createWorld(config.worldName);
-        //}
+        IOThread.getThread(defaultWorld); //create thread for world
         boxle.getWorlds().addWorld(defaultWorld);
         hostedWorlds.add(defaultWorld);
     }
@@ -251,7 +239,6 @@ public class Server {
         Vec3i center = CoordConverter.globalToChunk(VecConverter.floorVec3iFromVec3f(player.getLocation(), VecPool.createVec3i()));
         if (!center.equals(lastPlayerCLoc)) {
             VecPool.free(lastPlayerCLoc);
-            //System.out.println("Moving spiral center to " + center.asCoords());
             lastPlayerCLoc = center;
             spiral = new Spiral2i(VecPool.getVec2i(center.x, center.z));
         }
@@ -266,7 +253,6 @@ public class Server {
                     VecPool.free(lastPlayerCLoc);
                     lastPlayerCLoc = center;
                 }
-                //System.out.println("Ending build cycle early: " + sX + "," + sZ);
                 break;
             }
             for (int y = renderDistanceV; y >= -renderDistanceV; y--) {

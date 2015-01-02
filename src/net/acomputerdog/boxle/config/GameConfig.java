@@ -66,7 +66,7 @@ public class GameConfig {
      */
     public int renderDistanceVertical = 5;
 
-    public int maxLoadedChunksPerTick = 200;
+    public int maxLoadedChunksPerTick = 500;
 
     public int notifyNeighborsMode = 0; //0=only adjacent neighbors, 1=adjacent+"edge" neighbors, 2=adjacent+edge+"corner" neighbors, 3=adjacent+edge+corner+another layer of adjacent, -1=NO notifications
 

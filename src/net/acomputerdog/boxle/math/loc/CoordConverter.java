@@ -4,7 +4,7 @@ import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.save.Region;
 import net.acomputerdog.boxle.world.Chunk;
 
-//todo move
+//todo move to another package
 public class CoordConverter {
     private static final int chunkSize = Chunk.CHUNK_SIZE;
 

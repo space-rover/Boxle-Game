@@ -9,9 +9,6 @@ public class RandomAccessBuffer {
     private static final int DEFAULT_CAPACITY = 1;
     private static final int BUFFER_SECTION_SIZE = 256;
 
-    //private static long totalUsage = 0;
-    //private static long bufferUsage = 0;
-
     private final List<ByteBuffer> buffers = new ArrayList<>();
 
     private ByteBuffer activeBuffer;
@@ -20,8 +17,7 @@ public class RandomAccessBuffer {
     private long capacity = 0;
 
     private ByteBuffer intConvertBuf = ByteBuffer.allocate(4);
-    //private byte[] intConvertArr = new byte[4];
-    private byte[] longConvertArr = new byte[8];
+    private ByteBuffer longConvertBuf = ByteBuffer.allocate(8);
 
     public RandomAccessBuffer() {
         this(DEFAULT_CAPACITY);
@@ -33,26 +29,17 @@ public class RandomAccessBuffer {
         }
         expand(initialSize);
         seek(0);
-        //activeBuffer = buffers.get(0);
     }
 
     public RandomAccessBuffer(InputStream in) throws IOException {
-        this();
-        /*
-        System.out.println(in.available() + " bytes are available.");
-        byte[] bytes = new byte[in.available()];
-        System.out.println("Loaded " + in.read(bytes) + " bytes. " + in.available() + " bytes are available.");
-        expand(bytes.length);
-        writeBytes(bytes);
-        */
+        this(in.available());
         while (in.available() > 0) {
             writeByte(in.read());
         }
-        System.out.println("Read " + length() + " bytes. " + in.available() + " bytes are available.");
         seek(0);
     }
 
-    //--------------------------Control Methods-----------------------------
+    //--------------------------Control Methods-----------ss------------------
 
     public void save(OutputStream out) throws IOException {
         for (ByteBuffer buffer : buffers) {
@@ -69,7 +56,6 @@ public class RandomAccessBuffer {
         bufferIndex = (int) Math.floor((double) location / (double) BUFFER_SECTION_SIZE);
         bufferPosition = (int) (location % BUFFER_SECTION_SIZE);
         activeBuffer = buffers.get(bufferIndex);
-        //System.out.println("Seeking to " + location + ".  Now at " + position() + ".");
     }
 
     public long length() {
@@ -81,8 +67,6 @@ public class RandomAccessBuffer {
     }
 
     public void clear() {
-        //totalUsage -= capacity;
-        //System.out.println("Resetting RAB" + hashCode() +". Total usage is now " + totalUsage + "b.");
         bufferIndex = 0;
         bufferPosition = 0;
         capacity = 0;
@@ -143,8 +127,6 @@ public class RandomAccessBuffer {
         intConvertBuf.put(readBytes(4));
         intConvertBuf.rewind();
         return intConvertBuf.getInt();
-        //readBytes(intConvertArr);
-        //return ((intConvertArr[0] & 0xFF) << 24) | ((intConvertArr[1] & 0xFF) << 16) | ((intConvertArr[2] & 0xFF) << 8) | (intConvertArr[3] & 0xFF);
     }
 
 
@@ -193,14 +175,10 @@ public class RandomAccessBuffer {
     }
 
     public long readLong() {
-        readBytes(longConvertArr);
-        long l = 0;
-        for (int index = 0; index < 8; index++) {
-            l = l << 8;
-            l += longConvertArr[index];
-        }
-
-        return l;
+        longConvertBuf.rewind();
+        longConvertBuf.put(readBytes(8));
+        longConvertBuf.rewind();
+        return longConvertBuf.getLong();
     }
 
     public char[] readChars(int length) {
@@ -364,11 +342,6 @@ public class RandomAccessBuffer {
         intConvertBuf.putInt(i);
         intConvertBuf.rewind();
         writeBytes(intConvertBuf.array());
-        //intConvertArr[0] = (byte) ((i >> 24) & 0xFF);
-        //intConvertArr[1] = (byte) ((i >> 16) & 0xFF);
-        //intConvertArr[2] = (byte) ((i >> 8) & 0xFF);
-        //intConvertArr[3] = (byte) ((i) & 0xFF);
-        //writeBytes(intConvertArr);
     }
 
     public void writeLongs(List<Long> longs) {
@@ -384,10 +357,10 @@ public class RandomAccessBuffer {
     }
 
     public void writeLong(long l) {
-        for (int i = 0; i < 8; ++i) {
-            longConvertArr[i] = (byte) (l >> (8 - i - 1 << 3));
-        }
-        writeBytes(longConvertArr);
+        longConvertBuf.rewind();
+        longConvertBuf.putLong(l);
+        longConvertBuf.rewind();
+        writeBytes(longConvertBuf.array());
     }
 
     public void writeShorts(List<Integer> shorts) {

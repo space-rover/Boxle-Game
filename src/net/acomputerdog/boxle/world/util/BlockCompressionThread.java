@@ -5,6 +5,7 @@ import net.acomputerdog.boxle.world.Chunk;
 import net.acomputerdog.boxle.world.World;
 import net.acomputerdog.core.java.Sleep;
 
+@Deprecated
 /**
  * Thread that scans and compresses block and data arrays within chunks.
  */

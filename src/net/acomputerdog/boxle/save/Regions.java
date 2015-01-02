@@ -15,15 +15,10 @@ import java.util.concurrent.ConcurrentSkipListSet;
 //This class is more or less thread safe, but generates a lot of short-lived objects and so should be used lightly.
 public class Regions {
 
-    //private static final RegionLoc readLoc = new RegionLoc(null, 0, 0, 0);
-
     private static final Map<RegionLoc, Region> regionMap = new ConcurrentHashMap<>();
     private static final Map<World, Set<Region>> regionSet = new ConcurrentHashMap<>();
 
-    //private static final Set<RegionLoc> loadingRegionSet = new ConcurrentSkipListSet<>();
-
     public static void removeRegion(Region region) {
-        //System.out.println("Removing region at: " + region.getLoc().asCoords());
         getRegionList(region.getWorld()).remove(region);
         Vec3i loc = region.getLoc();
         regionMap.remove(new RegionLoc(region.getWorld(), loc.x, loc.y, loc.z));
@@ -33,16 +28,11 @@ public class Regions {
     public static Region getOrLoadRegion(World world, int x, int y, int z) {
         RegionLoc loc = new RegionLoc(world, x, y, z);
         Region region = regionMap.get(loc);
-        if (region == null) { //&& !loadingRegionSet.contains(readLoc)
-            //if (loadingRegionSet.contains(readLoc)) {
-            //    throw new IllegalStateException("Attempted to load region twice!");
-            //}
-            //loadingRegionSet.add(loc);
+        if (region == null) {
             WorldSave save = SaveManager.getLoadedWorld(world.getName());
             region = save.getRegion(x, y, z);
             regionMap.put(loc, region);
             getRegionList(world).add(region);
-            //loadingRegionSet.remove(loc);
         }
         return region;
     }

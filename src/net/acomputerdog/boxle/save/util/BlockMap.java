@@ -48,15 +48,11 @@ public class BlockMap {
     }
 
     public void save(DataOutput out) throws IOException {
-        //Set<Block> blocks = writeBlockMap.keySet();
         int numIds = readBlockMap.size();
         out.writeInt(numIds);
         for (int id = 0; id < numIds; id++) {
             out.writeUTF(readBlockMap.get(id).getDefinition());
         }
-        //for (Block block : blocks) {
-        //    out.writeUTF(block.getDefinition());
-        //}
     }
 
     @Override

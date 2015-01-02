@@ -41,15 +41,9 @@ public class WorldSave {
             if (chunk.isModifiedFromLoad()) {
                 thread.addSave(chunk);
             }
-            //SaveManager.saveChunkDelayed(chunk);
         }
         for (Region region : openRegions) {
-            //SaveManager.unloadRegion(region);
             thread.addRegion(region);
-            //try {
-            //} catch (IOException e) {
-            //    SaveManager.LOGGER.logError("Could not save region at: " + region.getLoc().asCoords(), e);
-            //}
         }
         openRegions.clear();
     }
@@ -63,11 +57,9 @@ public class WorldSave {
     }
 
     public Region getRegion(int x, int y, int z) {
-        //System.out.println("Getting region.");
         File regFile = SaveManager.getRegionFile(worldName, x, y, z);
         Region region = new Region(getWorldMeta(), regFile, VecPool.getVec3i(x, y, z));
         region.open();
-        //System.out.println("p4");
         openRegions.add(region);
         return region;
     }

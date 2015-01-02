@@ -185,20 +185,14 @@ public class Boxle extends SimpleApplication {
     private void run() {
         LOGGER.logInfo("Boxle is starting.");
         while (canRun) {
-            //System.out.println("Tick start.");
             if (hasStarted) {
-                //System.out.println("Starting tick.");
                 long time = System.currentTimeMillis();
                 server.tick(); //todo separate thread
                 client.tick(); //todo separate thread
-                //System.out.println("Sleep start");
-                //long sTime = System.currentTimeMillis();
                 Sleep.sync(time, 1000 / gameConfig.ticksPerSecond);
-                //System.out.println("Sleep end.  Slept for " + (System.currentTimeMillis() - sTime) + " millis.");
             } else {
                 Sleep.sleep(100);
             }
-            //Sleep.sleep(10);
         }
         cleanup();
         end(0);

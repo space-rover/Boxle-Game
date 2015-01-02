@@ -4,10 +4,8 @@ import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.save.world.WorldSave;
 import net.acomputerdog.boxle.world.Chunk;
 import net.acomputerdog.boxle.world.World;
-import net.acomputerdog.core.java.Patterns;
 import net.acomputerdog.core.logger.CLogger;
 
-import java.io.DataInput;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -15,8 +13,6 @@ import java.util.Map;
 
 public class SaveManager {
     public static final CLogger LOGGER = new CLogger("World_Saves", false, true);
-
-    private static final String UNDERSCORE = Patterns.quote("_");
 
     private static final File worldsDir = createWorldsDir();
 
@@ -51,7 +47,7 @@ public class SaveManager {
     public static WorldSave createWorld(String name) {
         WorldSave save = saveMap.get(name);
         if (save == null) {
-            initializeWorldDirectories(name);
+            initializeWorldDirectory(name);
             save = new WorldSave(name);
             save.createWorld();
             saveMap.put(name, save);
@@ -63,12 +59,7 @@ public class SaveManager {
         getLoadedWorld(world.getName()).save();
     }
 
-    public static boolean hasChunk(World world, int x, int y, int z) {
-        return new File(worldsDir, "/" + world.getName() + "/chunks/" + x + "_" + y + "_" + z + ".chunk").isFile();
-    }
-
     public static void saveChunkDelayed(Chunk chunk) {
-        //System.out.println("Saving chunk.");
         IOThread.getThread(chunk.getWorld()).addSave(chunk);
     }
 
@@ -76,110 +67,16 @@ public class SaveManager {
         IOThread.getThread(region.getWorld()).addRegion(region);
     }
 
-    /*
-    public static void saveChunk(Chunk chunk) throws IOException {
-        if (chunk.isModifiedFromLoad()) {
-            chunk.setModifiedFromLoad(false);
-            File chunkFile = getChunkFile(chunk);
-            DataOutputStream out = null;
-            try {
-                out = new DataOutputStream(new GZIPOutputStream(new FileOutputStream(chunkFile)));
-                Map<Block, Short> blockMap = writeBlockMap(out, chunk);
-                for (int y = 0; y < Chunk.CHUNK_SIZE; y++) {
-                    for (int x = 0; x < Chunk.CHUNK_SIZE; x++) {
-                        for (int z = 0; z < Chunk.CHUNK_SIZE; z++) {
-                            out.writeShort(blockMap.get(chunk.getBlockAt(x, y, z)));
-                        }
-                    }
-                }
-                chunk.setModifiedFromLoad(false);
-            } finally {
-                if (out != null) {
-                    try {
-                        out.close();
-                    } catch (IOException ignored) {}
-                }
-            }
-        }
-    }
-
-    private static Map<Block, Short> writeBlockMap(DataOutput out, Chunk chunk) throws IOException {
-        Map<Block, Short> blockMap = new LinkedHashMap<>();
-        short nextId = 0;
-        for (int y = 0; y < Chunk.CHUNK_SIZE; y++) {
-            for (int x = 0; x < Chunk.CHUNK_SIZE; x++) {
-                for (int z = 0; z < Chunk.CHUNK_SIZE; z++) {
-                    Block block = chunk.getBlockAt(x, y, z);
-                    if (!blockMap.containsKey(block)) {
-                        blockMap.put(block, nextId);
-                        nextId++;
-                    }
-                }
-            }
-        }
-        Set<Block> blocks = blockMap.keySet();
-        out.writeShort(blocks.size());
-        for (Block block : blocks) {
-            out.writeUTF(block.getDefinition());
-        }
-        return blockMap;
-    }
-    */
-
-    public static void initializeWorldDirectories(String name) {
-        //World world = new World(Boxle.instance(), name);
+    public static void initializeWorldDirectory(String name) {
         File worldDir = getWorldDir(name);
-        new File(worldDir, "/regions/").mkdirs();
+        File regions = new File(worldDir, "/regions/");
+        if (!regions.isDirectory() && !regions.mkdirs()) {
+            LOGGER.logWarning("Unable to create world region directory!");
+        }
     }
 
     public static void loadChunkDelayed(World world, Vec3i loc) {
         IOThread.getThread(world).addLoad(loc);
-    }
-
-    /*
-    public static Chunk loadChunk(World world, Vec3i loc) throws IOException {
-        return loadChunk(world, new File(getWorldDir(world.getName()), "/chunks/" + loc.x + "_" + loc.y + "_" + loc.z + ".chunk"));
-    }
-
-    public static Chunk loadChunk(World world, File file) throws IOException {
-        String fileName = file.getName();
-        String[] nameParts = fileName.substring(0, fileName.length() - 6).split(UNDERSCORE);
-        if (nameParts.length < 3) {
-            throw new IllegalArgumentException("Passed file is not a valid chunk!");
-        }
-        Chunk chunk;
-        try {
-            chunk = new Chunk(world, VecPool.getVec3i(Integer.parseInt(nameParts[0]), Integer.parseInt(nameParts[1]), Integer.parseInt(nameParts[2])));
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Passed file is not a valid chunk!", e);
-        }
-        DataInputStream in = null;
-        try {
-            in = new DataInputStream(new GZIPInputStream(new FileInputStream(file)));
-            readChunk(chunk, in);
-            return chunk;
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException ignored) {}
-            }
-        }
-    }
-*/
-
-    public static void readChunk(Chunk chunk, DataInput in) throws IOException {
-        /*Map<Short, Block> blockMap = readBlockMap(in);
-        for (int y = 0; y < Chunk.CHUNK_SIZE; y++) {
-            for (int x = 0; x < Chunk.CHUNK_SIZE; x++) {
-                for (int z = 0; z < Chunk.CHUNK_SIZE; z++) {
-                    short val = in.readShort();
-                    chunk.setBlockAt(x, y, z, blockMap.get(val));
-                }
-            }
-        }
-        chunk.setModifiedFromLoad(false);
-        */
     }
 
     public static File getRegionFile(String world, int x, int y, int z) {
@@ -204,13 +101,5 @@ public class SaveManager {
             LOGGER.logWarning("Unable to create world directory for world " + name);
         }
         return dir;
-    }
-
-    private static File getChunkFile(Chunk chunk) {
-        File dir = new File(getWorldDir(chunk.getWorld().getName()), "/chunks/");
-        if (!(dir.isDirectory() || dir.mkdirs())) {
-            LOGGER.logWarning("Unable to create world directory for chunk at " + chunk.asCoords());
-        }
-        return new File(dir, "/" + chunk.getXLoc() + "_" + chunk.getYLoc() + "_" + chunk.getZLoc() + ".chunk");
     }
 }

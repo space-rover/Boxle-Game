@@ -73,7 +73,6 @@ public class World {
         generator = new CellsWorldGen(name.hashCode());
         //generator = new SimplexWorldGen(name.hashCode());
         generator.addDecoration(Structures.tree);
-        //System.out.println("Creating world: " + name);
     }
 
     /**
@@ -117,7 +116,6 @@ public class World {
         if (chunk == null) {
             Region region = Regions.getRegion(this, loc.x, loc.y, loc.z);
             if (region == null || region.hasChunkGlobal(loc)) {
-                //System.out.println("Attempting to load chunk at " + loc.asCoords());
                 SaveManager.loadChunkDelayed(this, loc);
             } else {
                 return createNewChunk(loc);
@@ -128,7 +126,6 @@ public class World {
 
     //todo make into a threaded queue
     public Chunk createNewChunk(Vec3i loc) {
-        //System.out.println("Creating new chunk at " + loc.asCoords());
         Chunk chunk = new Chunk(this, loc);
         generator.generateTerrain(chunk);
         decorateChunks.add(chunk);
@@ -228,7 +225,6 @@ public class World {
     }
 
     public void addNewChunk(Chunk chunk) {
-        //System.out.println("Chunk at " + chunk.asCoords() + " has been loaded.");
         chunk.setModifiedFromLoad(false);
         chunk.setNeedsRebuild(true);
         chunks.addChunk(chunk);
