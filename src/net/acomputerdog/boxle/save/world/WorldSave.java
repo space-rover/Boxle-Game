@@ -67,6 +67,7 @@ public class WorldSave {
         File regFile = SaveManager.getRegionFile(worldName, x, y, z);
         Region region = new Region(getWorldMeta(), regFile, VecPool.getVec3i(x, y, z));
         region.open();
+        //System.out.println("p4");
         openRegions.add(region);
         return region;
     }

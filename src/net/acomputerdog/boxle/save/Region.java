@@ -16,19 +16,21 @@ import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
 public class Region implements Comparable<Region> {
+    private static final int CHUNK_MARKER = 0x11111111;
+
     public static final int REGION_SIZE = 10;
     public static final int REGION_SIZE_BLOCKS = REGION_SIZE * Chunk.CHUNK_SIZE;
 
-    private static final int chunkSize = Chunk.CHUNK_VOLUME * 4; // * 4
+    private static final int chunkSize = (Chunk.CHUNK_VOLUME * 4) + 4; // +4 for chunk flag
     /*
     private static final int chunkSpaceZ = REGION_SIZE;
     private static final int chunkSpaceX = chunkSpaceZ * chunkSpaceZ;
     private static final int chunkSpaceY = chunkSpaceZ * chunkSpaceZ * chunkSpaceZ;
     */
 
-    private static final int chunkSpaceY = 1;
+    private static final int chunkSpaceY = REGION_SIZE * REGION_SIZE;
     private static final int chunkSpaceX = REGION_SIZE;
-    private static final int chunkSpaceZ = REGION_SIZE * REGION_SIZE;
+    private static final int chunkSpaceZ = 1;
 
     private final WorldMetaFile metaFile;
     private final World world;
@@ -47,12 +49,13 @@ public class Region implements Comparable<Region> {
 
     public void open() {
         if (file.isFile()) {
-            //System.out.println("Loading region " + loc.asCoords());
+            System.out.println("Loading region " + loc.asCoords());
             InputStream in = null;
             try {
                 rab = new RandomAccessBuffer(in = new InflaterInputStream(new FileInputStream(file), new Inflater()));
                 //rab = new RandomAccessBuffer(in = new FileInputStream(file));
                 in.close();
+                //System.out.println("Loaded region from disk.  Total size is " + rab.length() + " bytes.");
             } catch (IOException e) {
                 if (in != null) {
                     try {
@@ -64,16 +67,25 @@ public class Region implements Comparable<Region> {
                 //throw new RuntimeException("Region file could not be opened!", e);
             }
         } else {
+            System.err.println("Creating empty region!");
             rab = new RandomAccessBuffer();
         }
+        rab.seek(0);
+        //for (int count = 0; count < 100; count++) {
+        //    System.out.println(rab.readInt());
+        //}
+        //rab.seek(0);
     }
 
     public void save() throws IOException {
+        System.out.println("Saving region at " + loc.asCoords());
         OutputStream out = null;
         try {
             rab.save(out = new DeflaterOutputStream(new FileOutputStream(file), new Deflater(1)));
             //rab.save(out = new FileOutputStream(file));
+            out.flush();
             out.close();
+            //System.out.println("Saved region to disk.  Total size " + rab.length() + " bytes.");
         } finally {
             if (out != null) {
                 try {
@@ -85,16 +97,12 @@ public class Region implements Comparable<Region> {
 
     public void close() {
         //System.out.println("Closing region at " + loc.asCoords());
-        rab.reset();
+        rab.clear();
     }
 
     public boolean hasChunkGlobal(Vec3i cLoc) {
-        if (cLoc == null || rab.length() < chunkSize) {
-            return false;
-        }
-        long pos = findLoc(CoordConverter.chunkLocInRegion(cLoc.x), CoordConverter.chunkLocInRegion(cLoc.y), CoordConverter.chunkLocInRegion(cLoc.z));
-        return pos < rab.length();
-        /*
+        return !(cLoc == null || rab.length() < chunkSize) && hasChunkAt(findChunkLoc(CoordConverter.chunkLocInRegion(cLoc.x), CoordConverter.chunkLocInRegion(cLoc.y), CoordConverter.chunkLocInRegion(cLoc.z)));
+/*
         if (loc >= rab.length()) {
             return false;
         }
@@ -107,11 +115,8 @@ public class Region implements Comparable<Region> {
     }
 
     public boolean hasChunk(Vec3i cLoc) {
-        if (cLoc == null || rab.length() < chunkSize) {
-            return false;
-        }
-        long pos = findLoc(cLoc);
-        return pos < rab.length();
+        return cLoc != null && rab.length() >= chunkSize && hasChunkAt(findChunkLoc(cLoc));
+
         /*
         if (loc >= rab.length()) {
             return false;
@@ -124,12 +129,27 @@ public class Region implements Comparable<Region> {
         */
     }
 
+    private boolean hasChunkAt(long pos) {
+        //System.out.println("Looking for chunk at " + pos);
+        if (pos + chunkSize >= rab.length()) return false;
+        rab.seek(pos);
+        //System.out.println(rab.readByte());
+        //System.out.println(rab.readByte());
+        //System.out.println(rab.readByte());
+        //System.out.println(rab.readByte());
+        //rab.seek(pos);
+        int val = rab.readInt();
+        //System.out.println("Chunk marker byte is " + val);
+        return val == CHUNK_MARKER;
+    }
+
     public void writeChunk(Chunk chunk) throws IOException {
         Vec3i rLoc = VecPool.getVec3i(CoordConverter.chunkLocInRegion(chunk.getXLoc()), CoordConverter.chunkLocInRegion(chunk.getYLoc()), CoordConverter.chunkLocInRegion(chunk.getZLoc()));
         verifyChunkLoc(rLoc);
-        //System.out.println("Writing chunk at " + chunk.asCoords() + " (" + rLoc.asCoords() + ")");
+        System.out.println("Writing chunk at " + chunk.asCoords() + " (" + rLoc.asCoords() + ")");
         //System.out.println("Writing chunk at " + chunk.asCoords());
-        rab.seek(findLoc(rLoc));
+        rab.seek(findChunkLoc(rLoc));
+        rab.writeInt(CHUNK_MARKER);
         BlockMap bm = metaFile.getBlockMap();
         for (int y = 0; y < Chunk.CHUNK_SIZE; y++) {
             for (int x = 0; x < Chunk.CHUNK_SIZE; x++) {
@@ -142,6 +162,7 @@ public class Region implements Comparable<Region> {
         VecPool.free(rLoc);
     }
 
+    /*
     public Chunk readChunk(int x, int y, int z) throws IOException {
         //Vec3i vec = VecPool.getVec3i(x + (loc.x * REGION_SIZE), y + (loc.y * REGION_SIZE), z + (loc.z * REGION_SIZE));
         Vec3i vec = VecPool.getVec3i(x, y, z);
@@ -149,23 +170,33 @@ public class Region implements Comparable<Region> {
         VecPool.free(vec);
         return chunk;
     }
+*/
 
     public Chunk readChunk(Vec3i cLoc) throws IOException {
         //Vec3i rLoc = VecPool.getVec3i(cLoc.x + (loc.x * REGION_SIZE), cLoc.y + (loc.y * REGION_SIZE), cLoc.z + (loc.z * REGION_SIZE));
         Vec3i rLoc = VecPool.getVec3i(CoordConverter.chunkLocInRegion(cLoc.x), CoordConverter.chunkLocInRegion(cLoc.y), CoordConverter.chunkLocInRegion(cLoc.z));
-        //System.out.println("Reading chunk at " + cLoc.asCoords() + " (" + rLoc.asCoords() + ")");
+        System.out.println("Reading chunk at " + cLoc.asCoords() + " (" + rLoc.asCoords() + "/" + findChunkLoc(rLoc) + ")");
         verifyChunkLoc(rLoc);
         if (!hasChunk(rLoc)) {
             return null;
         }
-        long loc = findLoc(rLoc);
+        long loc = findChunkLoc(rLoc);
         rab.seek(loc);
+        if (rab.readInt() != CHUNK_MARKER) {
+            System.err.println("Reading chunk from invalid area!");
+        }
+        long offset = 4;
         Chunk chunk = new Chunk(world, cLoc);
         BlockMap bm = metaFile.getBlockMap();
         for (int y = 0; y < Chunk.CHUNK_SIZE; y++) {
             for (int x = 0; x < Chunk.CHUNK_SIZE; x++) {
                 for (int z = 0; z < Chunk.CHUNK_SIZE; z++) {
+                    long pos = rab.position();
+                    if (pos != loc + offset) {
+                        System.err.println("RAB position moved!  Expected " + (loc + offset) + ", got " + pos);
+                    }
                     int val = rab.readInt();
+                    offset += 4;
                     Block block = bm.getBlockForId(val);
                     if (block == null) {
                         System.err.println("No block for ID: " + val);
@@ -179,12 +210,13 @@ public class Region implements Comparable<Region> {
         return chunk;
     }
 
-    private long findLoc(Vec3i cLoc) {
-        return findLoc(cLoc.x, cLoc.y, cLoc.z);
+    private long findChunkLoc(Vec3i cLoc) {
+        return findChunkLoc(cLoc.x, cLoc.y, cLoc.z);
     }
 
-    private long findLoc(int x, int y, int z) {
-        return ((Math.abs(x) * chunkSpaceX) + (Math.abs(y) * chunkSpaceY) + (Math.abs(z) * chunkSpaceZ)) * chunkSize;
+    private long findChunkLoc(int x, int y, int z) {
+        //System.out.println("Chunk offset for " + x +"," + y + "," + z +": " + (((x * chunkSpaceX) + (y * chunkSpaceY) + (z * chunkSpaceZ)) * chunkSize));
+        return ((x * chunkSpaceX) + (y * chunkSpaceY) + (z * chunkSpaceZ)) * chunkSize;
     }
 
     public File getFile() {
@@ -211,6 +243,7 @@ public class Region implements Comparable<Region> {
                 )
             throw new IllegalArgumentException("Chunk at " + cLoc.asCoords() + " is out of bounds of region at " + loc.asCoords() + "!");
             */
+        /*
         if (
                 cLoc.x < loc.x * REGION_SIZE ||
                         cLoc.x >= 2 * REGION_SIZE ||
@@ -220,10 +253,46 @@ public class Region implements Comparable<Region> {
                         cLoc.z >= 2 * REGION_SIZE
                 )
             throw new IllegalArgumentException("Chunk at " + cLoc.asCoords() + " is out of bounds of region at " + loc.asCoords() + "!");
+            */
+        if (
+                cLoc.x < 0 ||
+                        cLoc.x >= REGION_SIZE ||
+                        cLoc.y < 0 ||
+                        cLoc.y >= REGION_SIZE ||
+                        cLoc.z < 0 ||
+                        cLoc.z >= REGION_SIZE
+                )
+            throw new IllegalArgumentException("Chunk at " + cLoc.asCoords() + " is out of bounds of region at " + loc.asCoords() + "!");
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Region)) return false;
+
+        Region region = (Region) o;
+
+        return loc.equals(region.loc) && world.equals(region.world);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = world.hashCode();
+        result = 31 * result + loc.hashCode();
+        return result;
     }
 
     @Override
     public int compareTo(Region o) {
         return this.hashCode() - o.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "Region{" +
+                "loc=" + loc +
+                ", world=" + world +
+                '}';
     }
 }

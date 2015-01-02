@@ -96,7 +96,7 @@ public class Server {
         try {
             defaultWorld = SaveManager.loadOrCreateWorld(config.worldName).createWorld();
         } catch (IOException e) {
-            logger.logWarning("Exception loading world!", e);
+            logger.logWarning("Exception loading world!  A new one will be created!", e);
             defaultWorld = SaveManager.createWorld(config.worldName).createWorld(); //not the same as above, this forces it to create a new world where the above tries to load the old
         }
         IOThread.getThread(defaultWorld);
@@ -192,6 +192,11 @@ public class Server {
                                     if (chunks.getChunk(nLoc) != null) {
                                         decorateChunks.remove(chunk);
                                         world.getGenerator().generateDecorations(chunk);
+                                        chunk.setModifiedFromLoad(true);
+                                        chunk.markDecorated();
+                                        chunk.setNeedsRebuild(true);
+                                        chunk.setModifiedFromLoad(true);
+                                        SaveManager.saveChunkDelayed(chunk);
                                     }
                                 }
                             }

@@ -115,16 +115,24 @@ public class World {
     public Chunk loadOrGenerateChunk(Vec3i loc) {
         Chunk chunk = chunks.getChunk(loc);
         if (chunk == null) {
-            Region region = Regions.getOrLoadRegionChunkLoc(this, loc.x, loc.y, loc.z);
-            if (region.hasChunkGlobal(loc)) {
+            Region region = Regions.getRegion(this, loc.x, loc.y, loc.z);
+            if (region == null || region.hasChunkGlobal(loc)) {
+                //System.out.println("Attempting to load chunk at " + loc.asCoords());
                 SaveManager.loadChunkDelayed(this, loc);
             } else {
-                chunk = new Chunk(this, loc);
-                generator.generateTerrain(chunk);
-                decorateChunks.add(chunk);
-                chunks.addChunk(chunk);
+                return createNewChunk(loc);
             }
         }
+        return chunk;
+    }
+
+    //todo make into a threaded queue
+    public Chunk createNewChunk(Vec3i loc) {
+        //System.out.println("Creating new chunk at " + loc.asCoords());
+        Chunk chunk = new Chunk(this, loc);
+        generator.generateTerrain(chunk);
+        decorateChunks.add(chunk);
+        chunks.addChunk(chunk);
         return chunk;
     }
 
@@ -220,6 +228,7 @@ public class World {
     }
 
     public void addNewChunk(Chunk chunk) {
+        //System.out.println("Chunk at " + chunk.asCoords() + " has been loaded.");
         chunk.setModifiedFromLoad(false);
         chunk.setNeedsRebuild(true);
         chunks.addChunk(chunk);

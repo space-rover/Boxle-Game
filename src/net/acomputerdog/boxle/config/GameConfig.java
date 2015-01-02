@@ -72,7 +72,7 @@ public class GameConfig {
 
     public boolean outputRenderDebugInfo = false;
 
-    public int ticksPerSecond = 50;
+    public int ticksPerSecond = 20;
 
     public int lightingMode = 1; //0==off, 1==lighting only, 2==lighting+SSAO
 

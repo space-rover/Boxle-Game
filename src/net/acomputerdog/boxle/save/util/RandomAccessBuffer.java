@@ -3,11 +3,10 @@ package net.acomputerdog.boxle.save.util;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 public class RandomAccessBuffer {
-    private static final int DEFAULT_CAPACITY = 0;
+    private static final int DEFAULT_CAPACITY = 1;
     private static final int BUFFER_SECTION_SIZE = 256;
 
     //private static long totalUsage = 0;
@@ -20,7 +19,8 @@ public class RandomAccessBuffer {
     private int bufferPosition = 0;
     private long capacity = 0;
 
-    private byte[] intConvertArr = new byte[4];
+    private ByteBuffer intConvertBuf = ByteBuffer.allocate(4);
+    //private byte[] intConvertArr = new byte[4];
     private byte[] longConvertArr = new byte[8];
 
     public RandomAccessBuffer() {
@@ -32,17 +32,23 @@ public class RandomAccessBuffer {
             initialSize = 1;
         }
         expand(initialSize);
-        activeBuffer = buffers.get(0);
+        seek(0);
+        //activeBuffer = buffers.get(0);
     }
 
     public RandomAccessBuffer(InputStream in) throws IOException {
         this();
-        List<Byte> bytes = new LinkedList<>();
-        while (in.available() > 0) {
-            bytes.add((byte) in.read());
-        }
-        expand(bytes.size());
+        /*
+        System.out.println(in.available() + " bytes are available.");
+        byte[] bytes = new byte[in.available()];
+        System.out.println("Loaded " + in.read(bytes) + " bytes. " + in.available() + " bytes are available.");
+        expand(bytes.length);
         writeBytes(bytes);
+        */
+        while (in.available() > 0) {
+            writeByte(in.read());
+        }
+        System.out.println("Read " + length() + " bytes. " + in.available() + " bytes are available.");
         seek(0);
     }
 
@@ -60,9 +66,10 @@ public class RandomAccessBuffer {
         if (location >= capacity) {
             expand(location);
         }
-        bufferIndex = (int) (location / BUFFER_SECTION_SIZE);
+        bufferIndex = (int) Math.floor((double) location / (double) BUFFER_SECTION_SIZE);
         bufferPosition = (int) (location % BUFFER_SECTION_SIZE);
         activeBuffer = buffers.get(bufferIndex);
+        //System.out.println("Seeking to " + location + ".  Now at " + position() + ".");
     }
 
     public long length() {
@@ -73,7 +80,7 @@ public class RandomAccessBuffer {
         return (bufferIndex * BUFFER_SECTION_SIZE) + bufferPosition;
     }
 
-    public void reset() {
+    public void clear() {
         //totalUsage -= capacity;
         //System.out.println("Resetting RAB" + hashCode() +". Total usage is now " + totalUsage + "b.");
         bufferIndex = 0;
@@ -132,8 +139,12 @@ public class RandomAccessBuffer {
     }
 
     public int readInt() {
-        readBytes(intConvertArr);
-        return ((intConvertArr[0] & 0xFF) << 24) | ((intConvertArr[1] & 0xFF) << 16) | ((intConvertArr[2] & 0xFF) << 8) | (intConvertArr[3] & 0xFF);
+        intConvertBuf.rewind();
+        intConvertBuf.put(readBytes(4));
+        intConvertBuf.rewind();
+        return intConvertBuf.getInt();
+        //readBytes(intConvertArr);
+        //return ((intConvertArr[0] & 0xFF) << 24) | ((intConvertArr[1] & 0xFF) << 16) | ((intConvertArr[2] & 0xFF) << 8) | (intConvertArr[3] & 0xFF);
     }
 
 
@@ -349,11 +360,15 @@ public class RandomAccessBuffer {
     }
 
     public void writeInt(int i) {
-        intConvertArr[0] = (byte) ((i >> 24) & 0xFF);
-        intConvertArr[1] = (byte) ((i >> 16) & 0xFF);
-        intConvertArr[2] = (byte) ((i >> 8) & 0xFF);
-        intConvertArr[3] = (byte) ((i) & 0xFF);
-        writeBytes(intConvertArr);
+        intConvertBuf.rewind();
+        intConvertBuf.putInt(i);
+        intConvertBuf.rewind();
+        writeBytes(intConvertBuf.array());
+        //intConvertArr[0] = (byte) ((i >> 24) & 0xFF);
+        //intConvertArr[1] = (byte) ((i >> 16) & 0xFF);
+        //intConvertArr[2] = (byte) ((i >> 8) & 0xFF);
+        //intConvertArr[3] = (byte) ((i) & 0xFF);
+        //writeBytes(intConvertArr);
     }
 
     public void writeLongs(List<Long> longs) {
