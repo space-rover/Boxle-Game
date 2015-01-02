@@ -15,7 +15,6 @@ import net.acomputerdog.boxle.render.engine.ChunkRenderer;
 import net.acomputerdog.boxle.render.engine.RenderEngine;
 import net.acomputerdog.boxle.render.util.ChunkNode;
 import net.acomputerdog.boxle.save.SaveManager;
-import net.acomputerdog.boxle.save.io.IOThread;
 import net.acomputerdog.boxle.save.world.Regions;
 import net.acomputerdog.boxle.save.world.files.Region;
 import net.acomputerdog.boxle.world.Chunk;
@@ -89,7 +88,6 @@ public class Server {
             logger.logWarning("Exception loading world!  A new one will be created!", e);
             defaultWorld = SaveManager.createWorld(config.worldName).createWorld(); //not the same as above, this forces it to create a new world where the above tries to load the old
         }
-        IOThread.getThread(defaultWorld); //create thread for world
         boxle.getWorlds().addWorld(defaultWorld);
         hostedWorlds.add(defaultWorld);
     }

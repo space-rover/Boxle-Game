@@ -41,6 +41,7 @@ public class SaveManager {
         if (save == null) {
             save = new WorldSave(name);
             save.open();
+            IOThread.getThread(save.createWorld()); //create world and create thread
             saveMap.put(name, save);
         }
         return save;
@@ -51,7 +52,7 @@ public class SaveManager {
         if (save == null) {
             initializeWorldDirectory(name);
             save = new WorldSave(name);
-            save.createWorld();
+            IOThread.getThread(save.createWorld()); //create world and create thread
             saveMap.put(name, save);
         }
         return save;
@@ -103,5 +104,9 @@ public class SaveManager {
             LOGGER.logWarning("Unable to create world directory for world " + name);
         }
         return dir;
+    }
+
+    public static void waitForSave() {
+        IOThread.waitForEnd();
     }
 }

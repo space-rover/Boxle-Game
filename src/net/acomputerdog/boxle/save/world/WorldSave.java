@@ -3,7 +3,6 @@ package net.acomputerdog.boxle.save.world;
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.save.SaveManager;
-import net.acomputerdog.boxle.save.io.IOThread;
 import net.acomputerdog.boxle.save.world.files.Region;
 import net.acomputerdog.boxle.save.world.files.WorldMetaFile;
 import net.acomputerdog.boxle.world.Chunk;
@@ -36,14 +35,13 @@ public class WorldSave {
     }
 
     public void save() throws IOException {
-        IOThread thread = IOThread.getThread(world);
         for (Chunk chunk : world.getChunks().getAllChunks()) {
             if (chunk.isModifiedFromLoad()) {
-                thread.addSave(chunk);
+                SaveManager.saveChunkDelayed(chunk);
             }
         }
         for (Region region : openRegions) {
-            thread.addRegion(region);
+            SaveManager.unloadRegion(region);
         }
         openRegions.clear();
     }
