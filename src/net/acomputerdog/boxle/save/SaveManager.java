@@ -1,6 +1,7 @@
 package net.acomputerdog.boxle.save;
 
 import net.acomputerdog.boxle.math.vec.Vec3i;
+import net.acomputerdog.boxle.save.io.IOThread;
 import net.acomputerdog.boxle.save.world.WorldSave;
 import net.acomputerdog.boxle.save.world.files.Region;
 import net.acomputerdog.boxle.world.Chunk;

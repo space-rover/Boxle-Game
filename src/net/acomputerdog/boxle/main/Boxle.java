@@ -14,7 +14,7 @@ import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.render.engine.RenderEngine;
 import net.acomputerdog.boxle.render.util.BasicSSAO;
 import net.acomputerdog.boxle.render.util.BoxleFlyByCamera;
-import net.acomputerdog.boxle.save.IOThread;
+import net.acomputerdog.boxle.save.io.IOThread;
 import net.acomputerdog.boxle.world.structure.WorldList;
 import net.acomputerdog.core.java.Sleep;
 import net.acomputerdog.core.logger.CLogger;
