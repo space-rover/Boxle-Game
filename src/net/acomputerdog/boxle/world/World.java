@@ -10,8 +10,6 @@ import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.physics.PhysicsEngine;
 import net.acomputerdog.boxle.render.util.ChunkNode;
 import net.acomputerdog.boxle.save.SaveManager;
-import net.acomputerdog.boxle.save.world.Regions;
-import net.acomputerdog.boxle.save.world.files.Region;
 import net.acomputerdog.boxle.world.gen.CellsWorldGen;
 import net.acomputerdog.boxle.world.gen.WorldGen;
 import net.acomputerdog.boxle.world.gen.structures.Structures;
@@ -109,19 +107,6 @@ public class World {
      */
     public ChunkTable getChunks() {
         return chunks;
-    }
-
-    public Chunk loadOrGenerateChunk(Vec3i loc) {
-        Chunk chunk = chunks.getChunk(loc);
-        if (chunk == null) {
-            Region region = Regions.getRegion(this, loc.x, loc.y, loc.z);
-            if (region == null || region.hasChunkGlobal(loc)) {
-                SaveManager.loadChunkDelayed(this, loc);
-            } else {
-                return createNewChunk(loc);
-            }
-        }
-        return chunk;
     }
 
     //todo make into a threaded queue

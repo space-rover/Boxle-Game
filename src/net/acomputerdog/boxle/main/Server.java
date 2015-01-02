@@ -257,7 +257,8 @@ public class Server {
                 Vec3i newLoc = VecPool.getVec3i(sX, center.y + y, sZ);
                 Chunk chunk = chunks.getChunk(newLoc);
                 if (chunk == null) {
-                    chunk = world.loadOrGenerateChunk(newLoc);
+                    chunk = SaveManager.loadOrGenerateChunk(world, newLoc);
+                    //chunk = world.loadOrGenerateChunk(newLoc);
                 }
                 if (chunk != null && chunk.needsRebuild()) { //if null chunk has not been loaded yet
                     numChunks++;
