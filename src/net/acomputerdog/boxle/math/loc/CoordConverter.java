@@ -1,7 +1,7 @@
 package net.acomputerdog.boxle.math.loc;
 
 import net.acomputerdog.boxle.math.vec.Vec3i;
-import net.acomputerdog.boxle.save.Region;
+import net.acomputerdog.boxle.save.world.files.Region;
 import net.acomputerdog.boxle.world.Chunk;
 
 //todo move to another package

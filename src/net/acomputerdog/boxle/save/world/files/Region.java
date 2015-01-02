@@ -1,4 +1,4 @@
-package net.acomputerdog.boxle.save;
+package net.acomputerdog.boxle.save.world.files;
 
 import net.acomputerdog.boxle.block.block.Block;
 import net.acomputerdog.boxle.block.block.Blocks;

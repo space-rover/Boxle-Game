@@ -1,9 +1,10 @@
-package net.acomputerdog.boxle.save;
+package net.acomputerdog.boxle.save.world;
 
 import net.acomputerdog.boxle.math.loc.CoordConverter;
 import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.math.vec.VecPool;
-import net.acomputerdog.boxle.save.world.WorldSave;
+import net.acomputerdog.boxle.save.SaveManager;
+import net.acomputerdog.boxle.save.world.files.Region;
 import net.acomputerdog.boxle.world.World;
 
 import java.util.Collections;

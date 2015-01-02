@@ -3,9 +3,9 @@ package net.acomputerdog.boxle.save.world;
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.save.IOThread;
-import net.acomputerdog.boxle.save.Region;
 import net.acomputerdog.boxle.save.SaveManager;
-import net.acomputerdog.boxle.save.WorldMetaFile;
+import net.acomputerdog.boxle.save.world.files.Region;
+import net.acomputerdog.boxle.save.world.files.WorldMetaFile;
 import net.acomputerdog.boxle.world.Chunk;
 import net.acomputerdog.boxle.world.World;
 

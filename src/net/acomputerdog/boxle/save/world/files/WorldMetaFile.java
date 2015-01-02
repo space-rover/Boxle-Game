@@ -1,4 +1,4 @@
-package net.acomputerdog.boxle.save;
+package net.acomputerdog.boxle.save.world.files;
 
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.math.vec.Vec3f;
