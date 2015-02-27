@@ -2,7 +2,6 @@ package net.acomputerdog.boxle.save;
 
 import net.acomputerdog.boxle.math.vec.Vec3i;
 import net.acomputerdog.boxle.save.io.IOThread;
-import net.acomputerdog.boxle.save.world.Regions;
 import net.acomputerdog.boxle.save.world.WorldSave;
 import net.acomputerdog.boxle.save.world.files.Region;
 import net.acomputerdog.boxle.world.Chunk;
@@ -19,56 +18,56 @@ public class SaveManager {
 
     private static final File worldsDir = createWorldsDir();
 
+    private static final Map<String, WorldSave> saveMap = new HashMap<>();
+
     public static boolean worldExists(String name) {
         return new File(worldsDir, name).isDirectory();
     }
 
-    private static final Map<String, WorldSave> saveMap = new HashMap<>();
-
-    public static WorldSave loadOrCreateWorld(String name) throws IOException {
+    public static WorldSave loadOrCreateWorldSave(String name) throws IOException {
         if (worldExists(name)) {
-            return loadWorld(name);
+            return loadWorldSave(name);
         } else {
-            return createWorld(name);
+            return createWorldSave(name);
         }
     }
 
-    public static WorldSave getLoadedWorld(String name) {
+    public static WorldSave getLoadedWorldSave(String name) {
         return saveMap.get(name);
     }
 
-    private static WorldSave loadWorld(String name) throws IOException {
+    private static WorldSave loadWorldSave(String name) throws IOException {
         WorldSave save = saveMap.get(name);
         if (save == null) {
             save = new WorldSave(name);
             save.open();
-            IOThread.getThread(save.createWorld()); //create world and create thread
+            save.createWorld().getSaveIO(); //create world and create thread
             saveMap.put(name, save);
         }
         return save;
     }
 
-    public static WorldSave createWorld(String name) {
+    public static WorldSave createWorldSave(String name) {
         WorldSave save = saveMap.get(name);
         if (save == null) {
             initializeWorldDirectory(name);
             save = new WorldSave(name);
-            IOThread.getThread(save.createWorld()); //create world and create thread
+            save.createWorld().getSaveIO(); //create world and create thread
             saveMap.put(name, save);
         }
         return save;
     }
 
     public static void saveWorld(World world) throws IOException {
-        getLoadedWorld(world.getName()).save();
+        world.getWorldSave().save();
     }
 
     public static void saveChunkDelayed(Chunk chunk) {
-        IOThread.getThread(chunk.getWorld()).addSave(chunk);
+        chunk.getWorld().getSaveIO().addSave(chunk);
     }
 
     public static void unloadRegion(Region region) {
-        IOThread.getThread(region.getWorld()).addRegion(region);
+        region.getWorld().getSaveIO().addRegion(region);
     }
 
     public static void initializeWorldDirectory(String name) {
@@ -80,7 +79,7 @@ public class SaveManager {
     }
 
     public static void loadChunkDelayed(World world, Vec3i loc) {
-        IOThread.getThread(world).addLoad(loc);
+        world.getSaveIO().addLoad(loc);
     }
 
     public static File getRegionFile(String world, int x, int y, int z) {
@@ -114,7 +113,7 @@ public class SaveManager {
     public static Chunk loadOrGenerateChunk(World world, Vec3i loc) {
         Chunk chunk = world.getChunks().getChunk(loc);
         if (chunk == null) {
-            Region region = Regions.getRegion(world, loc.x, loc.y, loc.z);
+            Region region = world.getRegion(loc);
             if (region == null || region.hasChunkGlobal(loc)) {
                 SaveManager.loadChunkDelayed(world, loc);
             } else {

@@ -38,6 +38,8 @@ public class Region implements Comparable<Region> {
     private final Vec3i loc;
     private final RandomAccessBuffer rab;
 
+    private boolean isModifiedFromLoad = false;
+
     public Region(WorldMetaFile metaFile, File file, Vec3i loc) {
         this.metaFile = metaFile;
         this.world = metaFile.getWorld();
@@ -73,6 +75,14 @@ public class Region implements Comparable<Region> {
                 } catch (IOException ignored) {}
             }
         }
+    }
+
+    public boolean isModifiedFromLoad() {
+        return isModifiedFromLoad;
+    }
+
+    public void setModifiedFromLoad(boolean isModifiedFromLoad) {
+        this.isModifiedFromLoad = isModifiedFromLoad;
     }
 
     public void close() {

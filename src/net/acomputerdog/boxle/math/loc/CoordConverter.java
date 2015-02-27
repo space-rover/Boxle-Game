@@ -15,6 +15,13 @@ public class CoordConverter {
         return global;
     }
 
+    public static Vec3i globalToRegion(Vec3i global) {
+        global.x = (int) Math.floor((float) Math.floor((float) global.x / (float) chunkSize) / (float) Region.REGION_SIZE);
+        global.y = (int) Math.floor((float) Math.floor((float) global.y / (float) chunkSize) / (float) Region.REGION_SIZE);
+        global.z = (int) Math.floor((float) Math.floor((float) global.z / (float) chunkSize) / (float) Region.REGION_SIZE);
+        return global;
+    }
+
     public static Vec3i globalToBlock(Vec3i global) {
         global.x = globalToBlock(global.x);
         global.y = globalToBlock(global.y);
@@ -44,6 +51,10 @@ public class CoordConverter {
 
     public static int regionLocOfChunk(int loc) {
         return (int) Math.floor((float) loc / (float) Region.REGION_SIZE);
+    }
+
+    public static int regionLocOfChunkCeil(int loc) {
+        return (int) Math.ceil((float) loc / (float) Region.REGION_SIZE);
     }
 
     public static void main(String[] args) {

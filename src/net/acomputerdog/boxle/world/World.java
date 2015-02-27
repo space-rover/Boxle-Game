@@ -10,17 +10,19 @@ import net.acomputerdog.boxle.math.vec.VecPool;
 import net.acomputerdog.boxle.physics.PhysicsEngine;
 import net.acomputerdog.boxle.render.util.ChunkNode;
 import net.acomputerdog.boxle.save.SaveManager;
+import net.acomputerdog.boxle.save.io.IOThread;
+import net.acomputerdog.boxle.save.world.WorldSave;
+import net.acomputerdog.boxle.save.world.files.Region;
 import net.acomputerdog.boxle.world.gen.CellsWorldGen;
 import net.acomputerdog.boxle.world.gen.WorldGen;
 import net.acomputerdog.boxle.world.gen.structures.Structures;
 import net.acomputerdog.boxle.world.structure.ChunkTable;
 import net.acomputerdog.core.logger.CLogger;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * A world, made of blocks :)
@@ -53,13 +55,23 @@ public class World {
     private final Queue<Chunk> decorateChunks = new ConcurrentLinkedQueue<>();
 
     private final Map<Integer, Entity> entities = new HashMap<>();
+
+    private final IOThread saveIO;
+
+    private final WorldSave worldSave;
+
+    private final Map<Vec3i, Region> regionMap = new ConcurrentHashMap<>();
+
+    private final Set<Region> regionSet = new ConcurrentSkipListSet<>();
+
     /**
      * Creates a new instance of this World.
-     *
-     * @param boxle The Boxle instance that created this World.
+     *  @param boxle The Boxle instance that created this World.
      * @param name  The name of this world.
+     * @param worldSave
      */
-    public World(Boxle boxle, String name) {
+    public World(Boxle boxle, String name, WorldSave worldSave) {
+        this.worldSave = worldSave;
         if (name == null) throw new IllegalArgumentException("Name cannot be null!");
         if (boxle == null) throw new IllegalArgumentException("Boxle instance must not be null!");
         this.boxle = boxle;
@@ -71,6 +83,11 @@ public class World {
         generator = new CellsWorldGen(name.hashCode());
         //generator = new SimplexWorldGen(name.hashCode());
         generator.addDecoration(Structures.tree);
+        saveIO = IOThread.createThread(this);
+    }
+
+    public WorldSave getWorldSave() {
+        return worldSave;
     }
 
     /**
@@ -98,6 +115,10 @@ public class World {
      */
     public PhysicsEngine getPhysicsEngine() {
         return physicsEngine;
+    }
+
+    public IOThread getSaveIO() {
+        return saveIO;
     }
 
     /**
@@ -213,6 +234,50 @@ public class World {
         chunk.setModifiedFromLoad(false);
         chunk.setNeedsRebuild(true);
         chunks.addChunk(chunk);
+    }
+
+    public void removeRegion(Region region) {
+        regionSet.remove(region);
+        Vec3i loc = region.getLoc();
+        regionMap.remove(loc);
+        VecPool.free(loc);
+    }
+
+    public Region getOrLoadRegion(int x, int y, int z) {
+        Vec3i vec = VecPool.getVec3i(x, y, z);
+        Region region = regionMap.get(vec);
+        if (region == null) {
+            WorldSave save = getWorldSave();
+            region = save.getRegion(x, y, z);
+            regionMap.put(vec, region);
+            regionSet.add(region);
+        }
+        VecPool.free(vec);
+        return region;
+    }
+
+    public Set<Region> getRegionSet() {
+        return regionSet;
+    }
+
+    public Region getOrLoadRegionChunkLoc(int x, int y, int z) {
+        return getOrLoadRegion(CoordConverter.regionLocOfChunk(x), CoordConverter.regionLocOfChunk(y), CoordConverter.regionLocOfChunk(z));
+    }
+
+    public Region getRegionChunkLoc(int x, int y, int z) {
+        return getRegion(CoordConverter.regionLocOfChunk(x), CoordConverter.regionLocOfChunk(y), CoordConverter.regionLocOfChunk(z));
+
+    }
+
+    public Region getRegion(int x, int y, int z) {
+        Vec3i vec = VecPool.getVec3i(x, y, z);
+        Region region = regionMap.get(vec);
+        VecPool.free(vec);
+        return region;
+    }
+
+    public Region getRegion(Vec3i loc) {
+        return regionMap.get(loc);
     }
 
     @Override

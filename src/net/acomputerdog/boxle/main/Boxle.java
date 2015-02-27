@@ -126,7 +126,6 @@ public class Boxle extends SimpleApplication {
         player.setFlyby(boxleFlyCam);
 
         super.setDisplayStatView(false);
-
         super.setPauseOnLostFocus(false);
 
         viewPort.setBackgroundColor(new ColorRGBA(.25f, .5f, 1f, 1f));
@@ -157,6 +156,20 @@ public class Boxle extends SimpleApplication {
     private void init() {
         LOGGER.logInfo("Boxle is initializing.");
         gameConfig.load();
+
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            private final CLogger logger = new CLogger("UncaughtExceptionHandler", false, true);
+
+            @Override
+            public void uncaughtException(Thread t, Throwable e) {
+                logger.logFatal("Uncaught exception occurred in thread \"" + String.valueOf(t) + "\"!", e);
+                try {
+                    end(-5);
+                } catch (Throwable ignored) {}
+                logger.logFatal("Boxle did not shut down correctly!  It will be forced to close!");
+                System.exit(-5);
+            }
+        });
 
         File tempDir = new File(gameConfig.cacheDir);
         if (!(tempDir.isDirectory() || tempDir.mkdirs())) {

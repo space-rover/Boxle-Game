@@ -2,8 +2,6 @@ package net.acomputerdog.boxle.save.io;
 
 import net.acomputerdog.boxle.main.Boxle;
 import net.acomputerdog.boxle.math.vec.Vec3i;
-import net.acomputerdog.boxle.save.SaveManager;
-import net.acomputerdog.boxle.save.world.Regions;
 import net.acomputerdog.boxle.save.world.files.Region;
 import net.acomputerdog.boxle.world.Chunk;
 import net.acomputerdog.boxle.world.World;
@@ -15,11 +13,10 @@ import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentSkipListSet;
 
-//TODO keep instance with world
 public class IOThread extends Thread {
 
     private static final Map<World, IOThread> threadMap = new HashMap<>();
-    private static final CLogger LOGGER_GLOBAL = new CLogger("IO", false, true);
+    private static final CLogger LOGGER_GLOBAL = new CLogger("WorldIO", false, true);
 
     private final CLogger logger;
     private final World world;
@@ -47,7 +44,7 @@ public class IOThread extends Thread {
             while (canRun) {
                 canRun = performTick();
             }
-            SaveManager.getLoadedWorld(world.getName()).getWorldMeta().save();
+            world.getWorldSave().getWorldMeta().save();
             logger.logInfo("Stopping.");
         } catch (Throwable t) {
             logger.logFatal("Unhandled Exception in IOThread!", t);
@@ -58,51 +55,59 @@ public class IOThread extends Thread {
     private boolean performTick() {
         boolean canLoadChunks = Boxle.instance().canRunIO();
         boolean performedAction = false;
-        if (canLoadChunks) {
+        if (canLoadChunks) { //game is not shutting down
             Vec3i loc = loadQueue.poll();
             if (loc != null) {
+                //System.out.println("Load");
                 loadSet.remove(loc);
                 performedAction = true;
                 try {
-                    Region region = Regions.getOrLoadRegionChunkLoc(world, loc.x, loc.y, loc.z);
+                    Region region = world.getOrLoadRegionChunkLoc(loc.x, loc.y, loc.z);
                     if (region.hasChunkGlobal(loc)) {
                         world.addNewChunk(region.readChunk(loc));
                     } else {
-                        world.createNewChunk(loc); //tell world it can find it's own chunk
+                        world.createNewChunk(loc); //tell that lazy world to get it's own chunk!
                     }
                 } catch (IOException e) {
                     logger.logWarning("Unable to load chunk at " + loc.asCoords(), e);
                 }
             }
         }
-        Chunk chunk = saveQueue.poll();
-        if (chunk != null) {
-            saveSet.remove(chunk);
-            performedAction = true;
-            try {
-                Regions.getOrLoadRegionChunkLoc(world, chunk.getXLoc(), chunk.getYLoc(), chunk.getZLoc()).writeChunk(chunk);
-            } catch (Exception e) {
-                logger.logWarning("Unable to save chunk at " + chunk.asCoords(), e);
-            }
-        } else {
-            Region region = regionQueue.poll();
-            if (region != null) {
-                regionSet.remove(region);
+        if (!performedAction) { //no chunks were loaded
+            Chunk chunk = saveQueue.poll();
+            if (chunk != null) {
+                //System.out.println("Save");
+                saveSet.remove(chunk);
                 performedAction = true;
                 try {
-                    Regions.removeRegion(region);
-                    region.save();
-                    region.close();
+                    world.getOrLoadRegionChunkLoc(chunk.getXLoc(), chunk.getYLoc(), chunk.getZLoc()).writeChunk(chunk);
                 } catch (Exception e) {
-                    logger.logWarning("Unable to save region at " + region.getLoc().asCoords(), e);
+                    logger.logWarning("Unable to save chunk at " + chunk.asCoords(), e);
+                }
+            } else { //no chunks were loaded or saved
+                Region region = regionQueue.poll();
+                if (region != null) {
+                    //System.out.println("Region");
+                    regionSet.remove(region);
+                    performedAction = true;
+                    region.getWorld().removeRegion(region);
+                    if (region.isModifiedFromLoad()) {
+                        try {
+                            region.save();
+                            region.close();
+                        } catch (Exception e) {
+                            logger.logWarning("Unable to save region at " + region.getLoc().asCoords(), e);
+                        }
+                    }
                 }
             }
         }
 
         if (!performedAction) {
-            Sleep.sleep(1);
+            Sleep.sleep(10);
             return canLoadChunks;
         }
+        //Sleep.sleep(10);
         return true;
     }
 
@@ -130,7 +135,8 @@ public class IOThread extends Thread {
 
     //--------Static Methods--------------
 
-    public static IOThread getThread(World world) {
+
+    public static IOThread createThread(World world) {
         IOThread thread = threadMap.get(world);
         if (thread == null) {
             threadMap.put(world, thread = new IOThread(world));
@@ -138,6 +144,7 @@ public class IOThread extends Thread {
         }
         return thread;
     }
+
 
     public static void waitForEnd() {
         LOGGER_GLOBAL.logInfo("Saving chunks...");

@@ -10,13 +10,13 @@ import net.acomputerdog.boxle.world.World;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 public class WorldSave {
     private final String worldName;
 
-    private final List<Region> openRegions = new LinkedList<>();
+    private final Set<Region> openRegions = new ConcurrentSkipListSet<>();
     private World world;
     private WorldMetaFile worldMeta;
 
@@ -47,7 +47,7 @@ public class WorldSave {
     }
 
     public World createWorld() {
-        return world = (world == null ? new World(Boxle.instance(), worldName) : world);
+        return world = (world == null ? new World(Boxle.instance(), worldName, this) : world);
     }
 
     public WorldMetaFile getWorldMeta() {

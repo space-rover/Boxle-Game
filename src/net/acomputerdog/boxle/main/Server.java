@@ -4,7 +4,6 @@ import com.jme3.scene.Node;
 import net.acomputerdog.boxle.config.GameConfig;
 import net.acomputerdog.boxle.entity.Entity;
 import net.acomputerdog.boxle.entity.types.EntityPlayer;
-import net.acomputerdog.boxle.math.aabb.AABBI;
 import net.acomputerdog.boxle.math.loc.CoordConverter;
 import net.acomputerdog.boxle.math.spiral.Spiral2i;
 import net.acomputerdog.boxle.math.vec.Vec2i;
@@ -15,7 +14,6 @@ import net.acomputerdog.boxle.render.engine.ChunkRenderer;
 import net.acomputerdog.boxle.render.engine.RenderEngine;
 import net.acomputerdog.boxle.render.util.ChunkNode;
 import net.acomputerdog.boxle.save.SaveManager;
-import net.acomputerdog.boxle.save.world.Regions;
 import net.acomputerdog.boxle.save.world.files.Region;
 import net.acomputerdog.boxle.world.Chunk;
 import net.acomputerdog.boxle.world.World;
@@ -83,10 +81,10 @@ public class Server {
      */
     public void init() {
         try {
-            defaultWorld = SaveManager.loadOrCreateWorld(config.worldName).createWorld();
+            defaultWorld = SaveManager.loadOrCreateWorldSave(config.worldName).createWorld();
         } catch (IOException e) {
             logger.logWarning("Exception loading world!  A new one will be created!", e);
-            defaultWorld = SaveManager.createWorld(config.worldName).createWorld(); //not the same as above, this forces it to create a new world where the above tries to load the old
+            defaultWorld = SaveManager.createWorldSave(config.worldName).createWorld(); //not the same as above, this forces it to create a new world where the above tries to load the old
         }
         boxle.getWorlds().addWorld(defaultWorld);
         hostedWorlds.add(defaultWorld);
@@ -119,6 +117,21 @@ public class Server {
     }
 
     private void unloadExtraRegions() {
+        for (World world : hostedWorlds) {
+            Vec3i center = CoordConverter.globalToRegion(VecConverter.floorVec3iFromVec3f(boxle.getClient().getPlayer().getLocation(), VecPool.createVec3i()));
+            Set<Region> regions = world.getRegionSet();
+            for (Region region : regions) {
+                Vec3i rLoc = region.getLoc();
+                if (rLoc.x > center.x + CoordConverter.regionLocOfChunkCeil(renderDistanceH) || rLoc.x < center.x - CoordConverter.regionLocOfChunkCeil(renderDistanceH) || rLoc.y > center.y + CoordConverter.regionLocOfChunkCeil(renderDistanceV) || rLoc.y < center.y - CoordConverter.regionLocOfChunkCeil(renderDistanceV) || rLoc.z > center.z + CoordConverter.regionLocOfChunkCeil(renderDistanceH) || rLoc.z < center.z - CoordConverter.regionLocOfChunkCeil(renderDistanceH)) {
+                    System.out.println("Unloading region at " + rLoc.asCoords());
+                    world.removeRegion(region);
+                    SaveManager.unloadRegion(region);
+                }
+                VecPool.free(rLoc);
+            }
+            VecPool.free(center);
+        }
+        /*
         Vec3i endLoc = VecPool.getVec3i();
         Vec3i renderAreaStart = VecPool.getVec3i();
         Vec3i renderAreaEnd = VecPool.getVec3i();
@@ -126,7 +139,7 @@ public class Server {
         AABBI renderArea = new AABBI();
         AABBI regionArea = new AABBI();
         for (World world : hostedWorlds) {
-            for (Region region : Regions.getRegionsForWorld(world)) {
+            for (Region region : world.getRegionSet()) {
                 Vec3i startLoc = region.getLoc();
                 startLoc.x *= regionSize;
                 startLoc.y *= regionSize;
@@ -153,6 +166,7 @@ public class Server {
         VecPool.free(renderAreaEnd);
         VecPool.free(renderAreaStart);
         VecPool.free(endLoc);
+        */
     }
 
     private void decorateChunks() {
@@ -205,6 +219,7 @@ public class Server {
                     rebuildChunks.remove(chunk);
                     world.unloadChunk(chunk);
                 }
+                VecPool.free(cLoc);
             }
             VecPool.free(center);
         }
